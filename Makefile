@@ -1,5 +1,7 @@
+default:
+	cd v1 && go test ./...
 # *.gen.go files are hidden in .gitignore
-default: assets/assets.gen.go assets/img.gen.go
+default1: assets/assets.gen.go assets/img.gen.go
 	cd ./cmd/mdcoach && go build -trimpath -o ~/.local/bin/mdcoach && chmod +x ~/.local/bin/mdcoach
 	# mdcoach --output test/test-demo.html assets/test-demo.md assets/test-another.md
 	# firefox test/test-demo.notes.html

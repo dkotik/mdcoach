@@ -12,8 +12,7 @@ func DefaultParser() parser.Parser {
 			// Inject notes break detector above thematic break parser.
 			util.Prioritized(NewNotesBreakParser(), 180),
 		// util.Prioritized(NewThematicBreakParser(), 200),
-		)...,
-	),
+		)...),
 		parser.WithInlineParsers(parser.DefaultInlineParsers()...),
 		parser.WithParagraphTransformers(parser.DefaultParagraphTransformers()...),
 	)
