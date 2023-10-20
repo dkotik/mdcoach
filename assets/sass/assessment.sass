@@ -1,0 +1,101 @@
+@import common/Paper
+
+@media print
+  // https://github.com/Kozea/WeasyPrint/pull/652
+  // https://weasyprint.readthedocs.io/en/stable/features.html#css-paged-media-module-level-3
+  // @page:first
+  //   margin-top: 0
+  //   padding-top: 0
+  @page
+    margin: 5mm 7mm 10mm 7mm
+    @top-left
+      // display: none !important
+      // content: " "
+      height: 0 !important
+      overflow: hidden
+    @bottom-right
+      content: string(doctitle) " " counter(page) "/" counter(pages)
+  h1
+    page-break-before: auto
+  h1:first-of-type
+    page-break-before: auto
+    string-set: doctitle content()
+
+table.grades
+  font-family: sans-serif
+  color: var(--color-muted)
+  background-color: transparent
+  border: 0
+  font-size: 6pt
+  width: 100%
+  // width: auto
+  tr:nth-child(even)
+    background-color: transparent
+  tr:first-of-type
+    th, td
+      text-align: left
+      color: var(--color-muted)
+      border-style: solid
+      border-color: var(--color-muted)
+      border-width: 0 0 1pt 0
+      background-color: transparent
+  td
+    background-color: transparent
+    text-align: right
+    padding: 1px
+
+h1:first-of-type
+  height: 0
+  padding: 0
+  margin: 0
+  visibility: hidden
+
+.content>figure>img
+  max-height: 20cm
+  width: 100%
+
+aside
+  width: 60%
+  float: left
+  clear: left
+  margin-bottom: 1rem
+  margin-right: 1rem
+  display: block
+  border: 0
+
+hr
+  height: 5rem
+  border: none
+
+aside.notice
+  color: #ed212d
+  border-left: 1rem dotted #ed212d
+  padding-left: 1rem
+
+section.questions
+  clear: both
+  font-family: OpenSans, sans-serif
+  // columns: 2
+  // column-rule-color: var(--color-alt)
+  // column-rule-style: solid
+  // column-rule-width: 1px
+  // column-gap: 1cm
+  margin-top: 1cm
+  ol
+    padding: 0 0 0 1.5em
+    li
+      padding-right: 1em
+      min-height: 2.2cm
+      break-inside: avoid-page
+      position: relative
+      legend
+        position: absolute
+        right: 0
+        font-family: sans-serif
+        display: block
+        // float: right
+        // clear: right
+        text-align: right
+        line-height: 300%
+        font-size: 50%
+        color: var(--color-muted)

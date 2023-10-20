@@ -1,0 +1,72 @@
+// Derrived color vars based on primary inputs:
+
+body
+  background-color: var(--color-canvas)
+  color: var(--color-text)
+  cursor: default
+
+img
+  vertical-align: middle
+
+a
+  cursor: pointer
+  text-decoration: none
+  color: var(--color-action)
+  &.footnote-return
+    color: var(--color-faded)
+    &:hover
+      text-decoration: none
+      color: var(--color-info)
+  &:hover
+    text-decoration: underline
+  &.button
+    min-width: 8rem
+    font-size: 1.5rem
+    display: inline-block
+    padding: 1rem 2rem 1.1rem 2rem
+    margin: 0 0.3rem 0.3rem 0
+    border-radius: 0.6rem
+    box-sizing: border-box
+    text-decoration: none
+    font-weight: 400
+    text-align: center
+    //  position:relative
+    color: var(--color-canvas)
+    background-color: var(--color-muted)
+    // box-shadow: inset 0 -0.6em 0 -0.35em transparentize($action, 0.5)
+    &:hover
+      background-color: var(--color-action)
+      background-position: center 40% !important
+
+@mixin colors($action, $text, $canvas)
+  #{--color-canvas}: $canvas
+  #{--color-text}: $text
+  #{--color-action}: $action
+
+  #{--color-info}: mix($text, #006eff, 10%)
+  #{--color-danger}: mix($text, #ff0045, 10%)
+
+  #{--color-muted}: mix($canvas, $action, 30%)
+  #{--color-faded}: mix($canvas, $text, 30%)
+  #{--color-alt}: mix($canvas, $text, 90%)
+
+body,div,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,select,textarea,p,blockquote,th,td
+  box-sizing: border-box
+  word-wrap: break-word
+  overflow-wrap: break-word
+
+figure, figcaption
+  margin: 0
+  padding: 0
+  border: 0
+  box-sizing: border-box
+  word-wrap: break-word
+  overflow-wrap: break-word
+  -webkit-margin-before: 0em
+  -webkit-margin-after: 0em
+  -webkit-margin-start: 0em
+  -webkit-margin-end: 0em
+
+// without this, tables glitch like crazy!
+table, tr
+  width: 100%

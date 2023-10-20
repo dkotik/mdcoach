@@ -1,0 +1,33 @@
+@import common/Paper
+
+@font-face
+  font-family: OpenSans
+  src: url('fonts/opensans/OpenSansCondensed-Light.ttf'), url('fonts/opensans/OpenSansCondensed-Bold.ttf'), url('fonts/opensans/OpenSansCondensed-LightItalic.ttf')
+
+@media print
+  // https://github.com/Kozea/WeasyPrint/pull/652
+  @page
+    size: A4 portrait
+    // size: 10in 8.2in
+    margin: 8mm 6mm 8mm 6mm
+    @bottom-right
+      color: #656b7c
+      font-size: 8pt
+      // content: string(chapterstring) " • " string(subchapterstring) " " counter(page) "/" counter(pages)
+      content: string(chapterstring) " • " counter(page) "/" counter(pages)
+  h1
+    color: #134880
+    page-break-before: auto
+    string-set: chapterstring content()
+  h2
+    string-set: subchapterstring content()
+
+main
+  font-family: OpenSans
+  columns: 2
+  column-gap: 8mm
+  font-size: 11pt
+
+  h1:first-child
+    padding-top: 0
+    margin-top: 0

@@ -1,0 +1,119 @@
+// https://css-tricks.com/using-svg/
+
+hr
+  border-width: 1pt 0 0 0
+  border-color: var(--color-faded)
+  border-style: solid
+  margin: 2rem auto 1rem auto
+  max-width: 66%
+
+dl
+  // padding: 1rem 1rem 1rem 4rem
+  // margin: 1rem 1.5rem 1rem 3rem
+  &>dt
+    font-weight: bold
+  &>dd
+    margin-top: 1em
+    margin-left: 1em
+    &:before
+      content: "\2013\00A0"
+
+pre, blockquote
+  background-color: var(--color-alt)
+  padding: 1rem 1rem 1rem 4rem
+  margin: 1rem 1.5rem 1rem 3rem
+
+blockquote
+  border-width: 0 0 0 0.5rem
+  border-color: var(--color-info)
+  border-style: solid
+  &.classical, &.language-bible, &.language-greek, &.language-hebrew
+    sup
+      font-size: 80%
+      line-height: 80%
+      padding: 0 0.5em
+      color: var(--color-faded)
+  &>p+cite
+    font-family: sans-serif
+    display: block
+    margin-right: 2em
+    // margin-top: -1em
+    text-align: right
+    font-size: 80%
+    color: var(--color-faded)
+    &:before
+      content: "\2013\00A0"
+
+code
+  white-space: pre-wrap
+
+p code
+  color: var(--color-info)
+
+table
+  border: 0
+  border-spacing: 0
+  font-family: sans-serif
+  width: 100%
+  font-size: 60%
+  tr:last-child td
+    border-bottom-width: 0.5rem
+    border-color: var(--color-alt)
+    border-bottom-style: solid
+  thead th
+    text-align: center
+    background-color: var(--color-alt)
+    border-width: 0 0 0.5rem 0
+    border-color: var(--color-muted)
+    border-bottom-style: solid
+  tr:nth-child(even)
+    background-color: var(--color-alt)
+  td, th
+    padding: 1rem 2rem
+  td:first-child
+    border-left-width: 0.5rem
+    border-color: var(--color-alt)
+    border-left-style: solid
+  td:last-child
+    border-right-width: 0.5rem
+    border-color: var(--color-alt)
+    border-right-style: solid
+
+@font-face
+  font-family: 'Bible Works Greek'
+  src: url('fonts/bw/bwgrkl.ttf')
+
+blockquote.language-greek
+  font-family: Bible Works Greek
+  line-height: 160%
+
+@font-face
+  font-family: Shlomo
+  src: url('fonts/SBL_Hbrw.ttf')
+
+blockquote.language-hebrew
+  font-family: Shlomo
+  text-align: right
+  line-height: 180%
+  font-size: 160%
+  sup.ref
+    padding: 0 0 0 0.3em
+    font-size: 50%
+
+// aside.bibliography
+//   ul
+//     list-style: none
+//     li
+//       padding-left: 18pt
+//       text-indent: -18pt
+//       margin-bottom: 12pt
+//       // // p
+//       // p:first-of-type::first-letter
+//       //   margin-left: -48pt
+
+ul.todo
+  list-style: none
+  &>li>p>span.emote-checkbox, &>li>p>span.emote-checkboxchecked
+    position: relative
+    // left: -0.5em
+    // padding: 0 0.5em

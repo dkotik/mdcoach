@@ -1,0 +1,121 @@
+@import System
+\:root
+  @include colors(#1c90fb, white, black)
+body.flipContrast
+  @include colors(#327ae6, black, white)
+@mixin curtain
+  &::before
+    content: " "
+    position: fixed
+    top: -250vh
+    left: -250vw
+    margin: 0
+    width: 500vw
+    height: 1000vh
+    background-color: var(--color-muted)
+    z-index: -1
+    @content
+
+@import Markdown
+@import Controls
+
+@font-face
+  font-family: 'Corbel'
+  // src: url('fonts/choc.ttf')
+  // src: url('fonts/B612-Bold.ttf'), url('fonts/B612-BoldItalic.ttf'), url('fonts/B612-Regular.ttf')
+  src: url('fonts/corbel/corbel.ttf'), url('fonts/corbel/corbel-bold.ttf'), url('fonts/corbel/corbel-italic.ttf'), url('fonts/corbel/corbel-bold-italic.ttf')
+
+body
+  font-family: Corbel, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif
+  font-size: 6vh
+  margin: 0
+
+::-moz-selection
+  background: rgba(0,0,0,0.2)
+::selection
+  background: rgba(0,0,0,0.2)
+
+// vue.js escaped directive - hide elements that haven't been rendered yet
+#{'[v-cloak]'}
+  display: none
+
+mark
+  padding: 0.6em 0.5em 0.3em 0.5em
+  border-radius: 0.5em
+
+
+.slide-left-enter-active, .slide-left-leave-active, .slide-right-enter-active, .slide-right-leave-active
+  transition: all 0.4s
+
+.slide-left-enter-active, .slide-right-enter-active
+  // border-right: 1rem solid $color-primary
+  // border-left: 1rem solid $color-primary
+  // min-height: 100vh
+  z-index: 100000
+  // background-color: mix($color-initial, $color-primary, 90%)
+
+.slide-left-enter
+  transform: translateX(-100vw)
+
+.slide-left-enter-to
+  transform: translateX(0)
+
+.slide-left-leave
+  transform: translateX(0)
+
+.slide-left-leave-to
+  transform: translateX(100vw)
+
+.slide-right-enter
+  transform: translateX(100vw)
+
+.slide-right-enter-to
+  transform: translateX(0)
+
+.slide-right-leave
+  transform: translateX(0)
+
+.slide-right-leave-to
+  transform: translateX(-100vw)
+
+.curtain
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  background-color: black
+  z-index: 9999998
+
+.navigator
+  position: absolute
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  padding: 8rem 4rem 4rem 4rem
+  overflow: auto
+  z-index: 9999
+  @include curtain
+    background-color: var(--color-alt)
+
+  button::after
+    content: ' '
+
+main
+  height: 100vh
+  width: 100%
+  position: relative
+  overflow: hidden
+  & > section > ul > li
+    color: transparent
+    background-color: var(--color-alt)
+    border-left: 0.5rem solid var(--color-muted)
+    *
+      visibility: hidden
+    &.activated
+      color: inherit
+      border: inherit
+      background: inherit
+      *
+        visibility: visible

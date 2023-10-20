@@ -1,0 +1,93 @@
+@import common/Paper
+
+@font-face
+  // This is the best book font, as far as I know, serif.
+  font-family: EB Garamond
+  src: url('fonts/EB_Garamond/EBGaramond-Regular.ttf'), url('fonts/EB_Garamond/EBGaramond-Bold.ttf'), url('fonts/EB_Garamond/EBGaramond-Italic.ttf')
+
+@media print
+  // https://github.com/Kozea/WeasyPrint/pull/652
+  @page
+    counter-increment: pp
+    size: 6in 9in
+    // @bottom-right, @top-right, @top-left, @bottom-left, @top-center, @bottom-center
+    @bottom-right
+      content: none
+    @top-left
+      content: none
+  @page:left
+    margin: 10mm 17mm 17mm 10mm
+    @bottom-left
+      color: #656b7c
+      font-size: 8pt
+      // content: string(chapterstring) " • " string(subchapterstring) " " counter(page) "/" counter(pages)
+      content: counter(pp)
+  @page:right
+    margin: 10mm 10mm 17mm 17mm
+    @bottom-right
+      color: #656b7c
+      font-size: 8pt
+      // content: string(chapterstring) " • " string(subchapterstring) " " counter(page) "/" counter(pages)
+      content: counter(pp)
+  h1
+    color: #134880
+    page-break-before: always
+    string-set: chapterstring content()
+  h2
+    string-set: subchapterstring content()
+  copyright
+    position: absolute
+    bottom: 0
+    width: 100%
+
+header
+  &>h1, &>h2, &>h3
+    margin-top: 96pt
+    line-height: 150%
+    text-align: center
+    page-break-before: always
+  &>h1:first-of-type
+    page-break-before: avoid
+    margin-bottom: 24pt
+  copyright, h2#dedication + p, author, editor
+    display: block
+    margin-bottom: 24pt
+    text-align: center
+    white-space: pre
+  table.contents
+    font-size: 100%
+    border-spacing: 4pt 24pt
+    // width: 80%
+    // margin: 64pt auto
+    tr, td
+      border: 0
+      background-color: inherit
+    tr td:first-of-type, tr td:last-of-type
+      text-align: right
+
+main
+  counter-reset: pp
+  font-family: EB Garamond, Garamond, serif
+  font-size: 14pt
+  &>h1:first-of-type
+    counter-reset: pp 1
+  &>h1
+    margin-top: 96pt
+    line-height: 150%
+    text-align: center
+    & + blockquote
+      font-size: 11pt
+      margin: 0 auto
+      margin-bottom: 24pt
+      width: 80%
+  &>h2
+    text-align: center
+    margin-top: 24pt
+  &>h3
+    margin-top: 24pt
+  &>p
+    text-indent: 18pt
+
+footer
+  &>h1
+    page-break-before: always

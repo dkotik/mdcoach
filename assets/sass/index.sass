@@ -1,0 +1,55 @@
+@import common/Paper
+
+main
+  max-width: 80rem
+  margin: 0 auto
+  padding: 0 6rem
+  font-size: 2rem
+
+  h2
+    font-size: 3rem
+    font-weight: bold
+
+  ol
+    position: relative
+    padding: 1rem 0 0 6rem
+    list-style: none
+    counter-reset: licounter
+
+    li
+      clear: both
+      counter-increment: licounter
+      margin-bottom: 5rem
+
+    li::before
+      @extend h2
+      // color: $muted
+      position: absolute
+      // margin-top: 0.2rem
+      left: 0
+      text-align: right
+      width: 5rem
+      content: counter(licounter) "."
+      // font-weight: bold
+      // font-size: 3rem
+
+a.button
+  display: block
+  margin: 0.5rem 0 0.5rem 0
+  float: right
+  clear: right
+
+a.button.notes
+  // height: 6rem
+  background-position: center 45%
+  background-size: 2rem
+  background-repeat: no-repeat
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 482.5 482.5'%3E%3Cg%3E%3Cpath fill='white' d='M399.25,98.9h-12.4V71.3c0-39.3-32-71.3-71.3-71.3h-149.7c-39.3,0-71.3,32-71.3,71.3v27.6h-11.3 c-39.3,0-71.3,32-71.3,71.3v115c0,39.3,32,71.3,71.3,71.3h11.2v90.4c0,19.6,16,35.6,35.6,35.6h221.1c19.6,0,35.6-16,35.6-35.6 v-90.4h12.5c39.3,0,71.3-32,71.3-71.3v-115C470.55,130.9,438.55,98.9,399.25,98.9z M121.45,71.3c0-24.4,19.9-44.3,44.3-44.3h149.6 c24.4,0,44.3,19.9,44.3,44.3v27.6h-238.2V71.3z M359.75,447.1c0,4.7-3.9,8.6-8.6,8.6h-221.1c-4.7,0-8.6-3.9-8.6-8.6V298h238.3 V447.1z M443.55,285.3c0,24.4-19.9,44.3-44.3,44.3h-12.4V298h17.8c7.5,0,13.5-6,13.5-13.5s-6-13.5-13.5-13.5h-330 c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5h19.9v31.6h-11.3c-24.4,0-44.3-19.9-44.3-44.3v-115c0-24.4,19.9-44.3,44.3-44.3h316 c24.4,0,44.3,19.9,44.3,44.3V285.3z'/%3E%3Cpath fill='white' d='M154.15,364.4h171.9c7.5,0,13.5-6,13.5-13.5s-6-13.5-13.5-13.5h-171.9c-7.5,0-13.5,6-13.5,13.5S146.75,364.4,154.15,364.4 z'/%3E%3Cpath fill='white' d='M327.15,392.6h-172c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5h171.9c7.5,0,13.5-6,13.5-13.5S334.55,392.6,327.15,392.6z' /%3E%3Cpath fill='white' d='M398.95,151.9h-27.4c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5h27.4c7.5,0,13.5-6,13.5-13.5S406.45,151.9,398.95,151.9z' /%3E%3C/g%3E%3C/svg%3E")
+
+a.button.presentation
+  @extend a.button.notes
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='white' d='m80 233h90v40h-90zm0-39.878906h90v-40h-90zm0-117v40h90v-40zm0 273.878906h90v-40h-90zm432-290v392c0 33.085938-26.914062 60-60 60h-392c-33.085938 0-60-26.914062-60-60v-392c0-33.085938 26.914062-60 60-60h392c33.085938 0 60 26.914062 60 60zm-452 412h150v-432h-150c-11.027344 0-20 8.972656-20 20v392c0 11.027344 8.972656 20 20 20zm412-412c0-11.027344-8.972656-20-20-20h-202v193h107.714844l-46-46 28.285156-28.285156 94.285156 94.285156-94.285156 94.285156-28.285156-28.285156 46-46h-107.714844v199h202c11.027344 0 20-8.972656 20-20zm0 0'/%3E%3C/svg%3E")
+
+a.button.syllabus
+  @extend a.button.notes
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 485 485' xml:space='preserve'%3E%3Cpath fill='white' d='M483.8,46.25H181.6c-0.6,0-1.2,0.5-1.2,1.2v28.3c0,0.6,0.5,1.2,1.2,1.2h302.2c0.6,0,1.2-0.5,1.2-1.2v-28.3 C485,46.75,484.5,46.25,483.8,46.25z'/%3E%3Ccircle fill='white' cx='71.5' cy='253.35' r='37.9'/%3E%3Ccircle fill='white' cx='71.5' cy='419.55' r='38.1'/%3E%3Cpath fill='white' d='M181.6,128.15h142.8c0.6,0,1.2-0.5,1.2-1.2v-28.3c0-0.6-0.5-1.2-1.2-1.2H181.6c-0.6,0-1.2,0.5-1.2,1.2v28.3 C180.5,127.65,181,128.15,181.6,128.15z'/%3E%3Cpath fill='white' d='M483.8,212.45H181.6c-0.6,0-1.2,0.5-1.2,1.2v28.3c0,0.6,0.5,1.2,1.2,1.2h302.2c0.6,0,1.2-0.5,1.2-1.2v-28.3 C485,212.95,484.5,212.45,483.8,212.45z'/%3E%3Cpath fill='white' d='M181.6,294.35h142.8c0.6,0,1.2-0.5,1.2-1.2v-28.3c0-0.6-0.5-1.2-1.2-1.2H181.6c-0.6,0-1.2,0.5-1.2,1.2v28.3 C180.5,293.75,181,294.35,181.6,294.35z'/%3E%3Cpath fill='white' d='M483.8,378.55H181.6c-0.6,0-1.2,0.5-1.2,1.2v28.3c0,0.6,0.5,1.2,1.2,1.2h302.2c0.6,0,1.2-0.5,1.2-1.2v-28.3 C485,379.05,484.5,378.55,483.8,378.55z'/%3E%3Cpath fill='white' d='M324.4,429.85H181.6c-0.6,0-1.2,0.5-1.2,1.2v28.3c0,0.6,0.5,1.2,1.2,1.2h142.8c0.6,0,1.2-0.5,1.2-1.2v-28.3 C325.6,430.35,325.1,429.85,324.4,429.85z'/%3E%3Cpolygon fill='white' points='53.4,86.55 27.3,60.25 0,87.45 26.2,113.65 53.3,140.95 80.5,113.85 143,51.75 115.9,24.45 '/%3E%3C/svg%3E");

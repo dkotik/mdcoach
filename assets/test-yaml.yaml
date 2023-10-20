@@ -1,0 +1,8 @@
+- name: One
+  email: two@mmmail.org
+  tags: ['eh', 'meh']
+- name: Two
+  email: really@mmmail.org
+  address: |
+    233 Always Street
+    Address Line 2

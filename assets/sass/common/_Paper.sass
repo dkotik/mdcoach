@@ -1,0 +1,127 @@
+@import System
+\:root
+  @include colors(#2f45be, #2d2d2d, white)
+  // @include colors(#2f45be, red, white)
+@import Markdown
+// https://css-tricks.com/using-svg/
+@font-face
+  font-family: 'DejaVu'
+  // src: url('fonts/B612-Bold.ttf'), url('fonts/B612-BoldItalic.ttf'), url('fonts/B612-Regular.ttf')
+  src: url('fonts/DejaVuSerif.ttf'), url('fonts/DejaVuSerif-Bold.ttf'), url('fonts/DejaVuSerif-BoldItalic.ttf'), url('fonts/DejaVuSerif-Italic.ttf')
+
+@media print
+  // https://github.com/Kozea/WeasyPrint/pull/652
+  // https://weasyprint.readthedocs.io/en/stable/features.html#css-paged-media-module-level-3
+  @page
+    size: A4 portrait
+    margin: 15mm 10mm
+    @top-left
+      color: var(--color-faded)
+      font-size: 6px
+      content: string(chapterstring) " • " string(subchapterstring)
+      margin-left: 1mm
+    @bottom-right
+      color: var(--color-faded)
+      font-size: 6px
+      content: counter(page) "/" counter(pages)
+      margin-right: 4mm
+    // https://github.com/Kozea/WeasyPrint/issues/507
+  @page:blank
+    @top-right
+      content: ""
+    @top-center
+      content: ""
+    @top-left
+      content: ""
+    @bottom-right
+      content: ""
+    @bottom-center
+      content: ""
+    @bottom-left
+      content: ""
+
+body
+  font-family: DejaVu
+  // margin-top: 2rem
+  font-size: 12pt
+  box-decoration-break: clone
+  h1
+    // page-break-before: always
+    string-set: chapterstring content()
+  h2
+    string-set: subchapterstring content()
+  hr.double
+    page-break-before: always
+    border: 0
+    height: 0
+    margin: 0
+    visibility: hidden
+  a.footnote-return
+    display: none
+  li
+    page-break-inside: avoid
+    break-inside: avoid
+    column-break: avoid
+    // column-break? - is there such a thing?
+
+figure
+  margin: 0
+  break-inside: avoid
+  width: 100%
+  &>img
+    display: block
+    max-height: 8cm
+    margin: 0 auto
+  &>figcaption
+    padding: 1px 4pt 2px 4pt
+
+table
+  page-break-inside: auto
+  // margin: 0 auto
+  // width: fill-available
+  tr
+    page-break-inside: avoid
+    page-break-after: auto
+    // thead, tfoot
+    //   display: table-footer-group
+  tr:last-child td
+    border-bottom-width: 1px
+  thead th
+    padding-top: 2px
+    border-width: 0 0 1px 0
+    border-color: var(--color-faded)
+  td:first-child
+    border-left-width: 1px
+  td:last-child
+    border-right-width: 1px
+  td, th
+    padding: 1pt 2pt
+
+blockquote, pre
+  margin: 0
+  border-width: 0 0 0 1px
+  padding: 1pt 3pt 1pt 3mm
+
+  p
+    margin-top: 1mm
+    margin-bottom: 1mm
+
+blockquote.classical, blockquote.language-bible, blockquote.language-greek, blockquote.language-hebrew
+  border: 0
+  background-color: transparent
+
+pre
+  padding: 3mm
+
+// https://www.smashingmagazine.com/2018/05/print-stylesheets-in-2018/
+// p, blockquote
+//   a:not([href^="#"]):after
+//     content: " (" attr(href) ")"
+
+// footnote anchor
+sup[id^=fnref\:]
+  padding: 0 .2em
+  line-height: 50%
+  a
+    position: absolute
+    font-size: 0.8em

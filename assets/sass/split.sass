@@ -1,0 +1,37 @@
+@import common/Paper
+// notes on the left, written notes on the right
+
+@font-face
+  font-family: OpenSans
+  src: url('fonts/opensans/OpenSansCondensed-Light.ttf'), url('fonts/opensans/OpenSansCondensed-Bold.ttf'), url('fonts/opensans/OpenSansCondensed-LightItalic.ttf')
+
+@media print
+  // https://github.com/Kozea/WeasyPrint/pull/652
+  @page
+    size: A4 portrait
+    // size: 10in 8.2in
+    margin: 10mm 10mm 18mm 10mm
+    @bottom-right
+      color: #656b7c
+      font-size: 8pt
+      // content: string(chapterstring) " • " string(subchapterstring) " " counter(page) "/" counter(pages)
+      content: string(chapterstring) " • " counter(page) "/" counter(pages)
+  h1
+    color: #134880
+    page-break-before: auto
+    string-set: chapterstring content()
+  h2
+    string-set: subchapterstring content()
+
+main
+  font-family: OpenSans
+  font-size: 12pt
+  margin-right: 50%
+  &::before
+    content: " "
+    position: fixed
+    height: 100%
+    right: 0
+    width: 45%
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200px' height='20px' viewBox='0 0 200 20'%3E%3Cline x1='0' y1='0' x2='200' y2='0' style='stroke: #d6d6d6;'/%3E%3C/svg%3E%0A")
+    background-position: left top
