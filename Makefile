@@ -9,7 +9,7 @@ assets/img.gen.go:
 	cd assets && zassets img --output img.gen.go --embed --var Img --package assets
 frontend:
 	npm run build
-tests: reset-assets compile-assets
+tests: clean compile-assets
 	# go test -run YamlVisualizer
 	mkdir -p /tmp/mdcoachtest/.cache/
 	rsync -a assets/bundle/ /tmp/mdcoachtest/.cache/
