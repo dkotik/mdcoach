@@ -32,7 +32,7 @@ const slideOut = (node, { duration }) => {
 		duration,
 		css: (t) => {
 			const eased = elasticOut(t);
-      return `transform: translate(${(goingRight ? -100 : 100)*eased}%, 0%);`
+      return `transform: translate(${(goingRight ? -100 : 100)*eased}%, 0%); position: absolute;`
 			// return `
 			// 	transform: scale(${eased}) rotate(${eased * 1080}deg);
 			// 	color: hsl(

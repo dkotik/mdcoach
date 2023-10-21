@@ -1,5 +1,6 @@
 <script>
   import Slide from './Slide.svelte'
+  import Curtain from './Curtain.svelte'
   import './navigation/keys.js'
   // import { onMount } from 'svelte'
   // onMount()
@@ -29,6 +30,7 @@
 
 
 <main>
+  <Curtain />
   {#each slides as slide, index}
     <Slide index={index+1}>{@html slide}</Slide>
   {/each}
