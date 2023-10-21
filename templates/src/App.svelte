@@ -1,7 +1,9 @@
 <script>
+  import './stylesheets/Daggers.css'
   import Slide from './Slide.svelte'
   import Curtain from './Curtain.svelte'
   import Menu from './navigation/Menu.svelte'
+  // import Clock from './time/Clock.svelte'
   import './navigation/keys.js'
   // import { onMount } from 'svelte'
   // onMount()
@@ -33,9 +35,11 @@
 
 <main>
   <Curtain />
+  <!-- <Clock /> -->
   {#each slides as slide, index}
     <Slide index={index+1}>{@html slide}</Slide>
   {/each}
+  Add navigation slide limit with Math.ceil(x/3)
 </main>
 
 <style>

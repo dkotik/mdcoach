@@ -1,0 +1,7 @@
+main > section > ul > li.revealed {
+  color: red;
+}
+
+main > section > ul > li {
+  color: green;
+}

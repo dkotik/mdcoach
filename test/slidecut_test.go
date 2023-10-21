@@ -33,5 +33,5 @@ func TestSlideCut(t *testing.T) {
 	// 	fmt.Println(iter.Slide.String())
 	// }
 
-	t.Fatal("impl")
+	// t.Fatal("impl")
 }

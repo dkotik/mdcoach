@@ -1,5 +1,8 @@
-# '.source.gfm'
-'.text.md':
+# Add the following lines into ~/.pulsar/snippets.cson
+#  or ~/.atom/snippters.cson for Atom.
+#
+# '.text.md':
+'.source.gfm'
   '#H1 Header':
     'prefix': '1'
     'body': '# $0'

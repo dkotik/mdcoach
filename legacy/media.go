@@ -3,20 +3,12 @@ package mdcoach
 import (
 	"bytes"
 	"fmt"
-	"image"
-	_ "image/gif" // GIF format, has to be imported so image reader can read it
-	"image/jpeg"
-	_ "image/png" // PNG format, has to be imported so image reader can read it
 	"io"
-	"net/http"
-	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 
-	"github.com/chai2010/webp"
-	"github.com/nfnt/resize"
 	blackfriday "github.com/russross/blackfriday/v2"
 )
 
@@ -85,29 +77,6 @@ func (e *Environment) ImageToken(source, uri string) (token string, err error) {
 	return token, nil
 }
 
-// DecodeImage reads data from uri into an image object.
-func DecodeImage(uri string, local bool) (m image.Image, err error) {
-	var handle io.ReadCloser
-	if local {
-		handle, err = os.Open(uri)
-		if err != nil {
-			return m, err
-		}
-	} else if httpError != nil {
-		return nil, fmt.Errorf(`network access blocked by previous failure`)
-	} else {
-		resp, err2 := (&http.Client{Timeout: httpTimeout}).Get(uri)
-		if err2 != nil {
-			httpError = err2
-			return m, httpError
-		}
-		handle = resp.Body
-	}
-	defer handle.Close()
-	m, _, err = image.Decode(handle)
-	return m, err
-}
-
 // GenerateCachedImages creates a cache of images from a given URI.
 func GenerateCachedImages(tokenpath, source string, remote bool) error {
 	m, err := DecodeImage(source, !remote)
@@ -118,20 +87,4 @@ func GenerateCachedImages(tokenpath, source string, remote bool) error {
 		return err
 	}
 	return WriteImage(tokenpath+`.thumb.jpg`, &m, 360, 240, 40)
-}
-
-// WriteImage saves provided image to disk.
-func WriteImage(path string, m *image.Image, width, height, quality uint) error {
-	handle, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer handle.Close()
-	t := resize.Thumbnail(width, height, *m, resize.Lanczos3)
-	switch filepath.Ext(path) {
-	case `.webp`:
-		return webp.Encode(handle, *m, &webp.Options{Lossless: false, Quality: float32(quality)})
-	default:
-		return jpeg.Encode(handle, t, &jpeg.Options{Quality: int(quality)})
-	}
 }

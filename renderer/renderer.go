@@ -4,6 +4,10 @@ Package renderer converts parsed [ast.Node] Markdown to HTML. Images are resized
 package renderer
 
 import (
+	"fmt"
+
+	"github.com/OneOfOne/xxhash"
+	"github.com/dkotik/mdcoach/v1/renderer/picture"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/renderer/html"
@@ -11,6 +15,7 @@ import (
 )
 
 type Renderer struct {
+	sizings         []*picture.Sizing
 	sourceDirectory string
 	outputDirectory string
 }
@@ -46,4 +51,12 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	// reg.Register(ast.KindLink, r.renderLink)
 	// reg.Register(ast.KindCodeBlock, r.renderCodeBlock)
 	// reg.Register(ast.KindFencedCodeBlock, r.renderCodeBlock)
+}
+
+func (r *Renderer) PathHash(p string) string {
+	h := xxhash.New64()
+	h.WriteString(r.sourceDirectory)
+	h.WriteString("^")
+	h.WriteString(p)
+	return fmt.Sprintf("%x", h.Sum64())
 }
