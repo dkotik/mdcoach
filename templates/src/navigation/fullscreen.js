@@ -26,4 +26,10 @@ export const toggleFullScreen = function() {
       document.webkitCancelFullScreen();
     }
   }
-};
+}
+
+document.addEventListener('keydown', (event) => {
+  if (event.code === 'KeyF') {
+    toggleFullScreen()
+  }
+})

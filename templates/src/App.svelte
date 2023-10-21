@@ -1,6 +1,7 @@
 <script>
   import Slide from './Slide.svelte'
   import Curtain from './Curtain.svelte'
+  import Menu from './navigation/Menu.svelte'
   import './navigation/keys.js'
   // import { onMount } from 'svelte'
   // onMount()
@@ -28,6 +29,7 @@
   // {import.meta.env.VITE_SLIDE_DATA}
 </script>
 
+<Menu />
 
 <main>
   <Curtain />
