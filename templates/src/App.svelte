@@ -40,6 +40,8 @@
     <Slide index={index+1}>{@html slide}</Slide>
   {/each}
   Add navigation slide limit with Math.ceil(x/3)
+  <br />
+  Add error list on the notes view
 </main>
 
 <style>

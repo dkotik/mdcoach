@@ -1,3 +1,4 @@
+import './broadcast.js'
 import currentSlide from './current.js'
 import daggers from './daggers.js'
 import { isCurtainVisible } from '../Curtain.svelte'
@@ -36,6 +37,8 @@ document.addEventListener('keydown', (event) => {
   case "KeyK":
     currentSlide.update(value => value > 1 ? value-1 : 1)
     return
+  case "KeyC":
+    window.open(window.location.href, '_blank')
   default:
     // console.log(event.code)
   }

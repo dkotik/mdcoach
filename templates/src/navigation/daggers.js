@@ -9,6 +9,8 @@ const daggers = writable([])
 //   this.daggers = [];
 // }
 
+// TODO: clear daggers immediately, populate them after delay?
+
 let timeout = null
 current.subscribe((value) => {
   if (timeout) {

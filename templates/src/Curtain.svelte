@@ -1,5 +1,6 @@
 <script context="module">
   import { writable } from 'svelte/store'
+  import { slide } from 'svelte/transition'
   export let isCurtainVisible = writable(false)
   document.addEventListener('keydown', (event) => {
     switch (event.code) {
@@ -14,7 +15,10 @@
 </script>
 
 {#if $isCurtainVisible}
-  <aside />
+  <aside
+    in:slide={{ duration: 400 }}
+    out:slide={{ duration: 100 }}
+  />
 {/if}
 
 <style>

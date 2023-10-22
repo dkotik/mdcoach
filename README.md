@@ -13,6 +13,12 @@ Footnotes
 
 Headings of the first and second level and horizontal rules cut the content into slides. Headings of the first level also change the slide background to action color.
 
+## Synchronization
+
+Browser windows containing presentations with the same document title will all synchronize their current slide position using `window.localStorage` events. Open multiple windows to present the same presentation on different monitors.
+
+Use different viewing modes to give yourself convenient access to notes. Put two windows side by side in order to see notes next to the replica of the slides shown to the audience. Press `C` button to clone the current presentation window.
+
 ## Markdown Behavior
 
 Mdcoach departs from normal Markdown grammar in the following cases.
