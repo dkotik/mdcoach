@@ -1,27 +1,25 @@
 // https://xparkmedia.com/blog/enter-fullscreen-mode-javascript/
-
-// TODO: mozRequestFullScreen() is deprecated.
-
+// edited by dropping moz methods
 export const toggleFullScreen = function() {
   if (
     (document.fullScreenElement && document.fullScreenElement !== null) || // alternative standard method
     (!document.mozFullScreen && !document.webkitIsFullScreen)
   ) {
     // current working methods
-    if (document.documentElement.requestFullScreen) {
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.requestFullScreen) {
       document.documentElement.requestFullScreen();
-    } else if (document.documentElement.mozRequestFullScreen) {
-      document.documentElement.mozRequestFullScreen();
     } else if (document.documentElement.webkitRequestFullScreen) {
       document.documentElement.webkitRequestFullScreen(
         Element.ALLOW_KEYBOARD_INPUT
       );
     }
   } else {
-    if (document.cancelFullScreen) {
+    if (document.exitFullscreen) {
       document.cancelFullScreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
+    } else if (document.exitFullscreen) {
+      document.cancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
       document.webkitCancelFullScreen();
     }

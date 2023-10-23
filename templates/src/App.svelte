@@ -1,5 +1,6 @@
 <script>
   import './stylesheets/Daggers.css'
+  import './themes/default.css'
   import Slide from './Slide.svelte'
   import Curtain from './Curtain.svelte'
   import Menu from './navigation/Menu.svelte'
@@ -45,5 +46,7 @@
 </main>
 
 <style>
-
+:global(body) {
+  background-color: var(--color-body-background);
+}
 </style>

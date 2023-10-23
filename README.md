@@ -51,40 +51,6 @@ license='Custom Lincense', or use GPL license - project can't be rolled into com
 
 producing HTML presentations, notes, and tests from markdown files.
 
-## Atom.io Snippets
-``` cson
-# '.source.gfm'
-'.text.md':
-  '#H1 Header':
-    'prefix': '1'
-    'body': '# $0'
-  '#H2 Header':
-    'prefix': '2'
-    'body': '## $0'
-  '#H3 Header':
-    'prefix': '3'
-    'body': '### $0'
-  '#H4 Header':
-    'prefix': '4'
-    'body': '#### $0'
-  '- - -':
-    'prefix': '11'
-    'body': """- - -
-$0"""
-  '[]()':
-    'prefix': '22'
-    'body': '[${1:text}](${2:url} "${3:title}") $4'
-  '![]()':
-    'prefix': '33'
-    'body': '![${1:text}](${2:url} "${3:title}") $4'
-  '> >':
-    'prefix': '44'
-    'body': '> ${1:> }$2'
-  '^[quick footnote]':
-    'prefix': '6'
-    'body': '^[${1:footnote}]$2'
-```
-
 LICENSE
 =======
 

@@ -1,0 +1,9 @@
+body {
+  --color-body-background: white;
+  --color-menu-background: #ddd;
+}
+
+body.dark {
+  --color-body-background: black;
+  --color-menu-background: #666;
+}
