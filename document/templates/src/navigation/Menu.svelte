@@ -5,7 +5,7 @@
   let show = false
 </script>
 
-<section
+<section role="toolbar" tabindex="0"
   on:mouseenter={() => show = true}
   on:mouseleave={() => show = false}
 >

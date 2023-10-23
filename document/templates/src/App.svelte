@@ -1,4 +1,5 @@
 <script>
+  import loadSlides from './slides/load.js'
   import './stylesheets/Daggers.css'
   import './themes/default.css'
   import Slide from './Slide.svelte'
@@ -35,6 +36,12 @@
 <Menu />
 
 <main>
+  {#await loadSlides('slideData')}
+    LOADING....
+  {:then slideData}
+    Data: {JSON.stringify(slideData)}
+  {/await}
+
   <Curtain />
   <!-- <Clock /> -->
   {#each slides as slide, index}

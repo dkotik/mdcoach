@@ -1,4 +1,4 @@
-module github.com/dkotik/mdcoach/v1
+module github.com/dkotik/mdcoach
 
 go 1.21.2
 

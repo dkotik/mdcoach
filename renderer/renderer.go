@@ -7,7 +7,7 @@ import (
 	"fmt"
 
 	"github.com/OneOfOne/xxhash"
-	"github.com/dkotik/mdcoach/v1/renderer/picture"
+	"github.com/dkotik/mdcoach/picture"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/renderer/html"

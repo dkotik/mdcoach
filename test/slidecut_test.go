@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/dkotik/mdcoach/v1"
+	"github.com/dkotik/mdcoach"
 )
 
 func TestSlideCut(t *testing.T) {
