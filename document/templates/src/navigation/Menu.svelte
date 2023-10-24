@@ -37,7 +37,8 @@ nav {
   gap: 1em;
 }
 
-button {
+:global(button) {
+  color: var(--color-menu-text);
   overflow: hidden;
 }
 </style>

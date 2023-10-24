@@ -1,5 +1,6 @@
 <script>
   let darkMode = window.localStorage.getItem("darkMode") === "true"
+  if (!darkMode) document.body.classList.remove("dark")
 </script>
 
 <button

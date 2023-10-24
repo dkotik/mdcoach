@@ -1,9 +1,11 @@
 body {
   --color-body-background: white;
   --color-menu-background: #ddd;
+  --color-menu-text: #666;
 }
 
 body.dark {
   --color-body-background: black;
   --color-menu-background: #666;
+  --color-menu-text: #ddd;
 }

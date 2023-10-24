@@ -1,8 +1,7 @@
 package document
 
-// <div class="display: none;">
-//   <div id="slideData">%VITE_SLIDE_DATA%</div>
-// </div>
+// Base64 data object
+// <img src="data:image/gif;base64,xxxxbase64encodedtextxxxx">
 
 import "io"
 
@@ -11,7 +10,7 @@ type DataWriter struct {
 }
 
 func (d *DataWriter) Open(ID string) (err error) {
-	_, err = io.WriteString(d.w, `<div class="display: none;"><div id="`)
+	_, err = io.WriteString(d.w, `<div style="display: none;"><div id="`)
 	if err != nil {
 		return err
 	}

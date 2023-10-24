@@ -14,4 +14,5 @@ require (
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
 	github.com/yuin/goldmark v1.5.6 // indirect
 	golang.org/x/image v0.13.0 // indirect
+	golang.org/x/sync v0.4.0 // indirect
 )
