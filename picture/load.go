@@ -3,10 +3,11 @@ package picture
 import (
 	"image"
 	"os"
-
-	_ "image/gif" // add GIF format to image reader
-	_ "image/png" // add PNG format to image reader
 )
+
+type Loader interface {
+	LoadImage(string) (name string, m image.Image, err error)
+}
 
 // LoadImage reads contents of a file into [image.Image].
 func LoadImage(p string) (m image.Image, err error) {
