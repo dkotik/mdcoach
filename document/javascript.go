@@ -10,7 +10,7 @@ func WriteJavascriptModuleES6(w io.Writer, js string) (err error) {
 	if _, err = io.WriteString(w, `<script type="module">`); err != nil {
 		return err
 	}
-	// if err = writeEscapedHTML(w, js); err != nil {
+	// if err = WriteEscapedHTML(w, js); err != nil {
 	// 	return err
 	// }
 	if _, err = io.Copy(w, strings.NewReader(js)); err != nil {

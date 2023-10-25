@@ -4,12 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"html"
-	"io"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/dkotik/mdcoach"
 	"github.com/dkotik/mdcoach/document"
 
 	"github.com/urfave/cli/v2"
@@ -40,10 +39,13 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 		return err
 	}
 
-	fmt.Println("not compiling:", markdownContent)
-	if _, err = io.Copy(w, strings.NewReader(html.EscapeString(`"wooo<ul><li>1</li><li>2</li></ul>", "wooNotes", "wooFT", "1", "1n", "1ft"`))); err != nil {
+	if err = mdcoach.Compile(w, markdownContent); err != nil {
 		return err
 	}
+	// fmt.Println("not compiling:", markdownContent)
+	// if _, err = io.Copy(w, strings.NewReader(html.EscapeString(`"wooo<ul><li>1</li><li>2</li></ul>", "wooNotes", "wooFT", "1", "1n", "1ft"`))); err != nil {
+	// 	return err
+	// }
 	return document.WriteFooter(w)
 }
 
@@ -57,15 +59,15 @@ func compileCmd() *cli.Command {
 			silentFlag,
 		},
 		Action: func(c *cli.Context) (err error) {
-			if outputFlagValue == nil {
-				return errors.New("output flag is required")
-			}
-			output := *outputFlagValue
-			// TODO: add silent flag.
-			// output, err := os.Getwd()
-			// if err != nil {
-			// 	return fmt.Errorf("cannot locate working directory: %w", err)
+			// if outputFlagValue == nil {
+			// 	return errors.New("output flag is required")
 			// }
+			// output := *outputFlagValue
+			// TODO: add silent flag.
+			output, err := os.Getwd()
+			if err != nil {
+				return fmt.Errorf("cannot locate working directory: %w", err)
+			}
 			// if outputFlagValue != nil && len(*outputFlagValue) > 0 {
 			//   if *outputFlagValue[0] != filepath.Separator {
 			//     output = filepath.Join(output, *outputFlagValue)

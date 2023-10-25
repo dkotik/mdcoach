@@ -23,7 +23,7 @@ func (d *DataWriter) Open(ID string) (err error) {
 }
 
 func (d *DataWriter) Add(data []byte) error {
-	return writeEscapedHTML(d.w, string(data))
+	return WriteEscapedHTML(d.w, string(data))
 }
 
 func (d *DataWriter) Close() (err error) {

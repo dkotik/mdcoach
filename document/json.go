@@ -5,11 +5,11 @@ import (
 	"strings"
 )
 
-const escapedChars = "&'<>\"\r"
+const escapedCharsJSON = "&'<>\"\r\n"
 
 // code borrowed from `html` standard library package, simplified
-func WriteEscapedHTML(w io.Writer, s string) error {
-	i := strings.IndexAny(s, escapedChars)
+func WriteEscapedJSON(w io.Writer, s string) error {
+	i := strings.IndexAny(s, escapedCharsJSON)
 	for i != -1 {
 		if _, err := io.WriteString(w, s[:i]); err != nil {
 			return err
@@ -30,6 +30,9 @@ func WriteEscapedHTML(w io.Writer, s string) error {
 			esc = "&#34;"
 		case '\r':
 			esc = "&#13;"
+		case '\n':
+			esc = "&#10;"
+			panic("n")
 		default:
 			panic("unrecognized escape character")
 		}

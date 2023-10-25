@@ -61,7 +61,7 @@ func confirmOverwrite(destination string) error {
 	sync.OnceFunc(func() {
 		fmt.Println("Detected file conflict. Type 'yes' or 'y' to confirm. Type 'all' to assume 'yes' answer for every other file conflict. You may also use --force command line flag to assume 'all' answer when the program runs.")
 	})
-	fmt.Printf("File %q already exists. Overwrite?", destination)
+	fmt.Printf("File %q already exists. Overwrite? ", destination)
 	var answer string
 	if _, err = fmt.Scanf("%s", &answer); err != nil {
 		return err

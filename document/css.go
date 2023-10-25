@@ -6,7 +6,7 @@ func WriteCascadingStyleSheet(w io.Writer, css string) (err error) {
 	if _, err = io.WriteString(w, `<style type="text/css">`); err != nil {
 		return err
 	}
-	if err = writeEscapedHTML(w, css); err != nil {
+	if err = WriteEscapedHTML(w, css); err != nil {
 		return err
 	}
 	if _, err = io.WriteString(w, `</style>`); err != nil {
