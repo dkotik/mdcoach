@@ -8,6 +8,12 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
+// <picture>
+//   <source media="(max-width: 799px)" srcset="elva-480w-close-portrait.jpg" />
+//   <source media="(min-width: 800px)" srcset="elva-800w.jpg" />
+//   <img src="elva-800w.jpg" alt="..." />
+// </picture>
+
 func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
 		return ast.WalkContinue, nil
