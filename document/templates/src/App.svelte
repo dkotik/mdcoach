@@ -3,6 +3,7 @@
   import Loading from './navigation/Loading.svelte'
   import './stylesheets/Daggers.css'
   import './themes/default.css'
+  import Notes from './notes/Notes.svelte'
   import Slide from './Slide.svelte'
   import Curtain from './Curtain.svelte'
   import Menu from './navigation/Menu.svelte'
@@ -13,20 +14,27 @@
 
   // {import.meta.env.MODE}
   // {import.meta.env.VITE_SLIDE_DATA}
+  let showNotes = false
 </script>
 
-<Menu />
+<Menu
+  on:mode={(event) => showNotes = event.detail === 'notes' }
+/>
 <Curtain />
 
 <main>
   {#await loadSlides('slideData')}
     <Loading />
   {:then slideData}
-    {#each slideData.slides as slide, index}
-      <Slide index={index+1}>??{@html slide}</Slide>
+    {#if showNotes}
+      <Notes {slideData} />
     {:else}
-      TODO: THERE ARE NO SLIDES
-    {/each}
+      {#each slideData.slides as slide, index}
+        <Slide index={index+1}>??{@html slide}</Slide>
+      {:else}
+        TODO: THERE ARE NO SLIDES
+      {/each}
+    {/if}
   {/await}
 
   <!-- <Clock /> -->

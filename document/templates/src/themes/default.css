@@ -1,11 +1,19 @@
 body {
   --color-body-background: white;
-  --color-menu-background: #ddd;
+  --color-menu-background: #eee;
   --color-menu-text: #666;
+  --color-button-background: #fff;
+
+  /* Notes */
+  --color-marker-background: #f20101;
 }
 
 body.dark {
   --color-body-background: black;
   --color-menu-background: #666;
-  --color-menu-text: #ddd;
+  --color-menu-text: black;
+  --color-button-background: #999;
+
+  /* Notes */
+  --color-marker-background: #7a0a0a;
 }

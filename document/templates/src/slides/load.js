@@ -28,7 +28,7 @@ const loadSlides = (elementID) => new Promise((resolve, reject) => {
     }
 
     if (import.meta.env.DEV) {
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 6; i++) {
         result.slides = result.slides.concat(result.slides)
         result.notes = result.notes.concat(result.notes)
         result.footnotes = result.footnotes.concat(result.footnotes)
