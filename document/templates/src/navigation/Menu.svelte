@@ -41,7 +41,7 @@
         Fullscreen
       </button>
     </nav>
-  {/if}
+  {:else}&nbsp;{/if}
 </section>
 
 <style>

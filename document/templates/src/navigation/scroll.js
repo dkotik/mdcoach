@@ -1,24 +1,16 @@
-export const scrollToPosition = (x, y, delay=15, limit=15) => {
-  const deltaX = Math.floor((window.scrollX - x) / 4)
-  const deltaY = Math.floor((window.scrollY - y) / 4)
-  if (!deltaY) return
+export const scrollToPosition = (x, y, delay=15, limit=50) => {
+  const deltaX = (window.scrollX - x) * 0.6
+  const deltaY = (window.scrollY - y) * 0.6
+  // console.log("deltaY", deltaY)
+  if ((deltaY < 5 && deltaY > -5) || limit < 1) {
+    window.scrollTo(x, y)
+    return
+  }
   window.scrollTo(x + deltaX, y + deltaY)
-  if (limit < 1) return
   setTimeout(() => scrollToPosition(x, y, delay, limit-1), delay)
 }
 
-export const scrollToID = (elementID) => {
-  const element = document.getElementById(elementID)
-  if (!element) throw new Error("element ID not found: "+elementID)
-  // const targetX = element.offsetLeft
-  // const targetY = element.offsetTop
-  // const deltaX = element.offsetLeft
-  scrollToPosition(element.offsetLeft, element.offsetTop)
-}
-
-export const isVerticalScrollNecessary = (elementID, tolerancePercent=20) => {
-  const element = document.getElementById(elementID)
-  if (!element) throw new Error("element ID not found: "+elementID)
+const isVScrollNecessary = (element, tolerancePercent=20) => {
   const tolerance = element.clientHeight * tolerancePercent / 100
   // console.log("tole", tolerance, element)
   if (element.offsetTop > window.scrollY) {
@@ -33,4 +25,14 @@ export const isVerticalScrollNecessary = (elementID, tolerancePercent=20) => {
   // if (y < 0) return true                    // above window
   // if (y > window.screen.height) return true // below window
   // return false // visible
+}
+
+export const verticalScrollTo = (elementID) => {
+  const element = document.getElementById(elementID)
+  if (!element) throw new Error("element ID not found: "+elementID)
+  // if (!isVScrollNecessary(element, 20)) return
+  // const targetX = element.offsetLeft
+  // const targetY = element.offsetTop
+  // const deltaX = element.offsetLeft
+  scrollToPosition(element.offsetLeft, element.offsetTop, 60)
 }

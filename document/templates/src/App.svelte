@@ -15,6 +15,11 @@
   // {import.meta.env.MODE}
   // {import.meta.env.VITE_SLIDE_DATA}
   let showNotes = false
+  let current = 1
+  window.addEventListener(
+    'slideChange',
+    (event) => current = event.slide
+  )
 </script>
 
 <Menu
@@ -27,7 +32,7 @@
     <Loading />
   {:then slideData}
     {#if showNotes}
-      <Notes {slideData} />
+      <Notes active={current} {slideData} />
     {:else}
       {#each slideData.slides as slide, index}
         <Slide index={index+1}>??{@html slide}</Slide>

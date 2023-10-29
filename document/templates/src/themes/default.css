@@ -1,3 +1,7 @@
+html {
+  overscroll-behavior: none;
+}
+
 body {
   --color-body-background: white;
   --color-menu-background: #eee;
