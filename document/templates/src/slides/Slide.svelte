@@ -1,8 +1,8 @@
 <script>
   export let index = 0
 
-  import currentSlide from './navigation/current.js'
-  import { slideIn, slideOut } from './navigation/transitions.js'
+  import currentSlide from '../navigation/current.js'
+  import { slideIn, slideOut } from '../navigation/transitions.js'
   let isCurrent = false
   $: isCurrent = $currentSlide === index
 </script>

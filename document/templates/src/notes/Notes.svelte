@@ -1,28 +1,44 @@
 <script>
+  import './Daggers.css'
+  import Keys from '../navigation/Keys.svelte'
   import { Dispatch } from '../navigation/broadcast.js'
-  import { verticalScrollTo } from '../navigation/scroll.js'
+  import { verticalScrollTo, isVerticalScrollNecessary } from '../navigation/scroll.js'
   import { onMount } from 'svelte'
   export let slideData
   export let active = 1
 
   // TODO: add the necessity check of vertical scroll
   // setTimeout(() => {
-  // setInterval(() => {
-  //   if (isVerticalScrollNecessary("slide11")) console.log("visible")
-  //   console.clear()
-  // }, 500)
 
   const onSlideChange = (event) => {
-    verticalScrollTo('divider'+event.slide)
+    active = event.slide
+    // verticalScrollTo('divider'+event.slide)
+    if (isVerticalScrollNecessary('marker'+event.slide)) verticalScrollTo('divider'+event.slide)
   }
   onMount(() => {
+    // const velement = document.getElementById("marker11")
+    // setInterval(() => {
+    //   console.clear()
+    //   if (isVerticalScrollNecessary(velement)) console.log("vnec")
+    // }, 500)
+
     verticalScrollTo('divider'+active)
     window.addEventListener('slideChange', onSlideChange)
     return () => window.removeEventListener('slideChange', onSlideChange)
   })
 </script>
 
-on change anchor
+<Keys
+  daggerQuery='body > #app > main > div.notes > section.active > ul > li'
+  on:dagger={(event) => Dispatch(active, event.detail.number)}
+  on:next={() => {
+    if (active < (slideData.slides || []).length) Dispatch(active+1)
+  }}
+  on:previous={() => {
+    if (active > 1) Dispatch(active-1)
+  }}
+/>
+
 <div class="notes">
 {#each slideData.slides as slide, index}
   {@const ID = index + 1}
@@ -32,15 +48,16 @@ on change anchor
   </aside>
   <a
     class="marker"
+    id={'marker'+ID}
     class:active={active === ID}
     on:mouseup={() => {
+      if (isVerticalScrollNecessary('marker'+ID)) verticalScrollTo('divider'+ID)
       Dispatch(ID)
-      verticalScrollTo('divider'+ID)
     }}
   >
     {ID}
   </a>
-  <section>
+  <section class:active={active === ID}>
     {@html slide}
   </section>
 {:else}

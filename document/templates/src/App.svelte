@@ -3,8 +3,8 @@
   import Loading from './navigation/Loading.svelte'
   import './stylesheets/Daggers.css'
   import './themes/default.css'
+  import Slides from './slides/Slides.svelte'
   import Notes from './notes/Notes.svelte'
-  import Slide from './Slide.svelte'
   import Curtain from './Curtain.svelte'
   import Menu from './navigation/Menu.svelte'
   // import Clock from './time/Clock.svelte'
@@ -34,11 +34,7 @@
     {#if showNotes}
       <Notes active={current} {slideData} />
     {:else}
-      {#each slideData.slides as slide, index}
-        <Slide index={index+1}>??{@html slide}</Slide>
-      {:else}
-        TODO: THERE ARE NO SLIDES
-      {/each}
+      <Slides active={current} {slideData} />
     {/if}
   {/await}
 
