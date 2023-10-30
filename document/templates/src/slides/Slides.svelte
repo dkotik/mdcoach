@@ -1,44 +1,52 @@
 <script>
   import './layout.css'
+  import hiddenListItems from '../navigation/list.js'
+  import scrollStop from '../actions/scrollStop.js'
+  import navigation from '../actions/navigation.js'
   import Slide from './Slide.svelte'
-  import Keys from '../navigation/Keys.svelte'
   import { onMount } from 'svelte'
   export let slideData
   export let active = 1
 
-  let isScrolling
   let slidesElement
   $: {
     if (slidesElement) slidesElement.scrollTo((active - 1) * slidesElement.clientWidth, 0)
   }
-
-  // setInterval(() => {
-  //   slidesElement.scrollTo(1000, 0)
-  // }, 1000)
+  let daggers = []
 </script>
 
-<Keys
-  daggerQuery='body > #app > main > div.slides > section.active > ul > li'
-  on:dagger={(event) => console.log(event.detail.number)}
-  on:next={() => {
+<div
+  class="slides"
+  role="presentation"
+  use:navigation
+  on:next={(event) => {
+    if (daggers?.next()) {
+      console.log("ran into a dagger")
+      return
+    }
     if (active < (slideData.slides || []).length) active += 1
   }}
   on:previous={() => {
     if (active > 1) active -= 1
   }}
-/>
-
-<div class="slides" role="presentation" on:scroll={(event) => {
-  clearTimeout(isScrolling)
-  isScrolling = setTimeout(() => {
+  use:scrollStop
+  on:scrollStop={(event) => {
     const current = Math.ceil((event.target.scrollLeft + 0.01) / event.target.clientWidth)
     active = current
+    daggers = new hiddenListItems(slidesElement)
     console.log("current slide:", current)
-  }, 100)
-}} bind:this={slidesElement}>
+    //setTimeout(() => event.target.nextDagger(), 50)
+    //event.target.nextDagger()
+  }}
+  bind:this={slidesElement}>
 {#each slideData.slides as slide, index}
   <!-- <Slide index={index+1}>??{@html slide}</Slide> -->
-  <div>{index+1}smdsf ||</div>
+  <section
+    class:active={active===index+1}
+    class:visible={active > index - 5 && active < index + 3}
+  >{index+1}
+    {active===index+1}
+  ||{@html slide}</section>
 {:else}
   TODO: THERE ARE NO SLIDES
 {/each}

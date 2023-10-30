@@ -1,6 +1,7 @@
 <script>
   import './Daggers.css'
   import Keys from '../navigation/Keys.svelte'
+  import navigation from '../actions/navigation.js'
   import { Dispatch } from '../navigation/broadcast.js'
   import { verticalScrollTo, isVerticalScrollNecessary } from '../navigation/scroll.js'
   import { onMount } from 'svelte'
@@ -39,7 +40,14 @@
   }}
 />
 
-<div class="notes" role="presentation">
+<div
+  class="notes"
+  role="presentation"
+  use:navigation
+  on:previous={(event) => console.log("!! prev")}
+  on:next={(event) => console.log("!! next")}
+  on:jump={(event) => console.log("jump to:", event.detail)}
+>
 {#each slideData.slides as slide, index}
   {@const ID = index + 1}
   <div class="divider" id={'divider'+ID} />
