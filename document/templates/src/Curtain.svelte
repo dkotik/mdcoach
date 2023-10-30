@@ -24,11 +24,12 @@
 <style>
 aside {
   position: fixed;
-  top: 0;
+  top: -0.3em;
   left: 0;
   width: 100vw;
   height: 100vh;
   background-color: black;
   z-index: 9999998;
+  border-bottom: 0.3em solid var(--color-marker-background);
 }
 </style>

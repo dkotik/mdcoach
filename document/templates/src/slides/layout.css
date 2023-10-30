@@ -1,0 +1,27 @@
+/* https://codepen.io/knowler/pen/eYGRwyb */
+.slides {
+  background-color: red;
+  width: 100vw;
+  height: 70vh;
+  display: flex;
+  place-items: center;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  /* scrollbar-color: transparent transparent; */
+  scrollbar-width: thin;
+  @supports (overflow-inline: scroll) {
+    overflow-inline: scroll;
+    scroll-snap-type: inline mandatory;
+  }
+}
+
+.slides > * {
+  /* Fill the scroll container */
+  overflow: hidden;
+  flex: 0 0 100%;
+  /* Scroll to the start of the slide */
+  scroll-snap-align: start;
+  /* Increment the slide counter */
+  counter-increment: slide;
+}

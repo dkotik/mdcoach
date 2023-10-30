@@ -16,6 +16,8 @@
   // {import.meta.env.VITE_SLIDE_DATA}
   let showNotes = false
   let current = 1
+  $: console.log("top current:", current)
+
   window.addEventListener(
     'slideChange',
     (event) => current = event.slide
@@ -34,7 +36,7 @@
     {#if showNotes}
       <Notes active={current} {slideData} />
     {:else}
-      <Slides active={current} {slideData} />
+      <Slides bind:active={current} {slideData} />
     {/if}
   {/await}
 

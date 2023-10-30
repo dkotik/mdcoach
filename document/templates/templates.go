@@ -7,6 +7,8 @@ import (
 	_ "embed"
 )
 
+//go:generate npm run build
+
 //go:embed dist/index.css
 var StyleSheet string
 

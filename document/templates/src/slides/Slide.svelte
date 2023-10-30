@@ -23,4 +23,15 @@ section {
   height: 8em;
   background-color: gray;
 }
+
+/* Make each slide a grid layout */
+/* article > * {
+  position: relative;
+  display: grid;
+  grid-auto-flow: row;
+  grid-template-rows: max-content;
+  row-gap: 1rem;
+  padding: 2rem;
+  font-size: 1.5rem;
+} */
 </style>
