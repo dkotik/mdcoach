@@ -40,8 +40,7 @@
     {/if}
   {/await}
 
-  <!-- <Clock /> -->
-  Add navigation slide limit with Math.ceil(x/3)
+  Add navigation slide limit with Math.ceil(x/3)!
   <br />
   Add error list on the notes view
 </main>

@@ -28,7 +28,7 @@
   }}
 />
 
-<div class="slides" on:scroll={(event) => {
+<div class="slides" role="presentation" on:scroll={(event) => {
   clearTimeout(isScrolling)
   isScrolling = setTimeout(() => {
     const current = Math.ceil((event.target.scrollLeft + 0.01) / event.target.clientWidth)

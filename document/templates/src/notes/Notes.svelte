@@ -39,7 +39,7 @@
   }}
 />
 
-<div class="notes">
+<div class="notes" role="presentation">
 {#each slideData.slides as slide, index}
   {@const ID = index + 1}
   <div class="divider" id={'divider'+ID} />
@@ -47,6 +47,8 @@
     pictures
   </aside>
   <a
+    role="tab"
+    tabindex={ID}
     class="marker"
     id={'marker'+ID}
     class:active={active === ID}

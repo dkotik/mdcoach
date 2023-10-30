@@ -20,6 +20,14 @@ var (
 		DefaultText: os.TempDir(),
 	}
 
+	openFlagValue *bool
+	openFlag      = &cli.BoolFlag{
+		Destination: openFlagValue,
+		Name:        "open",
+		Aliases:     []string{"p"},
+		Usage:       "open created files in system browser",
+	}
+
 	overwriteFlagValue    *bool
 	confirmOverwriteMutex = &sync.Mutex{}
 	errSkip               = errors.New("skip file, do not overwrite")

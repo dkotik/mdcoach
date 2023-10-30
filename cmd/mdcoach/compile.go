@@ -10,6 +10,7 @@ import (
 
 	"github.com/dkotik/mdcoach"
 	"github.com/dkotik/mdcoach/document"
+	"github.com/skratchdot/open-golang/open"
 
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sync/errgroup"
@@ -20,7 +21,6 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 	if err != nil {
 		return fmt.Errorf("cannot read file %q: %w", p, err)
 	}
-	output = filepath.Join(output, strings.TrimSuffix(filepath.Base(p), ".md")+".html")
 	if err = confirmOverwrite(output); err != nil {
 		if errors.Is(err, errSkip) {
 			return nil // decided to skip file
@@ -55,10 +55,12 @@ func compileCmd() *cli.Command {
 		Usage: "display text editor autocompletion snippets that can accelerate presentation composition",
 		Flags: []cli.Flag{
 			outputFlag,
+			openFlag,
 			overwriteFlag,
 			silentFlag,
 		},
 		Action: func(c *cli.Context) (err error) {
+			// TODO: use c.IsSet("open") instead of output value!
 			// if outputFlagValue == nil {
 			// 	return errors.New("output flag is required")
 			// }
@@ -88,8 +90,15 @@ func compileCmd() *cli.Command {
 				if len(p) > 0 && p[0] != filepath.Separator {
 					p = filepath.Join(output, p)
 				}
-				g.Go(func() error {
-					return compileMarkdownToHTML(ctx, p, output)
+				g.Go(func() (err error) {
+					destination := filepath.Join(output, strings.TrimSuffix(filepath.Base(p), ".md")+".html")
+					if err = compileMarkdownToHTML(ctx, p, destination); err != nil {
+						return err
+					}
+					if c.IsSet("open") {
+						return open.Run("file://" + destination)
+					}
+					return nil
 				})
 			}
 
