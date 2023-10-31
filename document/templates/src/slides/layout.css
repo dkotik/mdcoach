@@ -18,7 +18,7 @@
 
 .slides > * {
   /* Fill the scroll container */
-  overflow: hidden;
+  /* overflow: hidden; */
   flex: 0 0 100%;
   /* Scroll to the start of the slide */
   scroll-snap-align: start;

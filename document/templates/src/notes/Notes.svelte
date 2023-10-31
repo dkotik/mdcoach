@@ -68,7 +68,7 @@
     {ID}
   </a>
   <section class:active={active === ID}>
-    {@html slide}
+    <article>{@html slide}</article>
   </section>
 {:else}
   TODO: THERE ARE NO SLIDES

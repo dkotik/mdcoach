@@ -1,4 +1,4 @@
-export default function(node) {
+export default function(node, wheel=false) {
   const handleKeyDownEvent = (event) => {
     switch (event.code) {
       case 'ArrowRight':
@@ -32,7 +32,6 @@ export default function(node) {
       rememberedDigits = ''
     }, 3000)
   }
-
   const handleKeyUpEvent = (event) => {
     switch (event.code) {
       case 'Digit0': rememberDigit('0'); return
@@ -55,12 +54,23 @@ export default function(node) {
     }
   }
 
+  const handleWheelEvent = (event) => {
+    event.preventDefault()
+    if (event.deltaY >= 0) {
+      node.dispatchEvent(new CustomEvent('next', { detail: event }))
+    } else {
+      node.dispatchEvent(new CustomEvent('previous', { detail: event }))
+    }
+  }
+
   document.addEventListener('keydown', handleKeyDownEvent)
   document.addEventListener('keyup', handleKeyUpEvent)
+  if (wheel) document.addEventListener('wheel', handleWheelEvent)
   return {
     destroy() {
       document.removeEventListener('keydown', handleKeyDownEvent)
       document.removeEventListener('keyup', handleKeyUpEvent)
+      if (wheel) document.removeEventListener('wheel', handleWheelEvent)
     }
   }
 }

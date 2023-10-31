@@ -1,7 +1,7 @@
-section > ul > li.revealed {
+section > article > ul > li.revealed {
   color: red;
 }
 
-section > ul > li {
+section > article > ul > li {
   color: green;
 }

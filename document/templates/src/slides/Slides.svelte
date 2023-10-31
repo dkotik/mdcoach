@@ -7,18 +7,25 @@
   import { onMount } from 'svelte'
   export let slideData
   export let active = 1
+  // let lastActive = 0
+  // let isMovingRight = true
+  // $: {
+  //   isMovingRight = active > lastActive
+  //   lastActive = active
+  //   console.log("moving right:", isMovingRight)
+  // }
 
   let slidesElement
   $: {
     if (slidesElement) slidesElement.scrollTo((active - 1) * slidesElement.clientWidth, 0)
   }
-  let daggers = []
+  let daggers = null
 </script>
 
 <div
   class="slides"
   role="presentation"
-  use:navigation
+  use:navigation={true}
   on:next={(event) => {
     if (daggers?.next()) {
       console.log("ran into a dagger")
@@ -40,13 +47,14 @@
   }}
   bind:this={slidesElement}>
 {#each slideData.slides as slide, index}
-  <!-- <Slide index={index+1}>??{@html slide}</Slide> -->
-  <section
-    class:active={active===index+1}
-    class:visible={active > index - 5 && active < index + 3}
-  >{index+1}
-    {active===index+1}
-  ||{@html slide}</section>
+  {@const ID = index+1}
+  <Slide
+    index={ID}
+    active={active === ID}
+    visible={active > ID - 6 && active < ID + 2}
+  >
+    {@html slide}
+  </Slide>
 {:else}
   TODO: THERE ARE NO SLIDES
 {/each}

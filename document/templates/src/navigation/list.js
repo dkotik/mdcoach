@@ -3,7 +3,7 @@ import { tick } from 'svelte'
 export default class hiddenListItems {
   remaining = []
 
-  constructor(element, query='section.active > ul > li:not(.revealed)') {
+  constructor(element, query='section.active > article > ul > li:not(.revealed)') {
     // this.remaining = Array.from(element.querySelectorAll(query))
     tick().then(() => this.remaining = Array.from(element.querySelectorAll(query)))
   }

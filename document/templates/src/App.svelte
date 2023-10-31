@@ -43,6 +43,8 @@
   Add navigation slide limit with Math.ceil(x/3)!
   <br />
   Add error list on the notes view
+  <br />
+  add mouse scroll
 </main>
 
 <style>
