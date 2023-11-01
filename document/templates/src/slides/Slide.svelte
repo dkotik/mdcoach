@@ -3,42 +3,9 @@
   export let active = false
   export let visible = false
 
+  import scaling from './scaling.mjs'
   import { onMount } from 'svelte'
-  let scaled = false
   let element
-
-  import { tick } from 'svelte'
-  const scale = async () => {
-    // const parentHeight = element.parentNode.offsetHeight
-    const parentHeight = element.parentNode.parentNode.clientHeight
-    let ratio = parentHeight / (element.clientHeight + 20)
-    if (ratio >= 1) return // already scaled
-
-    let fontSize = 100
-    while (fontSize > 50) {
-      fontSize -= 10
-      element.style.fontSize = fontSize + '%'
-      await tick()
-      ratio = parentHeight / (element.clientHeight + 20)
-      // console.log("finished scaling", element.style.fontSize, element.style.transform)
-      if (ratio >= 1) return // already scaled
-    }
-    element.style.transform = 'scale(' + ratio + ')'
-  }
-
-  $: if(element && visible && !scaled) {
-    scaled = true
-    scale()
-  }
-
-  const unlockScaling = (event) => {
-    tick().then(() => scaled = false)
-    console.log("scaling changed:", scaled)
-  }
-  onMount(() => {
-    window.addEventListener("resize", unlockScaling)
-    return () => window.removeEventListener("resize", unlockScaling)
-  })
 
   // import { slideIn, slideOut } from '../navigation/transitions.js'
   // in:slideIn={{ duration: 800 }}
@@ -48,19 +15,19 @@
 <section
   class:active={active}
 >
-  <article bind:this={element}>
+  <article bind:this={element} use:scaling={visible}>
     {#if visible}
       <slot />
       <!-- <div style="width: 200vw; background-color:purple;">&nbsp;</div> -->
       <!-- <div style="height: 200vh; background-color:purple;">&nbsp;</div> -->
       <p>[{index}]</p>
       <p>
-        {#each Array(Math.ceil(Math.random() * 1000)) as index}
-          {index} .
+        {#each Array(Math.ceil(Math.random() * 1000)) as value, index}
+          {index+1} test word.
         {/each}
       </p>
     {:else}
-      TODO: LOADING...
+      <div class="loading">...</div>
     {/if}
   </article>
 </section>
@@ -73,12 +40,20 @@ section {
 }
 
 article {
+  /* position: relative; */
   color: white;
   margin: 0 auto;
+  padding: 2em;
   display: grid;
   /* grid-auto-flow: row; */
   /* grid-template-rows: max-content; */
   grid-template-columns: 1fr auto 1fr;
+}
+
+article div.loading {
+  /* width: 90vw; */
+  /* height: 90vh; */
+  /* background-color: var(--color-menu-background); */
 }
 
 article > * {

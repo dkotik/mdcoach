@@ -15,7 +15,6 @@
   // {import.meta.env.VITE_SLIDE_DATA}
   let showNotes = false
   let current = 1
-  $: console.log("top current:", current)
 
   window.addEventListener(
     'slideChange',
@@ -39,11 +38,7 @@
     {/if}
   {/await}
 
-  Add navigation slide limit with Math.ceil(x/3)!
-  <br />
   Add error list on the notes view
-  <br />
-  add mouse scroll
 </main>
 
 <style>
