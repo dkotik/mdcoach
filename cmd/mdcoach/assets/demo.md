@@ -17,3 +17,11 @@ When a manual slide split is required, use dashes `---` on the same line to make
 ## Notes
 
 Thematic breaks made with asterisks designate notes attached to the previous slide. They are absent in the slide view, but present in the notes view.
+
+---
+
+## Unordered List
+
+- First item
+- Second item
+- Third item

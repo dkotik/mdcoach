@@ -39,8 +39,6 @@
       <Slides bind:active={current} {slideData} />
     {/if}
   {/await}
-
-  Add error list on the notes view
 </main>
 
 <style>

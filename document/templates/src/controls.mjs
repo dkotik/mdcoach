@@ -1,3 +1,5 @@
+import { tick } from 'svelte'
+
 export function debounce(callback, delay=90) {
   let timer
   return () => {
@@ -26,10 +28,15 @@ export function revealedListItems(node, query='section.active > article > ul > l
 
   node.addEventListener('next', nextConcealedListItem)
   node.addEventListener('nextStop', gatherConcealedListItems)
+  node.addEventListener('previousStop', gatherConcealedListItems)
+  node.addEventListener('scrollStop', gatherConcealedListItems)
   node.addEventListener('jump', gatherConcealedListItems)
+  tick().then(gatherConcealedListItems)
   return {
     destroy() {
       node.removeEventListener('jump', gatherConcealedListItems)
+      node.removeEventListener('scrollStop', gatherConcealedListItems)
+      node.removeEventListener('previousStop', gatherConcealedListItems)
       node.removeEventListener('nextStop', gatherConcealedListItems)
       node.removeEventListener('next', nextConcealedListItem)
     }
@@ -98,6 +105,17 @@ export function keyboardNavigation(node) {
       case 'KeyJ':
         if (emitJumpEvent(node)) return
         node.dispatchEvent(new CustomEvent('nextStop', {
+          bubbles: true,
+          cancelable: true,
+          detail: parseInt(rememberedDigits),
+        }))
+        return
+      case 'ArrowLeft':
+      case 'ArrowUp':
+      case 'PageUp':
+      case 'Backspace':
+      case 'KeyK':
+        node.dispatchEvent(new CustomEvent('previousStop', {
           bubbles: true,
           cancelable: true,
           detail: parseInt(rememberedDigits),

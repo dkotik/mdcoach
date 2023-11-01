@@ -46,11 +46,12 @@
 
 <style>
 section {
-  position: absolute;
+  z-index: 1;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  min-height: 6em;
+  min-height: 4vh;
 }
 
 nav {
