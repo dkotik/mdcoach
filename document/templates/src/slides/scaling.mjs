@@ -28,7 +28,7 @@ export default function(node, condition) {
     while (fontSize > 50) {
       fontSize -= 10
       node.style.fontSize = fontSize + '%'
-      await tick()
+      await tick() // TODO: tick does not seem to work, replace with timer?
       if (!visible) return
       ratio = ratioMeasure()
       if (ratio > 1) return

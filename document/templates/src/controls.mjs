@@ -129,7 +129,7 @@ export function keyboardNavigation(node) {
 
 export function wheelNavigation(node) {
   const handleWheelEvent = (event) => {
-    event.preventDefault()
+    // event.preventDefault()
     if (event.deltaY >= 0) {
       node.dispatchEvent(new CustomEvent('next', {
         bubbles: true,
@@ -149,6 +149,19 @@ export function wheelNavigation(node) {
   return {
     destroy() {
       document.removeEventListener('wheel', handleWheelEvent)
+    }
+  }
+}
+
+export function scrollStop(node, delay=150) {
+  const detectStop = debounce((event) => {
+    node.dispatchEvent(new CustomEvent('scrollStop', {}))
+  }, delay)
+
+  node.addEventListener('scroll', detectStop)
+  return {
+    destroy() {
+      node.removeEventListener('scroll', detectStop)
     }
   }
 }

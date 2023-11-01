@@ -2,7 +2,7 @@
   import './Daggers.css'
   import { keyboardNavigation, revealedListItems } from '../controls.mjs'
   import { Dispatch } from '../navigation/broadcast.js'
-  import { verticalScrollTo, isVerticalScrollNecessary } from '../navigation/scroll.js'
+  import { verticalScrollTo, isVerticalScrollNecessary } from './scroll.js'
   import { onMount } from 'svelte'
   export let slideData
   export let active = 1
@@ -27,11 +27,6 @@
     return () => window.removeEventListener('slideChange', onSlideChange)
   })
 </script>
-
-<!-- <Keys
-  daggerQuery='body > #app > main > div.notes > section.active > ul > li'
-  on:dagger={(event) => Dispatch(active, event.detail.number)}
-/> -->
 
 <div
   class="notes"

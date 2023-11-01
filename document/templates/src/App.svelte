@@ -29,7 +29,9 @@
 
 <main>
   {#await loadSlides('slideData')}
-    <Loading />
+    <div style="margin: 0 auto;display: flex; place-items: center;height: 80vh;">
+      <Loading />
+    </div>
   {:then slideData}
     {#if showNotes}
       <Notes active={current} {slideData} />
