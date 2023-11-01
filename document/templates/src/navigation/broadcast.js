@@ -1,4 +1,3 @@
-import current from './current.js'
 import ID from './documentid.js'
 
 const localStorageKey = 'mdcoachCurrentSlide'

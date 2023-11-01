@@ -66,10 +66,11 @@ func compileCmd() *cli.Command {
 			// }
 			// output := *outputFlagValue
 			// TODO: add silent flag.
-			output, err := os.Getwd()
+			cwd, err := os.Getwd() // TODO: should be flag -C
 			if err != nil {
 				return fmt.Errorf("cannot locate working directory: %w", err)
 			}
+			output := c.Value("output").(string)
 			// if outputFlagValue != nil && len(*outputFlagValue) > 0 {
 			//   if *outputFlagValue[0] != filepath.Separator {
 			//     output = filepath.Join(output, *outputFlagValue)
@@ -88,7 +89,7 @@ func compileCmd() *cli.Command {
 			for _, p := range args {
 				p := p // golang.org/doc/faq#closures_and_goroutines
 				if len(p) > 0 && p[0] != filepath.Separator {
-					p = filepath.Join(output, p)
+					p = filepath.Join(cwd, p)
 				}
 				g.Go(func() (err error) {
 					destination := filepath.Join(output, strings.TrimSuffix(filepath.Base(p), ".md")+".html")

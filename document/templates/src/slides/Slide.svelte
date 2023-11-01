@@ -20,7 +20,7 @@
       element.style.fontSize = fontSize + '%'
       await tick()
       ratio = parentHeight / (element.clientHeight + 20)
-      console.log("finished scaling", element.style.fontSize, element.style.transform)
+      // console.log("finished scaling", element.style.fontSize, element.style.transform)
       if (ratio >= 1) return // already scaled
     }
     element.style.transform = 'scale(' + ratio + ')'
@@ -40,7 +40,6 @@
     return () => window.removeEventListener("resize", unlockScaling)
   })
 
-  // import currentSlide from '../navigation/current.js'
   // import { slideIn, slideOut } from '../navigation/transitions.js'
   // in:slideIn={{ duration: 800 }}
   // out:slideOut={{ duration: 800 }}

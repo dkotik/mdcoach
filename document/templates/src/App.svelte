@@ -8,7 +8,6 @@
   import Curtain from './Curtain.svelte'
   import Menu from './navigation/Menu.svelte'
   // import Clock from './time/Clock.svelte'
-  import './navigation/keys.js'
   // import { onMount } from 'svelte'
   // onMount()
 

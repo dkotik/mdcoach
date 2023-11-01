@@ -1,7 +1,6 @@
 <script>
   import './Daggers.css'
-  import Keys from '../navigation/Keys.svelte'
-  import navigation from '../actions/navigation.js'
+  import { keyboardNavigation, revealedListItems } from '../controls.mjs'
   import { Dispatch } from '../navigation/broadcast.js'
   import { verticalScrollTo, isVerticalScrollNecessary } from '../navigation/scroll.js'
   import { onMount } from 'svelte'
@@ -29,23 +28,23 @@
   })
 </script>
 
-<Keys
+<!-- <Keys
   daggerQuery='body > #app > main > div.notes > section.active > ul > li'
   on:dagger={(event) => Dispatch(active, event.detail.number)}
-  on:next={() => {
-    if (active < (slideData.slides || []).length) Dispatch(active+1)
-  }}
-  on:previous={() => {
-    if (active > 1) Dispatch(active-1)
-  }}
-/>
+/> -->
 
 <div
   class="notes"
   role="presentation"
-  use:navigation
-  on:previous={(event) => console.log("!! prev")}
-  on:next={(event) => console.log("!! next")}
+  use:keyboardNavigation
+  use:revealedListItems
+  on:previous={(event) => {
+    if (active > 1) Dispatch(active-1)
+  }}
+  on:next={(event) => {
+    if (event.defaultPrevented) return
+    if (active < (slideData.slides || []).length) Dispatch(active+1)
+  }}
   on:jump={(event) => console.log("jump to:", event.detail)}
 >
 {#each slideData.slides as slide, index}

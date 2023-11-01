@@ -1,13 +1,12 @@
 import { fade } from 'svelte/transition'
 import { elasticOut } from 'svelte/easing'
-import currentSlide from './current.js'
 
 let lastSlide = 0
 let goingRight = true
-currentSlide.subscribe(value => {
-  goingRight = lastSlide < value
-  lastSlide = value
-})
+// currentSlide.subscribe(value => {
+//   goingRight = lastSlide < value
+//   lastSlide = value
+// })
 
 const slideIn = (node, { duration }) => {
 	return {
