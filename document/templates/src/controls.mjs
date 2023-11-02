@@ -2,28 +2,49 @@ import { tick } from 'svelte'
 
 export function debounce(callback, delay=90) {
   let timer
-  return () => {
+  return (...args) => {
     clearTimeout(timer)
-    timer = setTimeout(callback, delay)
+    timer = setTimeout(() => callback(...args), delay)
   }
 }
 
-let concealedListItems = []
-function nextConcealedListItem(event) {
-  if (concealedListItems.length === 0) return
-  event.preventDefault()
-  concealedListItems[0].classList.add('revealed')
-  concealedListItems = concealedListItems.slice(1)
-}
+// let concealedListItems = []
+// let revealed = 0
+// export function resetConcealListItems (event) {
+//   concealedListItems = []
+//   revealed = 0
+// }
+// window.addEventListener('hashchange', resetConcealListItems)
 
-export function resetConcealListItems (event) {
-  concealedListItems = []
-}
-window.addEventListener('hashchange', resetConcealListItems)
-
-export function revealedListItems(node, query='section.active > article > ul > li:not(.revealed)') {
+export function revealedListItems(node) {
+  // query='section.active > article > ul > li:not(.revealed)'
+  let target
   const gatherConcealedListItems = (event) => {
-    concealedListItems = Array.from(node.querySelectorAll(query))
+    target = node.querySelector('section.active > article')
+    if (!target.listItems) {
+      target.listItems = target.querySelectorAll('ul > li')
+      target.revealed = 0
+    }
+    // concealedListItems = Array.from(node.querySelectorAll(query))
+    // revealed = 0
+  }
+  const nextConcealedListItem = (event) => {
+    if (!target || target.revealed >= target.listItems.length) return target.revealed
+    event.preventDefault()
+    node.dispatchEvent(new CustomEvent('nextListItem', {
+      bubbles: true,
+      cancelable: true,
+      detail: {
+        listItem: target.listItems[target.revealed],
+        reveal: () => {
+          target.listItems[target.revealed].classList.add('revealed')
+          // concealedListItems = concealedListItems.slice(1)
+          target.revealed++
+          // console.log('revealed', revealed)
+          return target.revealed
+        }
+      }
+    }))
   }
 
   node.addEventListener('next', nextConcealedListItem)

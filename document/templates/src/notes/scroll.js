@@ -27,13 +27,3 @@ export const isVerticalScrollNecessary = (elementID) => {
   }
   return false
 }
-
-export const verticalScrollTo = (elementID) => {
-  const element = document.getElementById(elementID)
-  if (!element) throw new Error("element ID not found: "+elementID)
-  // if (isVScrollNecessary(element, 20)) return
-  // const targetX = element.offsetLeft
-  // const targetY = element.offsetTop
-  // const deltaX = element.offsetLeft
-  scrollToPosition(element.offsetLeft, element.offsetTop, 60)
-}

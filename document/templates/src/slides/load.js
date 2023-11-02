@@ -18,7 +18,7 @@ const loadSlides = (elementID) => new Promise((resolve, reject) => {
     const result = {
       slides: [],
       notes: [],
-      footnotes: []
+      footnotes: [],
     }
     if (!Array.isArray(slideData)) throw new Error(`element "${elementID}" text content does not contain a JSON array`)
     for (let i = 0; i < slideData.length; i += 3) {

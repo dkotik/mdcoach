@@ -17,6 +17,7 @@
 }
 
 .slides > section {
+  display: flex;
   /* Fill the scroll container */
   /* overflow: hidden; */
   flex: 0 0 100%;

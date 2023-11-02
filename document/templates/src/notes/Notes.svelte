@@ -1,42 +1,50 @@
 <script>
+  export let slideData
+  export let currentSlide
+  export let currentListItem
+
   import './Daggers.css'
   import { keyboardNavigation, revealedListItems } from '../controls.mjs'
-  import { Dispatch } from '../navigation/broadcast.js'
-  import { verticalScrollTo, isVerticalScrollNecessary } from './scroll.js'
-  import { onMount } from 'svelte'
-  export let slideData
-  export let active = 1
-
-  const onSlideChange = (event) => {
-    active = event.slide
-    if (isVerticalScrollNecessary('marker'+event.slide)) verticalScrollTo('divider'+event.slide)
-  }
-  onMount(() => {
-    verticalScrollTo('divider'+active)
-    window.addEventListener('slideChange', onSlideChange)
-    return () => window.removeEventListener('slideChange', onSlideChange)
+  import { scrollToPosition, isVerticalScrollNecessary } from './scroll.js'
+  import { tick, createEventDispatcher } from 'svelte'
+  const dispatch = createEventDispatcher()
+  // let scrollTarget
+  // $: scrollToPosition(0, scrollTarget, 60)
+  const updateScrollTarget = (slide) => tick().then(() => {
+    if (!isVerticalScrollNecessary('marker'+slide)) return
+    const element = document.getElementById('divider'+slide)
+    if (!element) throw new Error("divider not found: "+slide)
+    // scrollTarget = element.offsetTop
+    scrollToPosition(0, element.offsetTop, 60)
   })
+  $: updateScrollTarget(currentSlide)
 </script>
 
-Add error list on the notes view
+Add error list on the notes view<br />
+Multi-broadcasts get into infinite loop!
 
 <div
   class="notes"
   role="presentation"
   use:keyboardNavigation
   use:revealedListItems
-  on:previous={(event) => {
-    if (active > 1) Dispatch(active-1)
+  on:previous={() => {
+    dispatch("change", {slide: currentSlide-1, listItem: 0})
   }}
   on:next={(event) => {
-    if (isVerticalScrollNecessary('marker'+active)) {
-      verticalScrollTo('divider'+active)
-      return
-    }
     if (event.defaultPrevented) return
-    if (active < (slideData.slides || []).length) Dispatch(active+1)
+    dispatch("change", {slide: currentSlide+1, listItem: 0})
   }}
-  on:jump={(event) => console.log("jump to:", event.detail)}
+  on:nextListItem={(event) => {
+    if (isVerticalScrollNecessary('marker'+currentSlide)) {
+      updateScrollTarget(currentSlide)
+      return // do not reveal list items, until they are visible
+    }
+    dispatch("change", {slide: currentSlide, listItem: event.detail.reveal()})
+  }}
+  on:jump={(event) => {
+    dispatch("change", {slide: event.detail, listItem: 0})
+  }}
 >
   <h1>{document.title || '...'}</h1>
   {#each slideData.slides as slide, index}
@@ -50,15 +58,12 @@ Add error list on the notes view
       tabindex={ID}
       class="marker"
       id={'marker'+ID}
-      class:active={active === ID}
-      on:mouseup={() => {
-        if (isVerticalScrollNecessary('marker'+ID)) verticalScrollTo('divider'+ID)
-        Dispatch(ID)
-      }}
+      class:active={currentSlide === ID}
+      on:mouseup={() => dispatch("change", {slide: ID, listItem: 0})}
     >
       {ID}
     </a>
-    <section class:active={active === ID}>
+    <section class:active={currentSlide === ID}>
       <article>{@html slide}</article>
     </section>
   {:else}

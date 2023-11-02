@@ -10,6 +10,7 @@ func WriteJavascriptModuleES6(w io.Writer, js string) (err error) {
 	if _, err = io.WriteString(w, `<script type="module">`); err != nil {
 		return err
 	}
+	// TODO: proper escaping!
 	// if err = WriteEscapedHTML(w, js); err != nil {
 	// 	return err
 	// }

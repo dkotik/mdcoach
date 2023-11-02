@@ -6,20 +6,24 @@
   import Slides from './slides/Slides.svelte'
   import Notes from './notes/Notes.svelte'
   import Curtain from './Curtain.svelte'
+  import LocationHash from './LocationHash.svelte'
   import Menu from './navigation/Menu.svelte'
   // import Clock from './time/Clock.svelte'
-  // import { onMount } from 'svelte'
-  // onMount()
 
   // {import.meta.env.MODE}
   // {import.meta.env.VITE_SLIDE_DATA}
   let showNotes = false
-  let current = 1
-
-  window.addEventListener(
-    'slideChange',
-    (event) => current = event.slide
-  )
+  let currentSlide = 1
+  let currentListItem = 0
+  const jump = (slides, slide, listItem) => {
+    if (slide < 0) {
+      slide = 1
+    } else if (slide > slides.length) {
+      slide = slides.length
+    }
+    currentSlide = slide
+    currentListItem = listItem
+  }
 </script>
 
 <Menu
@@ -33,10 +37,25 @@
       <Loading />
     </div>
   {:then slideData}
+    <LocationHash
+      {currentSlide}
+      {currentListItem}
+      on:change={(e) => jump(slideData.slides, e.detail.slide, e.detail.listItem)}
+    />
     {#if showNotes}
-      <Notes active={current} {slideData} />
+      <Notes
+        {slideData}
+        {currentSlide}
+        {currentListItem}
+        on:change={(e) => jump(slideData.slides, e.detail.slide, e.detail.listItem)}
+      />
     {:else}
-      <Slides bind:active={current} {slideData} />
+      <Slides
+        {slideData}
+        {currentSlide}
+        {currentListItem}
+        on:change={(e) => jump(slideData.slides, e.detail.slide, e.detail.listItem)}
+      />
     {/if}
   {/await}
 </main>

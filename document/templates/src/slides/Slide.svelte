@@ -21,11 +21,11 @@
       <!-- <div style="width: 200vw; background-color:purple;">&nbsp;</div> -->
       <!-- <div style="height: 200vh; background-color:purple;">&nbsp;</div> -->
       <p>[{index}]</p>
-      <p>
+      <!-- <p>
         {#each Array(Math.ceil(Math.random() * 1000)) as value, index}
           {index+1} test word.
         {/each}
-      </p>
+      </p> -->
     {:else}
       <div class="loading">...</div>
     {/if}

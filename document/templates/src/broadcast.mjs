@@ -44,16 +44,6 @@ window.addEventListener('slideChange', (event) => {
   window.location.hash = event.anchor
 })
 
-const handleHashChange = () => {
-  console.log("hash change", window.location.hash)
-  const [slide, dagger] = window.location.hash.slice(1).split('.', 2)
-  // if (event.presentation !== ID) return
-  // const [slide, dagger] = window.location.hash.slice(1).split('.', 2)
-  if (parseInt(slide) === lastDispatch.slide) return
-  Dispatch(parseInt(slide), parseInt(dagger))
-}
-window.addEventListener('hashchange', handleHashChange)
-
 window.addEventListener('storage', (event) => {
  if (event.storageArea != window.localStorage) return
  if (event.key === localStorageKey) {

@@ -2,14 +2,16 @@
   import './layout.css'
   import Slide from './Slide.svelte'
   import { keyboardNavigation, wheelNavigation, revealedListItems, scrollStop } from '../controls.mjs'
-  import { onMount } from 'svelte'
+  import { createEventDispatcher } from 'svelte'
   export let slideData
-  export let active = 1
+  export let currentSlide
+  export let currentListItem
+  const dispatch = createEventDispatcher()
   // let lastActive = 0
   // let isMovingRight = true
   // $: {
-  //   isMovingRight = active > lastActive
-  //   lastActive = active
+  //   isMovingRight = currentSlide > lastActive
+  //   lastActive = currentSlide
   //   console.log("moving right:", isMovingRight)
   // }
 
@@ -27,7 +29,7 @@
   }
 
   $: {
-    if (slidesElement) scrollToPosition((active - 1) * slidesElement.clientWidth)
+    if (slidesElement) scrollToPosition((currentSlide - 1) * slidesElement.clientWidth)
   }
 </script>
 
@@ -38,27 +40,29 @@
   use:wheelNavigation
   use:revealedListItems
   on:previous={() => {
-    if (active > 1) active -= 1
+    dispatch("change", {slide: currentSlide-1, listItem: 0})
   }}
   on:next={(event) => {
     if (event.defaultPrevented) return
-    if (active < (slideData.slides || []).length) active += 1
+    dispatch("change", {slide: currentSlide+1, listItem: 0})
+  }}
+  on:nextListItem={(event) => {
+    dispatch("change", {slide: currentSlide, listItem: event.detail.reveal()})
   }}
   on:jump={(event) => {
-    if (event.detail < (slideData.slides || []).length) active = event.detail
+    dispatch("change", {slide: event.detail, listItem: 0})
   }}
   use:scrollStop
-  on:scrollStop={(event) => {
-    const current = Math.ceil((event.target.scrollLeft + 0.01) / event.target.clientWidth)
-    active = current
-  }}
+  on:scrollStop={(event) =>
+    dispatch("change", {slide: Math.ceil((event.target.scrollLeft + 0.01) / event.target.clientWidth), listItem: 0})
+  }
   bind:this={slidesElement}>
 {#each slideData.slides as slide, index}
   {@const ID = index+1}
   <Slide
     index={ID}
-    active={active === ID}
-    visible={active > ID - 6 && active < ID + 2}
+    active={currentSlide === ID}
+    visible={currentSlide > ID - 6 && currentSlide < ID + 2}
   >
     {@html slide}
   </Slide>
