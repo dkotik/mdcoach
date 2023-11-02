@@ -35,6 +35,9 @@ const loadSlides = (elementID) => new Promise((resolve, reject) => {
       }
     }
 
+    result.slides.push('<p>...</p>')
+    result.notes.push('')
+    result.footnotes.push('')
     // resolve(result)
     setTimeout(() => resolve(result), 1000)
   } catch (e) {

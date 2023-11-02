@@ -4,19 +4,14 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"os/exec"
 	"os/user"
-	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
 
-	"mdcoach/assets"
-
-	"github.com/dkotik/zassets"
 	"github.com/tdewolff/minify"
 	"github.com/tdewolff/minify/html"
 
@@ -72,56 +67,6 @@ func IOcleanHTML(in []byte) []byte {
 	b := bytes.NewBuffer(nil)
 	Minifier.Minify(`text/html`, b, bytes.NewReader(Sanitizer.SanitizeBytes(in)))
 	return b.Bytes()
-}
-
-func IOextractAssets(destination, sourcePath string) error {
-	err := zassets.Walk(assets.Img, ``,
-		func(path string, info os.FileInfo, err error) error {
-			if err == nil && !info.IsDir() {
-				handle, err2 := assets.Img.Open(path)
-				if err2 != nil {
-					return err2
-				}
-				defer handle.Close()
-				p := filepath.Join(destination, filepath.FromSlash(path))
-				err = os.MkdirAll(filepath.Dir(p), 0700)
-				if err != nil {
-					return err
-				}
-				dst, err2 := os.Create(p)
-				if err2 != nil {
-					return err2
-				}
-				defer dst.Close()
-				io.Copy(dst, handle)
-			}
-			return err
-		})
-	if err != nil {
-		return err
-	}
-	return zassets.Walk(assets.Cache, ``,
-		func(path string, info os.FileInfo, err error) error {
-			if err == nil && !info.IsDir() {
-				handle, err2 := assets.Cache.Open(path)
-				if err2 != nil {
-					return err2
-				}
-				defer handle.Close()
-				p := filepath.Join(destination, filepath.FromSlash(path))
-				err = os.MkdirAll(filepath.Dir(p), 0700)
-				if err != nil {
-					return err
-				}
-				dst, err2 := os.Create(p)
-				if err2 != nil {
-					return err2
-				}
-				defer dst.Close()
-				io.Copy(dst, handle)
-			}
-			return err
-		})
 }
 
 func init() {

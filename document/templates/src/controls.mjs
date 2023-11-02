@@ -20,10 +20,10 @@ export function revealedListItems(node, currentListItem) {
   // query='section.active > article > ul > li:not(.revealed)'
   let target
   const gatherConcealedListItems = (event) => {
-    target = node.querySelector('section.active > article')
+    target = node.querySelector(':scope > section.active > article')
     if (!target) return
     if (!target.listItems) {
-      target.listItems = Array.from(target.querySelectorAll('ul > li'))
+      target.listItems = Array.from(target.querySelectorAll(':scope > ul > li'))
       target.revealed = 0
     }
     // concealedListItems = Array.from(node.querySelectorAll(query))

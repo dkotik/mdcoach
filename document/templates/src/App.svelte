@@ -10,6 +10,7 @@
   import LocationHash from './LocationHash.svelte'
   import Menu from './navigation/Menu.svelte'
   import ID from './navigation/documentid.js'
+  import { debounce } from './controls.mjs'
   // import Clock from './time/Clock.svelte'
 
   // {import.meta.env.MODE}
@@ -17,11 +18,13 @@
   let showNotes = false
   let currentSlide = 1
   let currentListItem = 0
+  const jumpBack = debounce((slide) => currentSlide = slide, 310)
   const jump = (slides, slide, listItem) => {
     if (slide < 1) {
       slide = 1
-    } else if (slide > slides.length) {
+    } else if (slide >= slides.length) {
       slide = slides.length
+      if (slide > 1) jumpBack(slide - 1)
     }
     currentSlide = slide
     currentListItem = listItem

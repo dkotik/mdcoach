@@ -9,8 +9,6 @@
     {#key expression}...{/key}
     Key blocks destroy and recreate their contents when the value of an expression changes.
 - Toggleable progress line at the bottom of the screen!!
-- MarkdownRenderer should display only the first List element - everything else is notes
-
 - img folder is not being included into Cache assets as of right now
 - When file is not found, SaveMeta crashes:
   panic: interface conversion: interface {} is nil, not string

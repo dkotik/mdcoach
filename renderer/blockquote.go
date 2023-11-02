@@ -11,7 +11,11 @@ func isAsideBlockquote(n ast.Node) bool {
 }
 
 func (r *Renderer) renderAside(
-	w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	w util.BufWriter,
+	source []byte,
+	n ast.Node,
+	entering bool,
+) (ast.WalkStatus, error) {
 	if entering {
 		_, _ = w.WriteString("<aside>\n")
 	} else {
@@ -21,7 +25,11 @@ func (r *Renderer) renderAside(
 }
 
 func (r *Renderer) renderBlockquote(
-	w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+	w util.BufWriter,
+	source []byte,
+	n ast.Node,
+	entering bool,
+) (ast.WalkStatus, error) {
 	if isAsideBlockquote(n.Parent()) {
 		// never render blockquote children of aside block quote
 		return ast.WalkContinue, nil
