@@ -6,8 +6,10 @@
   import Slides from './slides/Slides.svelte'
   import Notes from './notes/Notes.svelte'
   import Curtain from './Curtain.svelte'
+  import Broadcast from './Broadcast.svelte'
   import LocationHash from './LocationHash.svelte'
   import Menu from './navigation/Menu.svelte'
+  import ID from './navigation/documentid.js'
   // import Clock from './time/Clock.svelte'
 
   // {import.meta.env.MODE}
@@ -16,7 +18,7 @@
   let currentSlide = 1
   let currentListItem = 0
   const jump = (slides, slide, listItem) => {
-    if (slide < 0) {
+    if (slide < 1) {
       slide = 1
     } else if (slide > slides.length) {
       slide = slides.length
@@ -37,6 +39,12 @@
       <Loading />
     </div>
   {:then slideData}
+    <Broadcast
+      {ID}
+      {currentSlide}
+      {currentListItem}
+      on:change={(e) => jump(slideData.slides, e.detail.slide, e.detail.listItem)}
+    />
     <LocationHash
       {currentSlide}
       {currentListItem}

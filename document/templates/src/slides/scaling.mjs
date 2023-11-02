@@ -1,7 +1,7 @@
 import { tick } from 'svelte'
 
 function verticalScaleRatio(node) {
-  const parentHeight = node.parentNode.parentNode.offsetHeight
+  const parentHeight = node?.parentNode?.parentNode?.offsetHeight || window.height
   const margin = parentHeight * 0.1
   return () => parentHeight / (node.offsetHeight + margin)
 }

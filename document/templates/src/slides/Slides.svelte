@@ -38,7 +38,7 @@
   role="presentation"
   use:keyboardNavigation
   use:wheelNavigation
-  use:revealedListItems
+  use:revealedListItems={currentListItem}
   on:previous={() => {
     dispatch("change", {slide: currentSlide-1, listItem: 0})
   }}

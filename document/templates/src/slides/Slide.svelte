@@ -15,8 +15,8 @@
 <section
   class:active={active}
 >
-  <article bind:this={element} use:scaling={visible}>
     {#if visible}
+      <article bind:this={element} use:scaling={visible}>
       <slot />
       <!-- <div style="width: 200vw; background-color:purple;">&nbsp;</div> -->
       <!-- <div style="height: 200vh; background-color:purple;">&nbsp;</div> -->
@@ -26,8 +26,8 @@
           {index+1} test word.
         {/each}
       </p> -->
+      </article>
     {:else}
-      <div class="loading">...</div>
+      <article class="loading">...</article>
     {/if}
-  </article>
 </section>

@@ -16,20 +16,22 @@ export function debounce(callback, delay=90) {
 // }
 // window.addEventListener('hashchange', resetConcealListItems)
 
-export function revealedListItems(node) {
+export function revealedListItems(node, currentListItem) {
   // query='section.active > article > ul > li:not(.revealed)'
   let target
   const gatherConcealedListItems = (event) => {
     target = node.querySelector('section.active > article')
+    if (!target) return
     if (!target.listItems) {
-      target.listItems = target.querySelectorAll('ul > li')
+      target.listItems = Array.from(target.querySelectorAll('ul > li'))
       target.revealed = 0
     }
     // concealedListItems = Array.from(node.querySelectorAll(query))
     // revealed = 0
   }
   const nextConcealedListItem = (event) => {
-    if (!target || target.revealed >= target.listItems.length) return target.revealed
+    if (!target) return 0
+    if (target.revealed >= target.listItems.length) return target.revealed
     event.preventDefault()
     node.dispatchEvent(new CustomEvent('nextListItem', {
       bubbles: true,
@@ -54,6 +56,16 @@ export function revealedListItems(node) {
   node.addEventListener('jump', gatherConcealedListItems)
   tick().then(gatherConcealedListItems)
   return {
+    update(currentListItem) {
+      // if (!target?.listItems) return
+      gatherConcealedListItems() // TODO: a bit redundant but works
+      for (const item in target.listItems.slice(target.revealed, currentListItem)) {
+        target.listItems[target.revealed].classList.add('revealed')
+        target.revealed++
+      }
+      // console.log("list item changed to:", currentListItem, target.listItems)
+    },
+
     destroy() {
       node.removeEventListener('jump', gatherConcealedListItems)
       node.removeEventListener('scrollStop', gatherConcealedListItems)
@@ -194,6 +206,10 @@ export function wheelNavigation(node) {
 
 export function scrollStop(node, delay=150) {
   const detectStop = debounce((event) => {
+    if (!document.hasFocus()) {
+      console.log("dropping scroll stop, cuz not focused")
+      return
+    }
     node.dispatchEvent(new CustomEvent('scrollStop', {}))
   }, delay)
 
