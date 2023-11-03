@@ -3,8 +3,6 @@ package renderer
 import (
 	"bytes"
 	"testing"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func TestImageEncoding(t *testing.T) {
@@ -19,6 +17,6 @@ func TestImageEncoding(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	spew.Dump(buf.String())
+	// spew.Dump(buf.String())
 	// t.Fatal(`impl`)
 }

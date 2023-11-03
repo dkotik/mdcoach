@@ -46,8 +46,8 @@ func Must() renderer.Renderer {
 
 func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindImage, r.renderImage)
-	reg.Register(ast.KindParagraph, r.renderParagraph)
 	reg.Register(ast.KindBlockquote, r.renderBlockquote)
+	reg.Register(ast.KindParagraph, r.renderParagraph)
 	// reg.Register(ast.KindLink, r.renderLink)
 	// reg.Register(ast.KindCodeBlock, r.renderCodeBlock)
 	// reg.Register(ast.KindFencedCodeBlock, r.renderCodeBlock)
