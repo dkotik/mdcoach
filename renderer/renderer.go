@@ -16,6 +16,7 @@ import (
 
 type Renderer struct {
 	sizings         []*picture.Sizing
+	pictureProvider picture.Provider
 	sourceDirectory string
 	outputDirectory string
 }
@@ -28,7 +29,14 @@ type Renderer struct {
 // }
 
 func New() (renderer.Renderer, error) {
-	r := &Renderer{}
+	provider, err := picture.NewLocalProvider()
+	if err != nil {
+		return nil, err
+	}
+
+	r := &Renderer{
+		pictureProvider: provider,
+	}
 
 	return renderer.NewRenderer(renderer.WithNodeRenderers(
 		util.Prioritized(r, 900),

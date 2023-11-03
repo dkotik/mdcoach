@@ -1,32 +1,25 @@
 package picture
 
 import (
-	"errors"
 	"image"
 	"image/jpeg"
-	"os"
+	"io"
 )
 
-// TODO: encoding should be customizeable for the resizer via an option.
+var _ Encoder = (*JPEGEncoder)(nil)
+
 type Encoder interface {
-	EncodeImage(*SizingTarget, image.Image) error
+	EncodeImage(w io.Writer, m image.Image, quality int) error
 }
 
-type JPEGEncoder struct {
-	// TODO: overwrite confirm.
-}
+type JPEGEncoder struct{}
 
-func (j *JPEGEncoder) EncodeImage(t *SizingTarget, m image.Image) (err error) {
-	// if strings.ToLower(filepath.Ext(p)) != "jpg"
-	// TODO: confirm overwrite.
-	w, err := os.Create(t.Destination + ".jpg")
-	if err != nil {
-		return err
-	}
-	defer func() {
-		err = errors.Join(err, w.Close())
-	}()
-	return jpeg.Encode(w, m, &jpeg.Options{Quality: int(t.Quality)})
+func (j *JPEGEncoder) EncodeImage(
+	w io.Writer,
+	m image.Image,
+	quality int,
+) error {
+	return jpeg.Encode(w, m, &jpeg.Options{Quality: quality})
 }
 
 // // Write saves provided image to disk.
