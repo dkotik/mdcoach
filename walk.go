@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/text"
@@ -88,8 +87,7 @@ func (i *iterator) Flush() error {
 	return nil
 }
 
-func Walk(source []byte, walk WalkFunc) (err error) {
-	renderer := goldmark.DefaultRenderer()
+func Walk(source []byte, renderer renderer.Renderer, walk WalkFunc) (err error) {
 	tree := DefaultParser().Parse(text.NewReader(source))
 	return newIterator(walk, renderer).Render(tree, source)
 }

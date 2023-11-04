@@ -7,7 +7,7 @@ import (
 
 func TestCitationDetection(t *testing.T) {
 	var buf bytes.Buffer
-	err := testMarkdown.Convert([]byte(`
+	err := newTestRenderer(t).Convert([]byte(`
 
 > Some quote.
 >
@@ -30,7 +30,7 @@ func TestCitationDetection(t *testing.T) {
 
 func TestAsideRendering(t *testing.T) {
 	var buf bytes.Buffer
-	err := testMarkdown.Convert([]byte(`
+	err := newTestRenderer(t).Convert([]byte(`
 
 > > p
 

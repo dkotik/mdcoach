@@ -10,6 +10,8 @@ import (
 
 	"github.com/dkotik/mdcoach"
 	"github.com/dkotik/mdcoach/document"
+	"github.com/dkotik/mdcoach/picture"
+	"github.com/dkotik/mdcoach/renderer"
 	"github.com/skratchdot/open-golang/open"
 
 	"github.com/urfave/cli/v2"
@@ -27,6 +29,21 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 		}
 		return err
 	}
+
+	pictureProvider, err := picture.NewLocalProvider(
+		picture.WithDestinationPath(filepath.Join(output, "presentationMedia")),
+	)
+	if err != nil {
+		return err
+	}
+
+	r, err := renderer.New(
+		renderer.WithPictureProvider(pictureProvider),
+	)
+	if err != nil {
+		return err
+	}
+
 	w, err := os.Create(output)
 	if err != nil {
 		return err
@@ -39,14 +56,18 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 		return err
 	}
 
-	if err = mdcoach.Compile(w, markdownContent); err != nil {
+	if err = mdcoach.Compile(w, markdownContent, r); err != nil {
 		return err
 	}
 	// fmt.Println("not compiling:", markdownContent)
 	// if _, err = io.Copy(w, strings.NewReader(html.EscapeString(`"wooo<ul><li>1</li><li>2</li></ul>", "wooNotes", "wooFT", "1", "1n", "1ft"`))); err != nil {
 	// 	return err
 	// }
-	return document.WriteFooter(w)
+	if err = document.WriteFooter(w); err != nil {
+		return err
+	}
+	pictureProvider.FinishScaling()
+	return nil
 }
 
 func compileCmd() *cli.Command {

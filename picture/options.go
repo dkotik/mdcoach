@@ -3,7 +3,6 @@ package picture
 import (
 	"errors"
 	"os"
-	"path/filepath"
 )
 
 type options struct {
@@ -47,7 +46,7 @@ func withDefaultDestinationPath() Option {
 		if o.destinationPath != "" {
 			return nil
 		}
-		o.destinationPath = filepath.Join(o.sourcePath, `assets`)
+		o.destinationPath = `slideMedia`
 		return nil
 	}
 }

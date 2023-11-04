@@ -4,6 +4,7 @@ Package renderer converts parsed [ast.Node] Markdown to HTML. Images are resized
 package renderer
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/OneOfOne/xxhash"
@@ -28,24 +29,31 @@ type Renderer struct {
 // 	AddOptions(...Option)
 // }
 
-func New() (renderer.Renderer, error) {
-	provider, err := picture.NewLocalProvider()
-	if err != nil {
-		return nil, err
-	}
-
-	r := &Renderer{
-		pictureProvider: provider,
+func New(withOptions ...Option) (_ renderer.Renderer, err error) {
+	o := &options{}
+	for _, option := range append(
+		withOptions,
+		func(o *options) error {
+			if o.PictureProvider == nil {
+				return errors.New("a picture provider is required")
+			}
+			return nil
+		},
+	) {
+		if err = option(o); err != nil {
+			return nil, fmt.Errorf("cannot create a Markdown renderer: %w", err)
+		}
 	}
 
 	return renderer.NewRenderer(renderer.WithNodeRenderers(
-		util.Prioritized(r, 900),
+		util.Prioritized(&Renderer{
+			pictureProvider: o.PictureProvider,
+		}, 900),
 		util.Prioritized(html.NewRenderer(), 1000),
 	)), nil
 }
 
-func Must() renderer.Renderer {
-	r, err := New()
+func Must(r renderer.Renderer, err error) renderer.Renderer {
 	if err != nil {
 		panic(err)
 	}

@@ -30,6 +30,6 @@ aside {
   height: 100vh;
   background-color: black;
   z-index: 9999998;
-  border-bottom: 0.3em solid var(--color-marker-background);
+  border-bottom: 0.6em solid var(--color-marker-background);
 }
 </style>

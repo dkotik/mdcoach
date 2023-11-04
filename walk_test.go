@@ -3,6 +3,8 @@ package mdcoach
 import (
 	"os"
 	"testing"
+
+	"github.com/yuin/goldmark"
 )
 
 func TestWalk(t *testing.T) {
@@ -10,7 +12,7 @@ func TestWalk(t *testing.T) {
 	if err != nil {
 		t.Fatal("could not load demo presentation:", err)
 	}
-	if err = Walk(demo, func(slide, notes, footnotes []byte) error {
+	if err = Walk(demo, goldmark.DefaultRenderer(), func(slide, notes, footnotes []byte) error {
 		t.Logf("slide: %s", slide)
 		t.Logf("notes: %s", notes)
 		t.Logf("footnotes: %s", footnotes)

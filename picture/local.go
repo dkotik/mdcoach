@@ -14,11 +14,12 @@ import (
 )
 
 type LocalProvider struct {
-	sourcePath      string
-	destinationPath string
-	encoder         Encoder
-	sizings         []Sizing
-	wg              *sync.WaitGroup
+	sourcePath             string
+	destinationPath        string
+	destinationPathCreated bool
+	encoder                Encoder
+	sizings                []Sizing
+	wg                     *sync.WaitGroup
 }
 
 func (p *LocalProvider) encode(to string, m image.Image, quality int) error {
@@ -63,6 +64,16 @@ func (p *LocalProvider) matchSizings(w, h int) (smaller []Sizing) {
 	return
 }
 
+func (p *LocalProvider) ensureDestinationPathExists() (err error) {
+	if !p.destinationPathCreated {
+		if err = os.MkdirAll(p.destinationPath, 700); err != nil {
+			return fmt.Errorf("unable to create directory %q: %w", p.destinationPath, err)
+		}
+		p.destinationPathCreated = true
+	}
+	return nil
+}
+
 func (p *LocalProvider) GetSourceSet(
 	ctx context.Context,
 	location string,
@@ -81,6 +92,9 @@ func (p *LocalProvider) GetSourceSet(
 		return nil, fmt.Errorf("failed to load image: %w", err)
 	}
 	if err = isContextAlive(ctx); err != nil {
+		return nil, err
+	}
+	if err = p.ensureDestinationPathExists(); err != nil {
 		return nil, err
 	}
 
@@ -144,6 +158,7 @@ func NewLocalProvider(withOptions ...Option) (p *LocalProvider, err error) {
 			return nil, fmt.Errorf("unable to initialize local picture provider: %w", err)
 		}
 	}
+
 	SortSizingsInDescendingOrder(o.sizings)
 	return &LocalProvider{
 		sourcePath:      o.sourcePath,

@@ -16,6 +16,7 @@ func TestSlideCut(t *testing.T) {
 	// renderer := renderer.NewRenderer()
 	mdcoach.Walk(
 		[]byte("# test\n\n\n## first\n\n\n12\n\n12\n\n***\nsome notes\n\n---\n\n sdfsdf sdf \n\n# final slide"),
+		NewTestRenderer(t),
 		func(s, n, ft []byte) error {
 			fmt.Println("-------------------------------")
 			fmt.Println("slide:", string(s))

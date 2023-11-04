@@ -72,6 +72,11 @@ func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, e
 	}
 	_, _ = w.WriteString(" />")
 	_, _ = w.WriteString("</picture>")
+	if n.Title != nil {
+		_, _ = w.WriteString(`<figcaption>`)
+		_, _ = w.Write(util.EscapeHTML(n.Title))
+		_, _ = w.WriteString(`</figcaption>`)
+	}
 	return ast.WalkSkipChildren, nil
 }
 
