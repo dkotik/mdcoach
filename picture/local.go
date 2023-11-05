@@ -168,20 +168,3 @@ func NewLocalProvider(withOptions ...Option) (p *LocalProvider, err error) {
 		wg:              &sync.WaitGroup{},
 	}, nil
 }
-
-// func (p *LocalProvider) CopyOriginal(p string) (ResizedImage, error) {
-//   handle, err := os.Open(p)
-//   if err != nil {
-//     return m, err
-//   }
-//   defer handle.Close()
-//   m, _, err = image.Decode(handle)
-//   return m, err
-// }
-
-// func (p *LocalProvider) GetResizedImages(source string) ([]ResizedImage, error) {
-// 	image, err := Load(source)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// }

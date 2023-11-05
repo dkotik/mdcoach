@@ -9,6 +9,12 @@ import (
 	_ "image/png" // add PNG format to image reader
 )
 
+// Ensure interface compliance.
+var (
+	_ Provider = (*LocalProvider)(nil)
+	_ Provider = (*InternetProvider)(nil)
+)
+
 type Source struct {
 	Sizing
 	Location string

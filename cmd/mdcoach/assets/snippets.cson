@@ -2,7 +2,7 @@
 #  or ~/.atom/snippters.cson for Atom.
 #
 # '.text.md':
-'.source.gfm'
+'.source.gfm':
   '#H1 Header':
     'prefix': '1'
     'body': '# $0'
@@ -15,19 +15,23 @@
   '#H4 Header':
     'prefix': '4'
     'body': '#### $0'
-  '- - -':
-    'prefix': '11'
-    'body': """- - -
+  '------- Slide Cut -------':
+    'prefix': '-'
+    'body': """------------------------------------------------
 $0"""
-  '[]()':
+  '* * * Slide Notes * * *':
+    'prefix': '--'
+    'body': """************************************************
+$0"""
+  '![]() Image':
+    'prefix': '11'
+    'body': '![${1:text}](${2:url} "${3:title}") $4'
+  '[]() Link':
     'prefix': '22'
     'body': '[${1:text}](${2:url} "${3:title}") $4'
-  '![]()':
+  '> > Aside Paragraph':
     'prefix': '33'
-    'body': '![${1:text}](${2:url} "${3:title}") $4'
-  '> >':
-    'prefix': '44'
     'body': '> ${1:> }$2'
   '^[quick footnote]':
-    'prefix': '6'
+    'prefix': '44'
     'body': '^[${1:footnote}]$2'
