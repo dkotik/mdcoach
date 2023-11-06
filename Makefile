@@ -1,5 +1,9 @@
 default:
 	cd v1 && go test ./...
+install:
+	# go test ./...
+	go generate ./...
+	go install ./cmd/mdcoach
 # *.gen.go files are hidden in .gitignore
 default1: assets/assets.gen.go assets/img.gen.go
 	cd ./cmd/mdcoach && go build -trimpath -o ~/.local/bin/mdcoach && chmod +x ~/.local/bin/mdcoach

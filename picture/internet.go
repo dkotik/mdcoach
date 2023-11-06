@@ -118,22 +118,21 @@ func (p *InternetProvider) GetSourceSet(
 			),
 		})
 	}
-	set = append(set, Source{
+
+	p.local.wg.Add(1)
+	go func(ctx context.Context, set []Source) {
+		err := p.local.resize(ctx, m, set)
+		if err != nil {
+			panic(err) // TODO: add graceful error handling.
+		}
+		p.local.wg.Done()
+	}(ctx, set[:]) // copy set
+	return append(set, Source{
 		Sizing: Sizing{
 			Width:   bounds.X,
 			Height:  bounds.Y,
 			Quality: 100,
 		},
 		Location: original,
-	})
-
-	p.local.wg.Add(1)
-	go func(ctx context.Context) {
-		err := p.local.resize(ctx, m, set)
-		if err != nil {
-			panic(err) // TODO: add graceful error handling.
-		}
-		p.local.wg.Done()
-	}(ctx)
-	return set, nil
+	}), nil
 }

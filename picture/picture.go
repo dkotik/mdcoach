@@ -14,6 +14,7 @@ var (
 	_ Provider = (*LocalProvider)(nil)
 	_ Provider = (*InternetProvider)(nil)
 	_ Provider = (*EmbeddedProvider)(nil)
+	_ Provider = (*SourceFilter)(nil)
 )
 
 type Source struct {

@@ -46,7 +46,7 @@ func withDefaultDestinationPath() Option {
 		if o.destinationPath != "" {
 			return nil
 		}
-		o.destinationPath = `slideMedia`
+		o.destinationPath = `presentationMedia`
 		return nil
 	}
 }
@@ -75,9 +75,15 @@ func withDefaultEncoder() Option {
 }
 
 func withDefaultSizing() Option {
-	return func(o *options) error {
+	return func(o *options) (err error) {
 		if len(o.sizings) > 0 {
 			return nil
+		}
+		if err = WithSizing(2048, 2048, 90)(o); err != nil {
+			return err
+		}
+		if err = WithSizing(512, 512, 50)(o); err != nil {
+			return err
 		}
 		return WithSizing(128, 128, 30)(o)
 	}

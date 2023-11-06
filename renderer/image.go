@@ -40,7 +40,7 @@ func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, e
 	for _, source := range sourceSet[:originalIndex] {
 		_, _ = w.WriteString("<source media=\"(max-width: ")
 		_, _ = w.WriteString(strconv.Itoa(source.Width))
-		_, _ = w.WriteString("px) and (max-height: ")
+		_, _ = w.WriteString("px) or (max-height: ")
 		_, _ = w.WriteString(strconv.Itoa(source.Height))
 		_, _ = w.WriteString("px)\" srcset=\"")
 		_, _ = w.Write(util.EscapeHTML([]byte(source.Location)))

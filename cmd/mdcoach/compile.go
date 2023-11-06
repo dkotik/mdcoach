@@ -41,7 +41,14 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 	}
 
 	r, err := renderer.New(
-		renderer.WithPictureProvider(pictureProvider),
+		renderer.WithPictureProvider(&picture.SourceFilter{
+			Provider: pictureProvider,
+			IsAllowed: func(source *picture.Source) (bool, error) {
+				// trim output path from the source set
+				source.Location = strings.TrimPrefix(source.Location, filepath.Dir(output)+"/")
+				return true, nil
+			},
+		}),
 	)
 	if err != nil {
 		return err

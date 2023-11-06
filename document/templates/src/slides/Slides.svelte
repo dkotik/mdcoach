@@ -72,7 +72,7 @@
 
 <style>
 .slides {
-  font-size: 140%;
+  font-size: 160%;
   /* background-color: red; */
   width: 100vw;
   height: 100vh;

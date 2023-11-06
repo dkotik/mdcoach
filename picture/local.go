@@ -121,24 +121,24 @@ func (p *LocalProvider) GetSourceSet(
 			),
 		})
 	}
-	set = append(set, Source{
+
+	p.wg.Add(1)
+	go func(ctx context.Context, set []Source) {
+		err := p.resize(ctx, m, set)
+		if err != nil {
+			panic(err) // TODO: add graceful error handling.
+		}
+		p.wg.Done()
+	}(ctx, set[:]) // copy set to prevent overwriting original
+
+	return append(set, Source{
 		Sizing: Sizing{
 			Width:   bounds.X,
 			Height:  bounds.Y,
 			Quality: 100,
 		},
 		Location: original,
-	})
-
-	p.wg.Add(1)
-	go func(ctx context.Context) {
-		err := p.resize(ctx, m, set)
-		if err != nil {
-			panic(err) // TODO: add graceful error handling.
-		}
-		p.wg.Done()
-	}(ctx)
-	return set, nil
+	}), nil
 }
 
 func (p *LocalProvider) FinishScaling() {
