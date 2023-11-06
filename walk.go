@@ -40,7 +40,7 @@ func (i *iterator) Render(tree ast.Node, source []byte) (err error) {
 		switch n.Kind() {
 		case ast.KindThematicBreak:
 			if IsNotesThematicBreak(n) {
-				if i.w != i.notes { // render repeated notes HR
+				if i.w == i.notes { // render repeated notes HR
 					if err = i.renderer.Render(i.w, source, n); err != nil {
 						return err
 					}

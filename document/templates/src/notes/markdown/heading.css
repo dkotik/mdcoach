@@ -1,0 +1,4 @@
+.notes article > h1, .notes article > h2, .notes article > h3, .notes article > h4 {
+  padding: 0;
+  margin: 0;
+}

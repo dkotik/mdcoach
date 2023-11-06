@@ -1,16 +1,20 @@
 package document
 
 import (
+	"fmt"
 	"html/template"
 	"io"
+	"strings"
 	"sync"
 	"time"
 
+	"github.com/OneOfOne/xxhash"
 	"github.com/yuin/goldmark/parser"
 	"go.abhg.dev/goldmark/frontmatter"
 )
 
 type Metadata struct {
+	ID          string
 	Title       string
 	Description string
 	Author      string
@@ -23,6 +27,13 @@ func NewMetadata(ctx parser.Context) (*Metadata, error) {
 	var metadata Metadata
 	if err := raw.Decode(&metadata); err != nil {
 		return nil, err
+	}
+	if metadata.ID == "" {
+		h := xxhash.New64()
+		_, _ = io.Copy(h, strings.NewReader(metadata.Title))
+		_, _ = io.Copy(h, strings.NewReader(metadata.Description))
+		_, _ = io.Copy(h, strings.NewReader(metadata.Author))
+		metadata.ID = fmt.Sprintf("%x", h.Sum(nil))
 	}
 	return &metadata, nil
 }

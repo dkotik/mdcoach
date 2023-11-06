@@ -17,8 +17,10 @@ export const toggleFullScreen = function() {
     }
   } else {
     if (document.exitFullscreen) {
-      document.cancelFullScreen();
-    } else if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.exitFullScreen) {
+      document.exitFullScreen();
+    } else if (document.cancelFullScreen) {
       document.cancelFullScreen();
     } else if (document.webkitCancelFullScreen) {
       document.webkitCancelFullScreen();

@@ -62,6 +62,7 @@ section > article {
   /* margin: 0 auto; */
   /* padding: 2em; */
   display: grid;
+  gap: 2em;
   /* grid-auto-flow: row; */
   /* grid-template-rows: max-content; */
   grid-template-columns: auto 1fr auto 1fr auto;

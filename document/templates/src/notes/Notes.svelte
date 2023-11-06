@@ -4,6 +4,7 @@
   export let currentListItem
 
   import './markdown/list.css'
+  import './markdown/heading.css'
   import './markdown/blockquote.css'
   import './markdown/picture.css'
   import { keyboardNavigation, revealedListItems } from '../controls.mjs'
@@ -22,14 +23,11 @@
   $: updateScrollTarget(currentSlide)
 </script>
 
-Add error list on the notes view<br />
-Multi-broadcasts get into infinite loop!
-
 <div
   class="notes"
   role="presentation"
   use:keyboardNavigation
-  use:revealedListItems
+  use:revealedListItems={currentSlide}
   on:previous={() => {
     dispatch("change", {slide: currentSlide-1, listItem: 0})
   }}
@@ -49,6 +47,11 @@ Multi-broadcasts get into infinite loop!
   }}
 >
   <h1>{document.title || '...'}</h1>
+  <ul>
+    <li>never listen to `next` event directly - pass it through revealed items widget that throws slide+listItem in the event // instrument the event more fully</li>
+    <li>Add error list on the notes view</li>
+    <li>Multi-broadcasts get into infinite loop!</li>
+  </ul>
   {#each slideData.slides as slide, index}
     {@const ID = index + 1}
     <div class="divider" id={'divider'+ID} />
@@ -85,7 +88,7 @@ Multi-broadcasts get into infinite loop!
   margin: 0 auto;
   padding-bottom: 2em;
   display: grid;
-  grid-template-columns: 1fr 2em 5fr;
+  grid-template-columns: 1fr 2em 5fr 1fr;
   grid-column-gap: 1em;
 }
 
