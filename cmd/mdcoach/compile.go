@@ -30,8 +30,11 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 		return err
 	}
 
-	pictureProvider, err := picture.NewLocalProvider(
-		picture.WithDestinationPath(filepath.Join(output, "presentationMedia")),
+	pictureProvider, err := picture.NewInternetProvider(
+		picture.WithDestinationPath(filepath.Join(
+			filepath.Dir(output),
+			"presentationMedia",
+		)),
 	)
 	if err != nil {
 		return err

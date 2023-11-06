@@ -1,0 +1,10 @@
+.notes picture {
+  max-width: 10em;
+  float: right;
+  clear: right;
+}
+
+.notes picture > img {
+  width: 100%;
+  height: 100%;
+}

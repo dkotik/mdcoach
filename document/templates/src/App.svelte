@@ -1,7 +1,6 @@
 <script>
   import loadSlides from './slides/load.js'
   import Loading from './navigation/Loading.svelte'
-  import './stylesheets/Daggers.css'
   import './themes/default.css'
   import Slides from './slides/Slides.svelte'
   import Notes from './notes/Notes.svelte'

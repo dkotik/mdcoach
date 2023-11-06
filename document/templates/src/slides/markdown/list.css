@@ -1,0 +1,26 @@
+.slides article > ul > li.revealed {
+  color: inherit;
+  border: inherit;
+  background: inherit;
+  margin-left: 2em;
+}
+
+.slides article > ul > li.revealed > * {
+  visibility: visible;
+}
+
+.slides article > ul > li {
+  margin-left: 0;
+  min-width: 10em;
+  color: transparent;
+  background-color: var(--color-menu-background);
+  border-left: 0.5rem solid var(--color-marker-background);
+}
+
+.slides article > ul > li > * {
+  visibility: hidden;
+}
+
+.slides article > ul > li + li {
+  margin-top: 0.6em; /* gap between items */
+}

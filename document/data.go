@@ -3,7 +3,9 @@ package document
 // Base64 data object
 // <img src="data:image/gif;base64,xxxxbase64encodedtextxxxx">
 
-import "io"
+import (
+	"io"
+)
 
 type DataWriter struct {
 	w io.Writer

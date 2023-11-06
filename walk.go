@@ -71,6 +71,9 @@ func (i *iterator) Render(tree ast.Node, source []byte) (err error) {
 }
 
 func (i *iterator) Flush() error {
+	if i.slide.Len()+i.notes.Len()+i.footnotes.Len() == 0 {
+		return nil // skip entirely empty slides
+	}
 	// TODO: render footnotes.
 	err := i.callback(
 		i.slide.Bytes(),

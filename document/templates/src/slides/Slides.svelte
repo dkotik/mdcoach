@@ -1,5 +1,4 @@
 <script>
-  import './layout.css'
   import Slide from './Slide.svelte'
   import { keyboardNavigation, wheelNavigation, revealedListItems, scrollStop } from '../controls.mjs'
   import { createEventDispatcher } from 'svelte'
@@ -72,5 +71,22 @@
 </div>
 
 <style>
-
+.slides {
+  font-size: 140%;
+  /* background-color: red; */
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  place-items: center;
+  overflow-y: hidden;
+  overflow-x: scroll;
+  /* https://codepen.io/knowler/pen/eYGRwyb */
+  /* scroll-snap-type: x mandatory; */
+  /* scrollbar-color: transparent transparent; */
+  scrollbar-width: thin;
+  /* @supports (overflow-inline: scroll) {
+    overflow-inline: scroll;
+    scroll-snap-type: inline mandatory;
+  } */
+}
 </style>

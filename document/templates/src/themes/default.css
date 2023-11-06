@@ -3,21 +3,25 @@ html {
 }
 
 body {
+  --color-body-text: black;
+  --color-body-subtext: #aaa;
   --color-body-background: white;
   --color-menu-background: #eee;
   --color-menu-text: #666;
   --color-button-background: #fff;
 
   /* Notes */
-  --color-marker-background: #f20101;
+  --color-marker-background: #006eff;
 }
 
 body.dark {
+  --color-body-text: white;
+  --color-body-subtext: #4a4a4a;
   --color-body-background: black;
-  --color-menu-background: #666;
+  --color-menu-background: #232323;
   --color-menu-text: black;
   --color-button-background: #999;
 
   /* Notes */
-  --color-marker-background: #7a0a0a;
+  --color-marker-background: #006eff;
 }

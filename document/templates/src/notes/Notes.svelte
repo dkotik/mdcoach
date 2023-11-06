@@ -3,7 +3,9 @@
   export let currentSlide
   export let currentListItem
 
-  import './Daggers.css'
+  import './markdown/list.css'
+  import './markdown/blockquote.css'
+  import './markdown/picture.css'
   import { keyboardNavigation, revealedListItems } from '../controls.mjs'
   import { scrollToPosition, isVerticalScrollNecessary } from './scroll.js'
   import { tick, createEventDispatcher } from 'svelte'
@@ -50,9 +52,7 @@ Multi-broadcasts get into infinite loop!
   {#each slideData.slides as slide, index}
     {@const ID = index + 1}
     <div class="divider" id={'divider'+ID} />
-    <aside class="media">
-      pictures
-    </aside>
+    <aside class="media"></aside>
     <a
       role="tab"
       tabindex={ID}
@@ -65,6 +65,14 @@ Multi-broadcasts get into infinite loop!
     </a>
     <section class:active={currentSlide === ID}>
       <article>{@html slide}</article>
+      {#if slideData.notes[index]}
+        <hr />
+        {@html slideData.notes[index]}
+      {/if}
+      {#if slideData.footnotes[index]}
+        <hr />
+        {@html slideData.footnotes[index]}
+      {/if}
     </section>
   {:else}
     TODO: THERE ARE NO SLIDES
@@ -75,6 +83,7 @@ Multi-broadcasts get into infinite loop!
 .notes {
   max-width: 60em;
   margin: 0 auto;
+  padding-bottom: 2em;
   display: grid;
   grid-template-columns: 1fr 2em 5fr;
   grid-column-gap: 1em;

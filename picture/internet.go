@@ -21,7 +21,7 @@ var reDetectURL = regexp.MustCompile(`^(https?\:\/\/|(www\.)?\w+\.\w+\/)`)
 
 type InternetProvider struct {
 	client *http.Client
-	local  *LocalProvider
+	local  *EmbeddedProvider
 }
 
 func NewInternetProvider(withOptions ...Option) (*InternetProvider, error) {
@@ -31,8 +31,12 @@ func NewInternetProvider(withOptions ...Option) (*InternetProvider, error) {
 	}
 	return &InternetProvider{
 		client: http.DefaultClient,
-		local:  local,
+		local:  &EmbeddedProvider{LocalProvider: local},
 	}, nil
+}
+
+func (p *InternetProvider) FinishScaling() {
+	p.local.FinishScaling()
 }
 
 func (p *InternetProvider) download(ctx context.Context, URL string) ([]byte, error) {

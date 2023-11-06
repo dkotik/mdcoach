@@ -1,0 +1,6 @@
+.slides article > blockquote {
+  padding: 1.5em 2em;
+  border-left: 0.5rem solid var(--color-marker-background);
+  background-color: var(--color-menu-background);
+  margin: 0;
+}

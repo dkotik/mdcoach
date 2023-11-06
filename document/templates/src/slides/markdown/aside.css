@@ -1,0 +1,15 @@
+/* article > aside {
+  height: 80vh;
+  width: 40vw;
+  width: 100%;
+  position: relative;
+}
+
+article > aside:first-child {
+  top: 0;
+  left: 0;
+  position: absolute;
+  background-color: red;
+  grid-column: 1 !important;
+  grid-row: 1 / -1;
+} */

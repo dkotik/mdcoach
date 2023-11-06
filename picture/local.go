@@ -66,7 +66,7 @@ func (p *LocalProvider) matchSizings(w, h int) (smaller []Sizing) {
 
 func (p *LocalProvider) ensureDestinationPathExists() (err error) {
 	if !p.destinationPathCreated {
-		if err = os.MkdirAll(p.destinationPath, 700); err != nil {
+		if err = os.MkdirAll(p.destinationPath, 0700); err != nil {
 			return fmt.Errorf("unable to create directory %q: %w", p.destinationPath, err)
 		}
 		p.destinationPathCreated = true

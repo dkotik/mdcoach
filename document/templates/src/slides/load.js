@@ -33,13 +33,13 @@ const loadSlides = (elementID) => new Promise((resolve, reject) => {
         result.notes = result.notes.concat(result.notes)
         result.footnotes = result.footnotes.concat(result.footnotes)
       }
+      result.slides.push('<p>...</p>')
+      result.notes.push('')
+      result.footnotes.push('')
     }
 
-    result.slides.push('<p>...</p>')
-    result.notes.push('')
-    result.footnotes.push('')
-    // resolve(result)
-    setTimeout(() => resolve(result), 1000)
+    resolve(result)
+    // setTimeout(() => resolve(result), 1000)
   } catch (e) {
     reject(e)
   }

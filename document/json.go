@@ -27,7 +27,7 @@ func WriteEscapedJSON(w io.Writer, s string) error {
 			esc = "&gt;"
 		case '"':
 			// "&#34;" is shorter than "&quot;".
-			esc = "&#34;"
+			esc = "\\&#34;" // TODO: I am adding a slash here - needs to be factored out.
 		case '\r':
 			esc = "&#13;"
 		case '\n':

@@ -13,6 +13,7 @@ import (
 var (
 	_ Provider = (*LocalProvider)(nil)
 	_ Provider = (*InternetProvider)(nil)
+	_ Provider = (*EmbeddedProvider)(nil)
 )
 
 type Source struct {
