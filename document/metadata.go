@@ -5,17 +5,27 @@ import (
 	"io"
 	"sync"
 	"time"
+
+	"github.com/yuin/goldmark/parser"
+	"go.abhg.dev/goldmark/frontmatter"
 )
 
 type Metadata struct {
 	Title       string
 	Description string
 	Author      string
-	SlideCount  int
+	Year        int
 	Created     time.Time
 }
 
-// func NewMetadata(n ast.Node) (*Metadata)
+func NewMetadata(ctx parser.Context) (*Metadata, error) {
+	raw := frontmatter.Get(ctx)
+	var metadata Metadata
+	if err := raw.Decode(&metadata); err != nil {
+		return nil, err
+	}
+	return &metadata, nil
+}
 
 var metadataTemplate *template.Template
 

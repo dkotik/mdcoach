@@ -46,7 +46,7 @@ func TestPictureDownloadedFromInternet(t *testing.T) {
 	}
 
 	address := testdataServer(t)
-	time.Sleep(time.Millisecond * 100)
+	time.Sleep(time.Millisecond * 600)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancel()

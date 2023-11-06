@@ -3,6 +3,7 @@
   border: inherit;
   background: inherit;
   margin-left: 2em;
+  min-width: 12em;
 }
 
 .slides article > ul > li.revealed > * {
@@ -11,7 +12,7 @@
 
 .slides article > ul > li {
   margin-left: 0;
-  min-width: 10em;
+  min-width: 14em;
   color: transparent;
   background-color: var(--color-menu-background);
   border-left: 0.5rem solid var(--color-marker-background);
