@@ -37,16 +37,12 @@
   role="presentation"
   use:keyboardNavigation
   use:wheelNavigation
-  use:revealedListItems={currentListItem}
+  use:revealedListItems={[currentSlide, currentListItem]}
   on:previous={() => {
     dispatch("change", {slide: currentSlide-1, listItem: 0})
   }}
-  on:next={(event) => {
-    if (event.defaultPrevented) return
-    dispatch("change", {slide: currentSlide+1, listItem: 0})
-  }}
   on:nextListItem={(event) => {
-    dispatch("change", {slide: currentSlide, listItem: event.detail.reveal()})
+    dispatch("change", {slide: event.detail.slide, listItem: event.detail.listItem})
   }}
   on:jump={(event) => {
     dispatch("change", {slide: event.detail, listItem: 0})

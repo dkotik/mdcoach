@@ -27,20 +27,16 @@
   class="notes"
   role="presentation"
   use:keyboardNavigation
-  use:revealedListItems={currentSlide}
+  use:revealedListItems={[currentSlide, currentListItem]}
   on:previous={() => {
     dispatch("change", {slide: currentSlide-1, listItem: 0})
   }}
-  on:next={(event) => {
-    if (event.defaultPrevented) return
-    dispatch("change", {slide: currentSlide+1, listItem: 0})
-  }}
   on:nextListItem={(event) => {
-    if (isVerticalScrollNecessary('marker'+currentSlide)) {
-      updateScrollTarget(currentSlide)
+    if (isVerticalScrollNecessary('marker'+event.detail.slide)) {
+      updateScrollTarget(event.detail.slide)
       return // do not reveal list items, until they are visible
     }
-    dispatch("change", {slide: currentSlide, listItem: event.detail.reveal()})
+    dispatch("change", {slide: event.detail.slide, listItem: event.detail.listItem})
   }}
   on:jump={(event) => {
     dispatch("change", {slide: event.detail, listItem: 0})

@@ -27,6 +27,7 @@
     }
     currentSlide = slide
     currentListItem = listItem
+    // console.log("jumped", slide, listItem)
   }
 </script>
 

@@ -8,44 +8,40 @@ export function debounce(callback, delay=90) {
   }
 }
 
-// let concealedListItems = []
-// let revealed = 0
-// export function resetConcealListItems (event) {
-//   concealedListItems = []
-//   revealed = 0
-// }
-// window.addEventListener('hashchange', resetConcealListItems)
-
-export function revealedListItems(node, currentListItem) {
+const allRevealedItems = new Map()
+export function revealedListItems(node, data) {
   // query='section.active > article > ul > li:not(.revealed)'
-  let target
+  let target = null
+  let currentSlide = 1
+
   const gatherConcealedListItems = (event) => {
     target = node.querySelector(':scope > section.active > article')
     if (!target) return
-    if (!target.listItems) {
-      target.listItems = Array.from(target.querySelectorAll(':scope > ul > li'))
-      target.revealed = 0
+    if (!target.listItems) target.listItems = Array.from(target.querySelectorAll(':scope > ul > li'))
+    if (target.listItems.length === 0) return
+    // reveal items that should be visible based on previous depth
+    for (var i = 0; i < allRevealedItems.get(currentSlide); i++) {
+      target.listItems[i].classList.add('revealed')
     }
-    // concealedListItems = Array.from(node.querySelectorAll(query))
-    // revealed = 0
   }
+
   const nextConcealedListItem = (event) => {
-    if (!target) return 0
-    if (target.revealed >= target.listItems.length) return target.revealed
-    event.preventDefault()
-    node.dispatchEvent(new CustomEvent('nextListItem', {
-      bubbles: true,
-      cancelable: true,
-      detail: {
-        listItem: target.listItems[target.revealed],
-        reveal: () => {
-          target.listItems[target.revealed].classList.add('revealed')
-          // concealedListItems = concealedListItems.slice(1)
-          target.revealed++
-          // console.log('revealed', revealed)
-          return target.revealed
-        }
-      }
+    let nextIndex = allRevealedItems.get(currentSlide) || 0
+    const nextConcealed = target?.listItems[nextIndex]
+
+    if (nextConcealed) {
+      nextIndex++
+      allRevealedItems.set(currentSlide, nextIndex)
+      nextConcealed.classList.add('revealed')
+      return node.dispatchEvent(new CustomEvent('nextListItem', {
+        bubbles: true, cancelable: true,
+        detail: { slide: currentSlide, listItem: nextIndex }
+      }))
+    }
+
+    return node.dispatchEvent(new CustomEvent('nextListItem', {
+      bubbles: true, cancelable: true,
+      detail: { slide: currentSlide+1, listItem: 0 }
     }))
   }
 
@@ -55,15 +51,43 @@ export function revealedListItems(node, currentListItem) {
   node.addEventListener('scrollStop', gatherConcealedListItems)
   node.addEventListener('jump', gatherConcealedListItems)
   tick().then(gatherConcealedListItems)
+  const gatherWithDelay = debounce(gatherConcealedListItems, 200)
   return {
-    update(currentListItem) {
-      // if (!target?.listItems) return
-      gatherConcealedListItems() // TODO: a bit redundant but works
-      for (const item in target.listItems.slice(target.revealed, currentListItem)) {
-        target.listItems[target.revealed].classList.add('revealed')
-        target.revealed++
+    update([slide, listItem]) {
+      currentSlide = slide
+      gatherWithDelay()
+      const revealedIndex = allRevealedItems.get(slide) || 0
+      if (revealedIndex < listItem) {
+        allRevealedItems.set(slide, listItem)
+        // gatherConcealedListItems()
+        return
       }
-      // console.log("list item changed to:", currentListItem, target.listItems)
+      // gatherConcealedListItems()
+      // if (target) {
+      //   for (var i = 0; i < allRevealedItems.get(currentSlide); i++) {
+      //     target.listItems[i].classList.add('revealed')
+      //   }
+      // }
+      node.dispatchEvent(new CustomEvent('nextListItem', {
+        bubbles: true, cancelable: true,
+        detail: { slide: slide, listItem: revealedIndex }
+      }))
+
+      // if (!allRevealedItems.has(slide) || listItem > allRevealedItems.get(slide)) {
+      //   allRevealedItems.set(slide, listItem)
+      //   tick().then(gatherConcealedListItems)
+      //   // for (var i = 0; i < listItem; i++) {
+      //   //   target.listItems[i].classList.add('revealed')
+      //   // }
+      //
+      // }
+      // gatherConcealedListItems()
+      // setTimeout(gatherConcealedListItems, 600)
+      // // reveal items that should be visible based on previous depth
+      // for (var i = 0; i < listItem; i++) {
+      //   target.listItems[i].classList.add('revealed')
+      // }
+      // console.log("updated to", slide, listItem)
     },
 
     destroy() {
@@ -207,7 +231,7 @@ export function wheelNavigation(node) {
 export function scrollStop(node, delay=150) {
   const detectStop = debounce((event) => {
     if (!document.hasFocus()) {
-      console.log("dropping scroll stop, cuz not focused")
+      // console.log("dropping scroll stop, cuz not focused")
       return
     }
     node.dispatchEvent(new CustomEvent('scrollStop', {}))
