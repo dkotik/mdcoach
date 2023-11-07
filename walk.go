@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 
+	"github.com/dkotik/mdcoach/parser"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/text"
@@ -39,7 +40,7 @@ func (i *iterator) Render(tree ast.Node, source []byte) (err error) {
 	for n := tree.FirstChild(); n != nil; n = n.NextSibling() {
 		switch n.Kind() {
 		case ast.KindThematicBreak:
-			if IsNotesThematicBreak(n) {
+			if parser.IsNotesThematicBreak(n) {
 				if i.w == i.notes { // render repeated notes HR
 					if err = i.renderer.Render(i.w, source, n); err != nil {
 						return err
@@ -91,6 +92,6 @@ func (i *iterator) Flush() error {
 }
 
 func Walk(source []byte, renderer renderer.Renderer, walk WalkFunc) (err error) {
-	tree := DefaultParser().Parse(text.NewReader(source))
+	tree := parser.New().Parse(text.NewReader(source))
 	return newIterator(walk, renderer).Render(tree, source)
 }

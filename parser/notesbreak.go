@@ -1,4 +1,4 @@
-package mdcoach
+package parser
 
 import (
 	"github.com/yuin/goldmark/ast"

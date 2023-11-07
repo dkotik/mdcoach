@@ -4,15 +4,15 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-	"github.com/dkotik/mdcoach"
 	"github.com/dkotik/mdcoach/document"
+	mdcoachParser "github.com/dkotik/mdcoach/parser"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 )
 
 func TestMetaDataLoading(t *testing.T) {
 	ctx := parser.NewContext()
-	_ = mdcoach.DefaultParser().Parse(text.NewReader([]byte(`---
+	_ = mdcoachParser.New().Parse(text.NewReader([]byte(`---
 title: Testing Front Matter
 author: Anonymous
 year: 2023
