@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 )
@@ -21,7 +22,11 @@ func TestReviewQuestionExtraction(t *testing.T) {
 `)
 
 	ctx := parser.NewContext()
-	_ = New().Parse(text.NewReader(source), parser.WithContext(ctx))
+	p, err := New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	p.Parse(text.NewReader(source), parser.WithContext(ctx))
 
 	questions := QuestionListFromContext(ctx)
 	if len(questions) != 2 {
@@ -36,6 +41,22 @@ func TestReviewQuestionExtraction(t *testing.T) {
 		}
 		t.Log(b.String())
 		b.Reset()
+	}
+
+	p, err = New(
+		WithQuestionExtractor(QuestionExtractor(
+			func(pc parser.Context, question ast.Node) {
+				if err := r.Render(b, source, question); err != nil {
+					t.Fatal(err)
+				}
+				t.Log(b.String())
+				b.Reset()
+			},
+		)),
+	)
+	p.Parse(text.NewReader(source), parser.WithContext(ctx))
+	if err != nil {
+		t.Fatal(err)
 	}
 	// spew.Dump(questions)
 	// t.Fatal("impl")

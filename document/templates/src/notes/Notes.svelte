@@ -34,7 +34,6 @@
   on:nextListItem={(event) => {
     if (isVerticalScrollNecessary('marker'+event.detail.slide)) {
       updateScrollTarget(event.detail.slide)
-      return // do not reveal list items, until they are visible
     }
     dispatch("change", {slide: event.detail.slide, listItem: event.detail.listItem})
   }}
@@ -43,11 +42,6 @@
   }}
 >
   <h1>{document.title || '...'}</h1>
-  <ul>
-    <li>never listen to `next` event directly - pass it through revealed items widget that throws slide+listItem in the event // instrument the event more fully</li>
-    <li>Add error list on the notes view</li>
-    <li>Multi-broadcasts get into infinite loop!</li>
-  </ul>
   {#each slideData.slides as slide, index}
     {@const ID = index + 1}
     <div class="divider" id={'divider'+ID} />
@@ -65,11 +59,11 @@
     <section class:active={currentSlide === ID}>
       <article>{@html slide}</article>
       {#if slideData.notes[index]}
-        <hr />
+        <hr class="notes" />
         {@html slideData.notes[index]}
       {/if}
       {#if slideData.footnotes[index]}
-        <hr />
+        <hr class="footnotes" />
         {@html slideData.footnotes[index]}
       {/if}
     </section>
@@ -86,6 +80,19 @@
   display: grid;
   grid-template-columns: 1fr 2em 5fr 1fr;
   grid-column-gap: 1em;
+}
+
+hr {
+  border: 0;
+  height: 0;
+  margin: 1em auto;
+  max-width: 12em;
+  border-top: 1px solid var(--color-menu-background);
+}
+
+hr.notes {
+  border-top: 2px dashed var(--color-menu-background);
+  margin: 0;
 }
 
 h1 {

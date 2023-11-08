@@ -17,6 +17,7 @@ func main() {
 		Commands: []*cli.Command{
 			snippetsCmd(),
 			compileCmd(),
+			reviewCmd(),
 			demoCmd(),
 		},
 	}

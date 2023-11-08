@@ -55,7 +55,6 @@
 {#each slideData.slides as slide, index}
   {@const ID = index+1}
   <Slide
-    index={ID}
     active={currentSlide === ID}
     visible={currentSlide > ID - 6 && currentSlide < ID + 2}
   >

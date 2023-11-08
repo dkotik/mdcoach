@@ -92,6 +92,12 @@ func (i *iterator) Flush() error {
 }
 
 func Walk(source []byte, renderer renderer.Renderer, walk WalkFunc) (err error) {
-	tree := parser.New().Parse(text.NewReader(source))
-	return newIterator(walk, renderer).Render(tree, source)
+	p, err := parser.New()
+	if err != nil {
+		return err
+	}
+	return newIterator(walk, renderer).Render(
+		p.Parse(text.NewReader(source)),
+		source,
+	)
 }

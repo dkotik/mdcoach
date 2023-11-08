@@ -2,7 +2,10 @@
   import { slide } from 'svelte/transition'
   import { toggleFullScreen } from './fullscreen.js'
   import { onMount, createEventDispatcher } from 'svelte'
-  import DarkLightToggle from '../themes/DarkLightToggle.svelte'
+  import IconCurtain from './icons/curtain.svg.svelte'
+  import IconMap from './icons/map.svg.svelte'
+  import IconFullScreen from './icons/fullscreen.svelte'
+  import DarkLightToggle from './DarkLightToggle.svelte'
   const dispatch = createEventDispatcher()
 
   let show = false
@@ -31,14 +34,14 @@
     <nav in:slide={{ duration: 800 }} out:slide={{ duration: 100 }}>
       <button on:click={toggleNotes}>
         {#if showNotes}
-          Slides
+          <IconMap /> Slides
         {:else}
-          Notes
+          <IconCurtain /> Notes
         {/if}
       </button>
       <DarkLightToggle />
       <button on:click={toggleFullScreen}>
-        Fullscreen
+        <IconFullScreen /> Fullscreen
       </button>
     </nav>
   {:else}&nbsp;{/if}
@@ -69,5 +72,11 @@ nav {
   overflow: hidden;
   border-radius: 0.3em;
   flex: 1;
+}
+
+:global(svg.icon) {
+  max-height: 0.8em;
+  max-width: 0.8em;
+  margin-bottom: -0.06em;
 }
 </style>

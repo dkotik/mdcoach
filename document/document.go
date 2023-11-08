@@ -55,6 +55,6 @@ func WriteHeader(w io.Writer, h *HeadMeta) (err error) {
 }
 
 func WriteFooter(w io.Writer) (err error) {
-	_, err = io.Copy(w, strings.NewReader(`"&lt;p&gt;...&lt;/p&gt;","",""]</div></div></body></html>`))
+	_, err = io.Copy(w, strings.NewReader(`"&lt;p&gt;&amp;hellip;&lt;/p&gt;","",""]</div></div></body></html>`))
 	return
 }

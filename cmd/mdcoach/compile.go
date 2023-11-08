@@ -83,7 +83,7 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 func compileCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "compile",
-		Usage: "display text editor autocompletion snippets that can accelerate presentation composition",
+		Usage: "convert Markdown to an HTML presentation",
 		Flags: []cli.Flag{
 			outputFlag,
 			openFlag,

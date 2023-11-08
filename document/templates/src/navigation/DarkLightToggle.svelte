@@ -1,4 +1,5 @@
 <script>
+  import IconDarkMode from './icons/darkmode.svg.svelte'
   let darkMode = window.localStorage.getItem("darkMode") === "true"
   if (!darkMode) document.body.classList.remove("dark")
 </script>
@@ -16,9 +17,9 @@
   }}
 >
   {#if darkMode}
-    Dark
+    <IconDarkMode /> Dark
   {:else}
-    Light
+    <IconDarkMode /> Light
   {/if}
 </button>
 

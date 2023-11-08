@@ -12,7 +12,11 @@ import (
 
 func TestMetaDataLoading(t *testing.T) {
 	ctx := parser.NewContext()
-	_ = mdcoachParser.New().Parse(text.NewReader([]byte(`---
+	p, err := mdcoachParser.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	p.Parse(text.NewReader([]byte(`---
 title: Testing Front Matter
 author: Anonymous
 year: 2023

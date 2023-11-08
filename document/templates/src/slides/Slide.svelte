@@ -1,5 +1,4 @@
 <script>
-  export let index = 0
   export let active = false
   export let visible = false
 
@@ -66,12 +65,6 @@ section > article {
   /* grid-auto-flow: row; */
   /* grid-template-rows: max-content; */
   grid-template-columns: auto 1fr auto 1fr auto;
-}
-
-section > article div.loading {
-  /* width: 90vw; */
-  /* height: 90vh; */
-  /* background-color: var(--color-menu-background); */
 }
 
 section > article > :global(*) {
