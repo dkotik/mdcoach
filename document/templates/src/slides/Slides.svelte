@@ -72,7 +72,7 @@
   width: 100vw;
   height: 100vh;
   display: flex;
-  place-items: center;
+  /* place-items: center; */
   overflow-y: hidden;
   overflow-x: scroll;
   /* https://codepen.io/knowler/pen/eYGRwyb */

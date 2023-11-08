@@ -1,7 +1,9 @@
 .slides figure {
   border: 0;
   padding: 0;
-  /* border: 1px solid var(--color-menu-background); */
+  margin: 0;
+  border-radius: 0.2em;
+  border: 1px solid var(--color-menu-background);
 }
 
 .slides figure > picture > img {

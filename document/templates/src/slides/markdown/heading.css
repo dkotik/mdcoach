@@ -6,7 +6,9 @@
 
 .slides h2 {
   text-align: left;
-  margin: 1em auto;
+  font-size: 180%;
+  /* margin: 1em auto; */
+  /* max-height: 1em; */
   max-width: 40em;
   /* margin: 1em auto; */
 }

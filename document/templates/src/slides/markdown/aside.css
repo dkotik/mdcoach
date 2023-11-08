@@ -1,15 +1,29 @@
-/* article > aside {
-  height: 80vh;
-  width: 40vw;
-  width: 100%;
-  position: relative;
+.slides article > aside {
+  width: 45vw;
+  grid-row: 1 / -1;
+  /* overflow: hidden; */
 }
 
-article > aside:first-child {
+.slides article > aside:first-child {
+  margin: 0 0 0 1em;
+  grid-column: 1 !important;
+}
+
+.slides article > aside:last-child {
+  margin: 0 1em 0 0;
+  grid-column: 5 !important;
+}
+
+.slides article > aside > figure {
+  /* margin: auto 0; */
+  width: 100%;
+  overflow: hidden;
+}
+
+/* .slides article > aside:first-child > figure > picture {
   top: 0;
   left: 0;
-  position: absolute;
-  background-color: red;
-  grid-column: 1 !important;
-  grid-row: 1 / -1;
+  width: 25vw;
+  height: 100vh;
+  position: static;
 } */
