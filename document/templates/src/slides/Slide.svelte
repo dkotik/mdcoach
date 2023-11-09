@@ -67,7 +67,6 @@ section {
 
 section > article {
   /* font-size: 120%; */
-  color: white;
   width: 100%;
   /* margin: 0 auto; */
   /* padding: 2em; */
