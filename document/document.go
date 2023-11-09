@@ -16,12 +16,8 @@ import (
 
 var headMetaTemplate *template.Template
 
-type HeadMeta struct {
-	Title string
-}
-
-func WriteHeader(w io.Writer, h *HeadMeta) (err error) {
-	if h == nil {
+func WriteHeader(w io.Writer, meta *Metadata) (err error) {
+	if meta == nil {
 		return errors.New("cannot use a <nil> HTML metadata")
 	}
 	sync.OnceFunc(func() {
@@ -32,7 +28,7 @@ func WriteHeader(w io.Writer, h *HeadMeta) (err error) {
 		return err
 	}
 
-	if err = headMetaTemplate.Execute(w, h); err != nil {
+	if err = headMetaTemplate.Execute(w, meta); err != nil {
 		return fmt.Errorf("header template execution error: %w", err)
 	}
 	if err = WriteCascadingStyleSheet(w, templates.StyleSheet); err != nil {

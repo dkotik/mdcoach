@@ -1,21 +1,7 @@
-## Confirm
-
-- weasy print errors are not properly captured still!
-
 ## Primary
 
-- Svelte dual window view using Javascript broadcasts
-  - Svelte key block to replay transition: {#key ...}
-    {#key expression}...{/key}
-    Key blocks destroy and recreate their contents when the value of an expression changes.
-- Toggleable progress line at the bottom of the screen!!
-- img folder is not being included into Cache assets as of right now
-- When file is not found, SaveMeta crashes:
-  panic: interface conversion: interface {} is nil, not string
-  mdcoach.(\*Environment).SaveMeta(0xc00992da40, 0x7fffe552474d, 0xb, 0x0, 0x0, 0xc009bde960)
-  mdcoach@/environment.go:127 +0x530
-  mdcoach.Paper(0xc00992da40, 0xbc9298, 0xb, 0xc001588cf0, 0x6, 0x9, 0x0, 0x0)
-  mdcoach@/paper.go:128 +0x2b5
+- Double `"` quotes cause compilation failure due to faulty encoding. Should probably enocode ampersand as well?
+- Toggleable progress line at the bottom of the screen
 - support figure with a footnote! syntax
 - include documentation into .cache dir for all cache distributions?
 - log errors to .cache directory - check last connection error on repeat program runs

@@ -5,9 +5,40 @@
   margin: 0 auto;
 }
 
+.slides h1:only-child::after {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* background-color: var(--color-marker-background); */
+  background-color: rgba(0, 0, 255, 0.2);
+  /* border: 1px solid red; */
+  /* z-index: 0; */
+}
+
 .slides h2 {
   text-align: left;
   font-size: 180%;
+  /* margin: 1em auto; */
+  /* max-height: 1em; */
+  max-width: 40em;
+  margin: 0;
+}
+
+.slides h3 {
+  text-align: left;
+  /* font-size: 180%; */
+  /* margin: 1em auto; */
+  /* max-height: 1em; */
+  max-width: 40em;
+  margin: 0;
+}
+
+.slides h4 {
+  text-align: left;
+  /* font-size: 180%; */
   /* margin: 1em auto; */
   /* max-height: 1em; */
   max-width: 40em;

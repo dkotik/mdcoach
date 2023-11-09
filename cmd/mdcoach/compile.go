@@ -10,9 +10,12 @@ import (
 
 	"github.com/dkotik/mdcoach"
 	"github.com/dkotik/mdcoach/document"
+	mdcParser "github.com/dkotik/mdcoach/parser"
 	"github.com/dkotik/mdcoach/picture"
 	"github.com/dkotik/mdcoach/renderer"
 	"github.com/skratchdot/open-golang/open"
+	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/text"
 
 	"github.com/urfave/cli/v2"
 	"golang.org/x/sync/errgroup"
@@ -28,6 +31,19 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 			return nil // decided to skip file
 		}
 		return err
+	}
+
+	prsr, err := mdcParser.New()
+	if err != nil {
+		return err
+	}
+	pc := parser.NewContext()
+	tree := prsr.Parse(
+		text.NewReader(markdownContent),
+		parser.WithContext(pc))
+	meta, err := document.NewMetadata(pc)
+	if err != nil {
+		return fmt.Errorf("cannot accept document metadata: %w", err)
 	}
 
 	pictureProvider, err := picture.NewInternetProvider(
@@ -60,13 +76,11 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 	}
 	defer w.Close()
 
-	if err = document.WriteHeader(w, &document.HeadMeta{
-		Title: "demo",
-	}); err != nil {
+	if err = document.WriteHeader(w, meta); err != nil {
 		return err
 	}
 
-	if err = mdcoach.Compile(w, markdownContent, r); err != nil {
+	if err = mdcoach.Compile(w, tree, markdownContent, r); err != nil {
 		return err
 	}
 	// fmt.Println("not compiling:", markdownContent)

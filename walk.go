@@ -8,7 +8,6 @@ import (
 	"github.com/dkotik/mdcoach/parser"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
-	"github.com/yuin/goldmark/text"
 )
 
 var EndWalk = errors.New("iteration interrupted")
@@ -91,13 +90,9 @@ func (i *iterator) Flush() error {
 	return nil
 }
 
-func Walk(source []byte, renderer renderer.Renderer, walk WalkFunc) (err error) {
-	p, err := parser.New()
-	if err != nil {
-		return err
-	}
+func Walk(tree ast.Node, source []byte, renderer renderer.Renderer, walk WalkFunc) (err error) {
 	return newIterator(walk, renderer).Render(
-		p.Parse(text.NewReader(source)),
+		tree,
 		source,
 	)
 }

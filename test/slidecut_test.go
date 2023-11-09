@@ -5,9 +5,16 @@ import (
 	"testing"
 
 	"github.com/dkotik/mdcoach"
+	"github.com/dkotik/mdcoach/parser"
+	"github.com/yuin/goldmark/text"
 )
 
 func TestSlideCut(t *testing.T) {
+	p, err := parser.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	markdown := []byte("# test\n\n\n## first\n\n\n12\n\n12\n\n***\nsome notes\n\n---\n\n sdfsdf sdf \n\n# final slide")
 	// r := text.NewReader(
 	// 	[]byte("\n\n\n12\n\n12\n\n***\n---\n"),
 	// 	// testPresentation,
@@ -15,7 +22,8 @@ func TestSlideCut(t *testing.T) {
 	// tree := mdcoach.DefaultParser().Parse(r)
 	// renderer := renderer.NewRenderer()
 	mdcoach.Walk(
-		[]byte("# test\n\n\n## first\n\n\n12\n\n12\n\n***\nsome notes\n\n---\n\n sdfsdf sdf \n\n# final slide"),
+		p.Parse(text.NewReader(markdown)),
+		markdown,
 		NewTestRenderer(t),
 		func(s, n, ft []byte) error {
 			fmt.Println("-------------------------------")

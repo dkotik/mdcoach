@@ -12,7 +12,7 @@ export default function(node, condition) {
 
   const scale = async () => {
     if (scaled) {
-      scaled = false
+      scaled = false // reset previously set scale
       node.style.marginTop = '0' // reset top margin
       node.style.transform = 'scale(1)'
       node.style.fontSize = '100%'
@@ -57,6 +57,7 @@ export default function(node, condition) {
   }
   unlockScaling()
   window.addEventListener("resize", unlockScaling)
+  node.style.marginTop = '0' // reset top margin
   return {
     update(condition) {
       visible = condition

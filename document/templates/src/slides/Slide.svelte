@@ -27,7 +27,7 @@
       <figure><picture><source media="(max-width: 128px) and (max-height: 128px)" srcset="https://blog.paavo.me/cities-skylines-2-performance/cs2_character.jpeg"><source srcset="https://blog.paavo.me/cities-skylines-2-performance/cs2_character.jpeg"><img src="https://blog.paavo.me/cities-skylines-2-performance/cs2_character.jpeg" width="800" height="517" alt="not found image" title="test image"></picture><figcaption>test image</figcaption></figure>
       </aside> -->
 
-      <!-- <h2>title</h2> -->
+      <!-- <h1>title</h1> -->
       <!-- <p>paragraph</p> -->
       <slot />
       <!-- <div style="width: 200vw; background-color:purple;">&nbsp;</div> -->

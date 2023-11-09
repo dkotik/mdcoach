@@ -9,11 +9,12 @@ import (
 	"strings"
 
 	"github.com/dkotik/mdcoach/document"
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
 )
 
-func Compile(w io.Writer, markdown []byte, r renderer.Renderer) error {
-	return Walk(markdown, r, func(slide, notes, footnotes []byte) (err error) {
+func Compile(w io.Writer, tree ast.Node, markdown []byte, r renderer.Renderer) error {
+	return Walk(tree, markdown, r, func(slide, notes, footnotes []byte) (err error) {
 		slide = bytes.ReplaceAll(slide, []byte("\n"), []byte("&#10;"))
 		notes = bytes.ReplaceAll(notes, []byte("\n"), []byte("&#10;"))
 		footnotes = bytes.ReplaceAll(footnotes, []byte("\n"), []byte("&#10;"))
