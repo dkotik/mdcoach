@@ -49,11 +49,16 @@
 
 <style>
 section {
-  display: flex;
+  position: relative;
+  /* display: block; */
+  min-width: 100vw;
+  width: 100vw;
+  overflow: hidden;
+  /* display: flex; */
   /* Fill the scroll container */
   /* overflow: hidden; */
-  flex: 0 0 100%;
-  place-items: center;
+  /* flex: 0 0 100%; */
+  /* place-items: center; */
   /* Scroll to the start of the slide */
   /* scroll-snap-align: start; */
   /* Increment the slide counter */
@@ -61,7 +66,7 @@ section {
 }
 
 section > article {
-  /* position: relative; */
+  /* font-size: 120%; */
   color: white;
   width: 100%;
   /* margin: 0 auto; */
@@ -71,7 +76,7 @@ section > article {
   /* grid-auto-flow: row; */
   /* grid-template-rows: max-content; */
   grid-template-columns: auto 1fr auto 1fr auto;
-  grid-template-rows: 1fr auto 1fr;
+  /* grid-template-rows: 1fr auto 1fr; */
 }
 
 section > article > :global(*) {

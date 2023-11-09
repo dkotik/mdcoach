@@ -25,3 +25,7 @@ body.dark {
   /* Notes */
   --color-marker-background: #006eff;
 }
+
+pre {
+  white-space: pre-wrap;
+}

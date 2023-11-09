@@ -13,6 +13,7 @@ export default function(node, condition) {
   const scale = async () => {
     if (scaled) {
       scaled = false
+      node.style.marginTop = '0' // reset top margin
       node.style.transform = 'scale(1)'
       node.style.fontSize = '100%'
       await tick()
@@ -36,17 +37,30 @@ export default function(node, condition) {
     node.style.transform = 'scale(' + ratio + ')'
     // console.log("finished scaling!", node.style.fontSize)
   }
-  if (visible) scale()
+
+  const scaleThenResize = async () => {
+    if (!visible) return
+    await scale()
+    const slideElement = node?.parentNode
+    if (!slideElement) return
+    await tick()
+    const parentHeight = slideElement.parentNode?.offsetHeight || window.height
+    const gap = parentHeight - node.offsetHeight
+    node.style.marginTop = Math.floor(gap*0.4) + "px"
+    // console.log(node.parentNode, (gap/2) + "px gap")
+    // console.log((gap/2) + "px gap")
+  }
 
   const unlockScaling = async () => {
-    if (visible) scale()
+    scaled = false
+    await scaleThenResize()
   }
   unlockScaling()
   window.addEventListener("resize", unlockScaling)
   return {
     update(condition) {
       visible = condition
-      if (visible) scale()
+      scaleThenResize()
     },
 
     destroy() {

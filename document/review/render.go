@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"text/template"
 	"time"
 
@@ -16,6 +17,9 @@ import (
 var tmpl string
 
 func (r *Review) RenderToFile(p string, meta *document.Metadata) (err error) {
+	if err = os.MkdirAll(filepath.Dir(p), 0700); err != nil {
+		return err
+	}
 	w, err := os.Create(p)
 	if err != nil {
 		return err

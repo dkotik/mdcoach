@@ -1,7 +1,8 @@
 .slides h1 {
+  font-size: 220%;
   text-align: center;
   max-width: 20em;
-  margin: 1em auto;
+  margin: 0 auto;
 }
 
 .slides h2 {
@@ -10,5 +11,5 @@
   /* margin: 1em auto; */
   /* max-height: 1em; */
   max-width: 40em;
-  /* margin: 1em auto; */
+  margin: 0;
 }

@@ -57,42 +57,44 @@ var ( // Document flags
 )
 
 func confirmOverwrite(destination string) error {
-	confirmOverwriteMutex.Lock()
-	defer confirmOverwriteMutex.Unlock()
+	fmt.Println("Confirm override disabled for now:", destination)
+	return nil
+	// confirmOverwriteMutex.Lock()
+	// defer confirmOverwriteMutex.Unlock()
+	//
+	// if overwriteFlagValue != nil && *overwriteFlagValue {
+	// 	return nil // always overwrite
+	// }
+	// stat, err := os.Stat(destination)
+	// if err != nil {
+	// 	if errors.Is(err, os.ErrNotExist) {
+	// 		return nil // conflict not possible
+	// 	}
+	// 	return err
+	// }
+	//
+	// if stat.IsDir() {
+	// 	return fmt.Errorf("target %q cannot be overwritten, because it is a directory", destination)
+	// }
+	//
+	// sync.OnceFunc(func() {
+	// 	fmt.Println("Detected file conflict. Type 'yes' or 'y' to confirm. Type 'all' to assume 'yes' answer for every other file conflict. You may also use --force command line flag to assume 'all' answer when the program runs.")
+	// })
+	// fmt.Printf("File %q already exists. Overwrite? ", destination)
+	// var answer string
+	// if _, err = fmt.Scanf("%s", &answer); err != nil {
+	// 	return err
+	// }
+	// switch answer {
+	// case "all":
+	// 	all := true
+	// 	overwriteFlagValue = &all
+	// 	fallthrough
+	// case "y", "Y", "yes", "Yes":
+	// 	return nil
+	// default:
+	// 	// 	return errSkip
+	// }
 
-	if overwriteFlagValue != nil && *overwriteFlagValue {
-		return nil // always overwrite
-	}
-	stat, err := os.Stat(destination)
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return nil // conflict not possible
-		}
-		return err
-	}
-
-	if stat.IsDir() {
-		return fmt.Errorf("target %q cannot be overwritten, because it is a directory", destination)
-	}
-
-	sync.OnceFunc(func() {
-		fmt.Println("Detected file conflict. Type 'yes' or 'y' to confirm. Type 'all' to assume 'yes' answer for every other file conflict. You may also use --force command line flag to assume 'all' answer when the program runs.")
-	})
-	fmt.Printf("File %q already exists. Overwrite? ", destination)
-	var answer string
-	if _, err = fmt.Scanf("%s", &answer); err != nil {
-		return err
-	}
-	switch answer {
-	case "all":
-		all := true
-		overwriteFlagValue = &all
-		fallthrough
-	case "y", "Y", "yes", "Yes":
-		return nil
-	default:
-		return errSkip
-	}
-
-	return fmt.Errorf("file %s already exists", destination)
+	// return fmt.Errorf("file %s already exists", destination)
 }
