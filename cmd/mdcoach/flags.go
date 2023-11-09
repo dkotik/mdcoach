@@ -47,6 +47,15 @@ var (
 	}
 )
 
+var ( // Document flags
+	titleFlag = &cli.StringFlag{
+		Name:    "title",
+		Aliases: []string{"t"},
+		Value:   "",
+		Usage:   "title of the generated document",
+	}
+)
+
 func confirmOverwrite(destination string) error {
 	confirmOverwriteMutex.Lock()
 	defer confirmOverwriteMutex.Unlock()

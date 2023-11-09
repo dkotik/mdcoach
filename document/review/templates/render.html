@@ -22,7 +22,7 @@
         /* // https://github.com/Kozea/WeasyPrint/pull/652 */
         /* // https://weasyprint.readthedocs.io/en/stable/features.html#css-paged-media-module-level-3 */
         @page {
-          margin: 10mm 8mm 10mm 14mm;
+          margin: 8mm 8mm 12mm 8mm;
           @top-left {
             /* // display: none !important */
             /* // content: " " */
@@ -33,17 +33,17 @@
             color: #aaa;
             margin-top: -4mm;
             margin-right: 3mm;
-            font-size: 12pt;
+            font-size: 8pt;
             content: string(doctitle) " " counter(page) " / " counter(pages);
           }
         }
 
         @page:first {
-          margin: 14mm 8mm 10mm 14mm;
+          margin: 10mm 8mm 12mm 8mm;
         }
       }
 
-      table.grades {
+      table.meta, table.grades {
         font-family: sans-serif;
         color: var(--color-muted);
         background-color: transparent;
@@ -52,17 +52,26 @@
         width: 100%;
       }
 
-      table.grades tr:nth-child(even) {
-        background-color: transparent;
+      table.meta {
+        border: 0;
+        /* border-bottom: 1pt solid var(--color-muted); */
+        border-style: solid;
+        border-color: var(--color-muted);
+        border-width: 1px;
+        padding: 4pt;
+        margin-bottom: 6pt;
       }
 
-      table.grades tr:first-of-type th, table.grades tr:first-of-type td {
+      table.meta td {
+          font-size: 8pt;
           text-align: left;
           color: var(--color-muted);
-          border-style: solid;
-          border-color: var(--color-muted);
-          border-width: 0 0 1pt 0;
-          background-color: transparent;
+          min-width: 64pt;
+          /* background-color: transparent; */
+      }
+
+      table.grades tr:nth-child(even) {
+        background-color: transparent;
       }
 
       table.grades td {
@@ -79,28 +88,56 @@
 
       table.questions td.legend {
         width: 12pt;
+        font-size: 10pt;
+        /* padding-top: 4pt; */
+        line-height: 150%;
         color: var(--color-muted);
         text-align: right;
         vertical-align: top;
       }
 
+      /* table.questions tr td {
+        page-break-before: auto;
+      } */
+
       table.questions tr td {
-        padding-bottom: 32pt;
         vertical-align: top;
+      }
+
+      table.questions tr td p:first-of-type {
+        margin-top: 0;
+      }
+
+      table.questions tr td p:last-of-type {
+        margin-bottom: 0;
+      }
+
+      table.questions tr.row td:nth-child(2) hr:last-child {
+        margin-top: 48pt;
+        height: 0px;
+        border-style: dashed;
+        border-color: #dedede;
+        border-width: 0 0 1px 0;
+        /* padding-bottom: 24pt; */
+        /* background-color: gray; */
+      }
+
+      table.questions tr.row:last-child td:nth-child(2) hr:last-child {
+        display: none;
       }
     </style>
   </head><body>
 <main>
-<table class="grades">
+<table class="meta">
   <tr>
-    <td colspan="8">&nbsp;</td>
-    <th colspan="3">
-      Группа:
-    </th>
-    <th colspan="6">
-      Имя:
-    </th>
+    <td style="width: 45%;">{{ .Title }}</td>
+    <td>Группа:</td>
+    <td>&nbsp;</td>
+    <td>Имя:</td>
+    <td>&nbsp;</td>
   </tr>
+</table>
+<table class="grades">
   <tr>
     <td>&lt;</td>
     {{ range .Missed }}
@@ -114,20 +151,25 @@
     {{ end }}
   </tr>
 </table>
-<h1>{{ .Title }}</h1>
-<section class="content">
-{{ .Header }}
-<p>
-  Ответьте на каждый вопрос кратко, точно, и чётко, чтобы получить +3 балла за каждый ответ.
-</p>
-</section>
-<table class="questions">
+<table class="questions" cellpadding="0" cellspacing="6">
+<tr>
+  <td class="legend" style="padding:0;"></td>
+  <td style="padding:0;">
+    <section class="content">
+      {{ .Header }}
+    </section>
+    <!-- <p style="color: #999;">
+      Ответьте на каждый вопрос кратко, точно, и чётко, чтобы получить +3 балла за каждый ответ.
+    </p> -->
+  </td>
+  <td class="legend" style="padding:0;"></td>
+</tr>
 {{ range $index, $question := .Questions }}
 <tr class="row">
   <td class="legend">
     <p>{{ plusOne $index }}.</p>
   </td>
-  <td>{{ $question }}</td>
+  <td>{{ $question }}<hr /></td>
   <td class="legend"><p>-1<br />-2<br />-3</p></td>
 </tr>
 {{ end }}

@@ -6,9 +6,23 @@ package main
 import (
 	"log"
 	"os"
+	"os/exec"
 
 	"github.com/urfave/cli/v2"
 )
+
+func isCapableOfPDF() bool {
+	p, _ := exec.LookPath("weasyprint")
+	return p != ""
+}
+
+func isDirectory(p string) (bool, error) {
+	info, err := os.Stat(p)
+	if err != nil {
+		return false, err
+	}
+	return info.IsDir(), nil
+}
 
 func main() {
 	app := &cli.App{

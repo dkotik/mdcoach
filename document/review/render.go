@@ -8,12 +8,14 @@ import (
 	"os"
 	"text/template"
 	"time"
+
+	"github.com/dkotik/mdcoach/document"
 )
 
 //go:embed templates/render.html
 var tmpl string
 
-func (r *Review) RenderToFile(p string) (err error) {
+func (r *Review) RenderToFile(p string, meta *document.Metadata) (err error) {
 	w, err := os.Create(p)
 	if err != nil {
 		return err
@@ -21,10 +23,10 @@ func (r *Review) RenderToFile(p string) (err error) {
 	defer func() {
 		err = errors.Join(err, w.Close())
 	}()
-	return r.Render(w)
+	return r.Render(w, meta)
 }
 
-func (r *Review) Render(w io.Writer) error {
+func (r *Review) Render(w io.Writer, meta *document.Metadata) error {
 	t, err := template.New("").Funcs(map[string]any{
 		"plusOne": func(v any) int {
 			i, ok := v.(int)
@@ -55,6 +57,10 @@ func (r *Review) Render(w io.Writer) error {
 	reverseIntSlice(missed)
 	reverseIntSlice(grades)
 
+	title := meta.Title
+	if title == "" {
+		title = time.Now().Format(`2006-01-02`)
+	}
 	return t.Execute(w, struct {
 		Title       string
 		Description string
@@ -69,9 +75,12 @@ func (r *Review) Render(w io.Writer) error {
 		Missed      []int
 		Grades      []int
 	}{
-		Questions: r.questions,
-		Missed:    missed,
-		Grades:    grades,
+		Title:       title,
+		Description: meta.Description,
+		Author:      meta.Author,
+		Questions:   r.questions,
+		Missed:      missed,
+		Grades:      grades,
 	})
 }
 

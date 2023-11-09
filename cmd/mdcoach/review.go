@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
+	"github.com/dkotik/mdcoach/document"
 	"github.com/dkotik/mdcoach/document/review"
 	"github.com/dkotik/mdcoach/picture"
 	"github.com/dkotik/mdcoach/renderer"
@@ -26,10 +27,19 @@ func reviewCmd() *cli.Command {
 			openFlag,
 			overwriteFlag,
 			silentFlag,
+			titleFlag,
 			// TODO: add -C flag.
 		},
 		Action: func(c *cli.Context) (err error) {
+			cwd, err := os.Getwd() // TODO: should be flag -C
+			if err != nil {
+				return fmt.Errorf("cannot locate working directory: %w", err)
+			}
 			output := c.Value("output").(string)
+			if filepath.IsLocal(output) {
+				output = filepath.Join(cwd, output)
+			}
+
 			pictureProvider, err := picture.NewInternetProvider(
 				picture.WithDestinationPath(filepath.Join(
 					filepath.Dir(output),
@@ -57,10 +67,6 @@ func reviewCmd() *cli.Command {
 			args := c.Args().Slice()
 			if len(args) == 0 {
 				return errors.New("compile command requires a file path to a Markdown file")
-			}
-			cwd, err := os.Getwd() // TODO: should be flag -C
-			if err != nil {
-				return fmt.Errorf("cannot locate working directory: %w", err)
 			}
 
 			questions, err := review.New(
@@ -94,25 +100,40 @@ func reviewCmd() *cli.Command {
 			// if err = questions.Render(os.Stdout); err != nil {
 			// 	return err
 			// }
-			output = filepath.Join(
-				output,
-				"review.html",
-			)
-			if err = questions.RenderToFile(output); err != nil {
+			// time.Now().Format(`2006-01-02`)
+			pdf := isCapableOfPDF()
+			switch ext := filepath.Ext(output); ext {
+			case ".html":
+			case ".pdf":
+				if !pdf {
+					return errors.New("PDF generator weasyprint is not installed")
+				}
+				output = strings.TrimSuffix(output, ".pdf") + ".html"
+			case "": // directory
+				output = filepath.Join(
+					output,
+					"review"+time.Now().Format(`2006-01-02`)+".html",
+				)
+			default:
+				return fmt.Errorf("output format %q is not supported", ext)
+			}
+			if err = questions.RenderToFile(output, &document.Metadata{
+				Title: c.Value("title").(string),
+			}); err != nil {
 				return err
 			}
 
-			wp, _ := exec.LookPath("weasyprint")
-			if wp != "" {
+			if pdf {
 				renderered := output
-				if strings.HasSuffix(output, `.html`) {
-					output = output[:len(output)-5] + `.pdf`
-				}
-				// -p is important for ol! https://github.com/Kozea/WeasyPrint/issues/398
-				if err = Exec(`weasyprint`, renderered, output, `-p`); err != nil {
+				output = strings.TrimSuffix(output, ".html") + ".pdf"
+				if err = Exec(
+					`weasyprint`, renderered, output,
+					`-p`, // -p is important for ol! https://github.com/Kozea/WeasyPrint/issues/398
+				); err != nil {
 					return err
 				}
 			}
+			fmt.Println(output)
 			if c.IsSet("open") {
 				return open.Run("file://" + output)
 			}
