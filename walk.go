@@ -38,24 +38,31 @@ func newIterator(callback WalkFunc, r renderer.Renderer) *iterator {
 func (i *iterator) Render(tree ast.Node, source []byte) (err error) {
 	for n := tree.FirstChild(); n != nil; n = n.NextSibling() {
 		switch n.Kind() {
-		case ast.KindThematicBreak:
-			if parser.IsNotesThematicBreak(n) {
-				if i.w == i.notes { // render repeated notes HR
-					if err = i.renderer.Render(i.w, source, n); err != nil {
-						return err
-					}
-				} else {
-					i.w = i.notes
+		case parser.KindNotesBreak:
+			if i.w == i.notes { // render repeated notes HR
+				if err = i.renderer.Render(i.w, source, n); err != nil {
+					return err
 				}
-				continue
+			} else {
+				i.w = i.notes
 			}
+		case ast.KindThematicBreak:
 			if err = i.Flush(); err != nil {
+				return err
+			}
+		case ast.KindParagraph: // TODO: create KindFigure.
+			if parser.HasOnlyOneChildOfKind(n, ast.KindImage) {
+				if err = i.Flush(); err != nil {
+					return err
+				}
+			}
+			if err = i.renderer.Render(i.w, source, n); err != nil {
 				return err
 			}
 		case ast.KindHeading:
 			heading := n.(*ast.Heading)
 			switch heading.Level {
-			case 1, 2:
+			case 1, 2: // TODO: make configurable.
 				if err = i.Flush(); err != nil {
 					return err
 				}

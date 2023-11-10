@@ -6,6 +6,7 @@ package parser
 import (
 	"fmt"
 
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/util"
 	"go.abhg.dev/goldmark/frontmatter"
@@ -45,7 +46,14 @@ func New(withOptions ...Option) (_ parser.Parser, err error) {
 		parser.WithInlineParsers(parser.DefaultInlineParsers()...),
 		parser.WithParagraphTransformers(parser.DefaultParagraphTransformers()...),
 		parser.WithASTTransformers(
-			util.Prioritized(&frontmatter.MetaTransformer{}, 0),
+		// util.Prioritized(&frontmatter.MetaTransformer{}, 0),
 		),
 	), nil
+}
+
+func HasOnlyOneChildOfKind(n ast.Node, k ast.NodeKind) bool {
+	if n.ChildCount() != 1 {
+		return false
+	}
+	return n.FirstChild().Kind() == k
 }

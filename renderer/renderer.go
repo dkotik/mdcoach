@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/OneOfOne/xxhash"
+	"github.com/dkotik/mdcoach/parser"
 	"github.com/dkotik/mdcoach/picture"
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/renderer"
@@ -64,6 +65,7 @@ func (r *Renderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
 	reg.Register(ast.KindImage, r.renderImage)
 	reg.Register(ast.KindBlockquote, r.renderBlockquote)
 	reg.Register(ast.KindParagraph, r.renderParagraph)
+	reg.Register(parser.KindNotesBreak, r.renderNotesBreak)
 	// reg.Register(ast.KindLink, r.renderLink)
 	// reg.Register(ast.KindCodeBlock, r.renderCodeBlock)
 	// reg.Register(ast.KindFencedCodeBlock, r.renderCodeBlock)

@@ -6,6 +6,7 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
+// TODO: kull this in favor of the one in parser. All operations of this kind are parser operations.
 func hasOnlyOneChildOfKind(n ast.Node, k ast.NodeKind) bool {
 	if n.ChildCount() != 1 {
 		return false
