@@ -22,3 +22,8 @@
   background-color: var(--color-menu-background);
   /* border: 1px solid var(--color-menu-background); */
 }
+
+/* this is the original markdown text inside [] */
+.slides figure > figcaption.source {
+  display: none;
+}

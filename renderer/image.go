@@ -11,12 +11,6 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-// <picture>
-//   <source media="(max-width: 799px)" srcset="elva-480w-close-portrait.jpg" />
-//   <source media="(min-width: 800px)" srcset="elva-800w.jpg" />
-//   <img src="elva-800w.jpg" alt="..." />
-// </picture>
-
 func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
 		return ast.WalkContinue, nil
@@ -50,6 +44,7 @@ func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, e
 	_, _ = w.Write(util.EscapeHTML([]byte(original.Location)))
 	_, _ = w.WriteString("\" />")
 
+	alt := nodeToHTMLText(n, source)
 	_, _ = w.WriteString("<img src=\"")
 	// if r.Unsafe || !html.IsDangerousURL(n.Destination) {
 	_, _ = w.Write(util.EscapeHTML(util.URLEscape([]byte(original.Location), true)))
@@ -59,7 +54,7 @@ func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, e
 	_, _ = w.WriteString(`" height="`)
 	_, _ = w.WriteString(strconv.Itoa(original.Height))
 	_, _ = w.WriteString(`" alt="`)
-	_, _ = w.Write(nodeToHTMLText(n, source))
+	_, _ = w.Write(alt)
 	_ = w.WriteByte('"')
 	if n.Title != nil {
 		_, _ = w.WriteString(` title="`)
@@ -75,6 +70,11 @@ func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, e
 	if n.Title != nil {
 		_, _ = w.WriteString(`<figcaption>`)
 		_, _ = w.Write(util.EscapeHTML(n.Title))
+		_, _ = w.WriteString(`</figcaption>`)
+	}
+	if len(alt) > 0 {
+		_, _ = w.WriteString(`<figcaption class="source">`)
+		_, _ = w.Write(util.EscapeHTML(alt))
 		_, _ = w.WriteString(`</figcaption>`)
 	}
 	return ast.WalkSkipChildren, nil

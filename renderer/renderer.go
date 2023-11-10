@@ -23,13 +23,6 @@ type Renderer struct {
 	outputDirectory string
 }
 
-// type Renderer interface {
-// 	Render(w io.Writer, source []byte, n ast.Node) error
-//
-// 	// AddOptions adds given option to this renderer.
-// 	AddOptions(...Option)
-// }
-
 func New(withOptions ...Option) (_ renderer.Renderer, err error) {
 	o := &options{}
 	for _, option := range append(
