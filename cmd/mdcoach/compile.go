@@ -21,11 +21,11 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
-	markdownContent, err := os.ReadFile(p)
-	if err != nil {
-		return fmt.Errorf("cannot read file %q: %w", p, err)
-	}
+func compileMarkdownToHTML(
+	ctx context.Context,
+	output string,
+	markdownContent []byte,
+) (err error) {
 	if err = confirmOverwrite(output); err != nil {
 		if errors.Is(err, errSkip) {
 			return nil // decided to skip file
@@ -83,10 +83,6 @@ func compileMarkdownToHTML(ctx context.Context, p, output string) (err error) {
 	if err = mdcoach.Compile(w, tree, markdownContent, r); err != nil {
 		return err
 	}
-	// fmt.Println("not compiling:", markdownContent)
-	// if _, err = io.Copy(w, strings.NewReader(html.EscapeString(`"wooo<ul><li>1</li><li>2</li></ul>", "wooNotes", "wooFT", "1", "1n", "1ft"`))); err != nil {
-	// 	return err
-	// }
 	if err = document.WriteFooter(w); err != nil {
 		return err
 	}
@@ -116,29 +112,61 @@ func compileCmd() *cli.Command {
 				return fmt.Errorf("cannot locate working directory: %w", err)
 			}
 			output := c.Value("output").(string)
-			// if outputFlagValue != nil && len(*outputFlagValue) > 0 {
-			//   if *outputFlagValue[0] != filepath.Separator {
-			//     output = filepath.Join(output, *outputFlagValue)
-			//   } else {
-			//     ouput = *outputFlagValue
-			//   }
-			// }
-
 			args := c.Args().Slice()
 			if len(args) == 0 {
-				return errors.New("compile command requires a file path to a Markdown file")
+				return errors.New("compile command requires a file path to at least one Markdown file")
+			}
+
+			isDir, err := isDirectory(output)
+			if err != nil {
+				return err
+			}
+			if !isDir {
+				for i, p := range args {
+					if filepath.IsLocal(p) {
+						args[i] = filepath.Join(cwd, p)
+					}
+				}
+				markdownContent, err := mdcParser.Glue(args...)
+				if err != nil {
+					return err
+				}
+				if !strings.HasSuffix(output, ".html") {
+					output = output + ".html"
+				}
+				if err = compileMarkdownToHTML(
+					// TODO: add notify context to respond to Ctrl+C signal and others.
+					context.TODO(),
+					output,
+					markdownContent,
+				); err != nil {
+					return err
+				}
+				if c.IsSet("open") {
+					return open.Run("file://" + output)
+				}
+				return nil
 			}
 
 			// TODO: add notify context to respond to Ctrl+C signal and others.
 			g, ctx := errgroup.WithContext(context.TODO())
 			for _, p := range args {
 				p := p // golang.org/doc/faq#closures_and_goroutines
-				if len(p) > 0 && p[0] != filepath.Separator {
+				// if len(p) > 0 && p[0] != filepath.Separator {
+				if filepath.IsLocal(p) {
 					p = filepath.Join(cwd, p)
 				}
 				g.Go(func() (err error) {
+					markdownContent, err := os.ReadFile(p)
+					if err != nil {
+						return fmt.Errorf("cannot read file %q: %w", p, err)
+					}
 					destination := filepath.Join(output, strings.TrimSuffix(filepath.Base(p), ".md")+".html")
-					if err = compileMarkdownToHTML(ctx, p, destination); err != nil {
+					if err = compileMarkdownToHTML(
+						ctx,
+						destination,
+						markdownContent,
+					); err != nil {
 						return err
 					}
 					if c.IsSet("open") {

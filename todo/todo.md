@@ -1,6 +1,6 @@
 ## Primary
 
-- Double `"` quotes cause compilation failure due to faulty encoding. Should probably enocode ampersand as well?
+- create new node kind
 - Toggleable progress line at the bottom of the screen
 - support figure with a footnote! syntax
 - include documentation into .cache dir for all cache distributions?

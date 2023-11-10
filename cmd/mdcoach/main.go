@@ -4,6 +4,7 @@ Package main provides command line interface to [mdcoach.Iterator].
 package main
 
 import (
+	"errors"
 	"log"
 	"os"
 	"os/exec"
@@ -19,6 +20,9 @@ func isCapableOfPDF() bool {
 func isDirectory(p string) (bool, error) {
 	info, err := os.Stat(p)
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return false, nil
+		}
 		return false, err
 	}
 	return info.IsDir(), nil

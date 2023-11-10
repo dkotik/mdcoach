@@ -82,6 +82,10 @@
   grid-column-gap: 1em;
 }
 
+section {
+  position: relative;
+}
+
 hr {
   border: 0;
   height: 0;
