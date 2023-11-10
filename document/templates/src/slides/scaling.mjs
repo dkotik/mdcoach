@@ -1,9 +1,16 @@
 import { tick } from 'svelte'
 
+async function delayPromise(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 function verticalScaleRatio(node) {
   const parentHeight = node?.parentNode?.parentNode?.offsetHeight || window.height
   const margin = parentHeight * 0.1
-  return () => parentHeight / (node.offsetHeight + margin)
+  return async () => {
+    await delayPromise(20)
+    return parentHeight / (node.offsetHeight + margin)
+  }
 }
 
 export default function(node, condition) {
@@ -16,12 +23,12 @@ export default function(node, condition) {
       node.style.marginTop = '0' // reset top margin
       node.style.transform = 'scale(1)'
       node.style.fontSize = '100%'
-      await tick()
+      // await tick()
     } else {
       scaled = true
     }
     const ratioMeasure = verticalScaleRatio(node)
-    let ratio = ratioMeasure()
+    let ratio = await ratioMeasure()
     if (ratio > 1) return // no need
 
     // scale down fontSize first
@@ -29,31 +36,33 @@ export default function(node, condition) {
     while (fontSize > 50) {
       fontSize -= 10
       node.style.fontSize = fontSize + '%'
-      await tick() // TODO: tick does not seem to work, replace with timer?
+      // await tick() // TODO: tick does not seem to work, replace with timer?
       if (!visible) return
-      ratio = ratioMeasure()
+      ratio = await ratioMeasure()
       if (ratio > 1) return
     }
     node.style.transform = 'scale(' + ratio + ')'
+    // await delayPromise(100)
     // console.log("finished scaling!", node.style.fontSize)
   }
 
-  const scaleThenResize = async () => {
+  const scaleThenCenter = async () => {
     if (!visible) return
     await scale()
     const slideElement = node?.parentNode
     if (!slideElement) return
     await tick()
+    // await delayPromise(120)
     const parentHeight = slideElement.parentNode?.offsetHeight || window.height
     const gap = parentHeight - node.offsetHeight
-    node.style.marginTop = Math.floor(gap*0.4) + "px"
+    node.style.marginTop = Math.floor(gap*0.5) + "px"
     // console.log(node.parentNode, (gap/2) + "px gap")
     // console.log((gap/2) + "px gap")
   }
 
   const unlockScaling = async () => {
     scaled = false
-    await scaleThenResize()
+    await scaleThenCenter()
   }
   unlockScaling()
   window.addEventListener("resize", unlockScaling)
@@ -61,7 +70,7 @@ export default function(node, condition) {
   return {
     update(condition) {
       visible = condition
-      scaleThenResize()
+      scaleThenCenter()
     },
 
     destroy() {
