@@ -43,6 +43,7 @@ func New(withOptions ...Option) (_ parser.Parser, err error) {
 			util.Prioritized(parser.NewATXHeadingParser(), 600),
 			util.Prioritized(parser.NewFencedCodeBlockParser(), 700),
 			util.Prioritized(parser.NewBlockquoteParser(), 800),
+			// util.Prioritized(NewBlockquoteParser(), 800),
 			util.Prioritized(parser.NewHTMLBlockParser(), 900),
 			util.Prioritized(extension.NewFootnoteBlockParser(), 999),
 			util.Prioritized(parser.NewParagraphParser(), 1000),
@@ -56,6 +57,9 @@ func New(withOptions ...Option) (_ parser.Parser, err error) {
 			util.Prioritized(extension.NewLinkifyParser(
 			// opts ...LinkifyOption
 			), 999),
+			util.Prioritized(extension.NewTypographerParser(
+			// opts ...TypographerOption
+			), 9999),
 		)...),
 		parser.WithParagraphTransformers(append(
 			parser.DefaultParagraphTransformers(),

@@ -51,20 +51,58 @@ func (r *Renderer) renderBlockquote(
 	}
 
 	if entering {
-		if n.HasChildren() && n.LastChild().Kind() == ast.KindParagraph {
+		// prevent cutting attribute twice
+		_, ok := n.AttributeString(citationAttribute)
+		if !ok && n.HasChildren() && n.LastChild().Kind() == ast.KindParagraph {
 			lines := n.LastChild().Lines()
 			if index := lines.Len() - 1; index >= 0 {
 				lastLine := lines.At(index)
 				m := reCaptureCitation.FindSubmatch(lastLine.Value(source))
 				if len(m) == 2 {
 					cutoff := len(m[0])
-					// spew.Dump(lastLine.Stop)
-					lastLine.Stop -= cutoff //
+					lastLine.Stop -= cutoff
 					lines.Set(index, lastLine)
+					n.SetAttributeString(citationAttribute, m[1])
+
+					// walk backwards through children, cutting them
+					for c := n.LastChild().LastChild(); c != nil; c = c.PreviousSibling() {
+						t, ok := c.(*ast.Text)
+						if !ok {
+							panic("not text node!")
+							break
+						}
+						available := t.Segment.Len()
+						if available > cutoff { // trim
+							t.Segment.Stop -= cutoff
+							break
+						}
+						// n.RemoveChild(n, c) // drop
+						// TODO: this is ugly! but it works for now.
+						t.Segment.Start = t.Segment.Stop // make null size ""
+						cutoff -= available
+						if cutoff <= 0 {
+							break
+						}
+					}
+
+					// t, ok := n.LastChild().LastChild().(*ast.Text)
+					// if ok {
+					// 	if t.Segment.Stop-cutoff < t.Segment.Start {
+					//
+					// 	} else {
+					// 		t.Segment.Stop -= cutoff // shorten
+					// 	}
+					// }
+					// spew.Dump(lastLine.Stop)
 
 					// t := n.LastChild().LastChild().(*ast.Text)
+					// spew.Dump(source[lastLine.Start:lastLine.Stop])
 					// t.Segment.Stop -= cutoff
-					n.SetAttributeString(citationAttribute, m[1])
+					// if t.Segment.Start > t.Segment.Stop {
+					// 	spew.Dump(source[lastLine.Start:lastLine.Stop])
+					// 	panic(string(m[1]))
+					// }
+
 					// n.LastChild().SetLines(lines)
 					// spew.Dump(t.Text(source))
 					// panic(string(n.LastChild().Text(source)))

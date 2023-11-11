@@ -74,7 +74,7 @@ func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, e
 	}
 	if len(alt) > 0 {
 		_, _ = w.WriteString(`<figcaption class="source">`)
-		_, _ = w.Write(util.EscapeHTML(alt))
+		_, _ = w.Write(alt)
 		_, _ = w.WriteString(`</figcaption>`)
 	}
 	return ast.WalkSkipChildren, nil

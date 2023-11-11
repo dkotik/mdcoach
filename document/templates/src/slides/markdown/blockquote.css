@@ -4,3 +4,19 @@
   background-color: var(--color-menu-background);
   margin: 0;
 }
+
+blockquote > p+cite {
+  display: block;
+  font-family: sans-serif;
+  margin-right: 2em;
+  margin-bottom: -1em;
+  margin-top: 0.8em;
+  text-align: right;
+  font-size: 80%;
+  color: var(--color-body-subtext);
+}
+
+blockquote > p+cite:before {
+  color: var(--color-body-subtext);
+  content: "\2013\00A0";
+}

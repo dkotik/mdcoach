@@ -28,6 +28,6 @@ body.dark {
   --color-marker-background: #006eff;
 }
 
-pre {
+pre, code {
   white-space: pre-wrap;
 }

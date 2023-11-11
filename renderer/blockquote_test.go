@@ -14,6 +14,11 @@ func TestCitationDetection(t *testing.T) {
 >
 > Last part of it. (Author)
 
+> > three\
+> > continue teh quote
+>
+> ahem... (citation, p. 71)
+
   `), &buf)
 
 	if err != nil {
@@ -22,6 +27,13 @@ func TestCitationDetection(t *testing.T) {
 	if buf.String() != `<blockquote><p>Some quote.</p>
 <p>Last part of it.</p>
 <cite>Author</cite>
+</blockquote>
+<blockquote><blockquote>
+<p>three<br>
+continue teh quote</p>
+</blockquote>
+<p>ahem...</p>
+<cite>citation, p. 71</cite>
 </blockquote>
 ` {
 		t.Log(buf.String())
