@@ -6,6 +6,7 @@ import (
 )
 
 func TestCitationDetection(t *testing.T) {
+	// t.Skip("disabled for now")
 	var buf bytes.Buffer
 	err := newTestRenderer(t).Convert([]byte(`
 
@@ -29,6 +30,7 @@ func TestCitationDetection(t *testing.T) {
 }
 
 func TestAsideRendering(t *testing.T) {
+	// t.Skip("disabled for now")
 	var buf bytes.Buffer
 	err := newTestRenderer(t).Convert([]byte(`
 

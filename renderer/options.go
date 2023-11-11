@@ -27,7 +27,7 @@ func WithPictureProvider(p picture.Provider) Option {
 
 func WithPictureProviderOptions(withOptions ...picture.Option) Option {
 	return func(o *options) error {
-		provider, err := picture.NewLocalProvider(withOptions...)
+		provider, err := picture.NewInternetProvider(withOptions...)
 		if err != nil {
 			return err
 		}

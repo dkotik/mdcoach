@@ -9,6 +9,7 @@
   import './markdown/picture.css'
   import './markdown/list.css'
   import './markdown/thematicBreak.css'
+  import './markdown/table.css'
   import scaling from './scaling.mjs'
   import { onMount } from 'svelte'
   let element

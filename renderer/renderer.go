@@ -11,6 +11,7 @@ import (
 	"github.com/dkotik/mdcoach/parser"
 	"github.com/dkotik/mdcoach/picture"
 	"github.com/yuin/goldmark/ast"
+	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/renderer"
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/util"
@@ -44,6 +45,15 @@ func New(withOptions ...Option) (_ renderer.Renderer, err error) {
 			pictureProvider: o.PictureProvider,
 		}, 900),
 		util.Prioritized(html.NewRenderer(), 1000),
+		util.Prioritized(extension.NewTaskCheckBoxHTMLRenderer(), 500),
+		util.Prioritized(extension.NewStrikethroughHTMLRenderer(), 500),
+		util.Prioritized(extension.NewDefinitionListHTMLRenderer(), 500),
+		util.Prioritized(extension.NewTableHTMLRenderer(
+		// opts ...TableOption
+		), 500),
+		util.Prioritized(extension.NewFootnoteHTMLRenderer(
+		// opts ...FootnoteOption
+		), 500),
 	)), nil
 }
 

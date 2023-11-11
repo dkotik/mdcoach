@@ -62,8 +62,8 @@ func (r *Renderer) renderBlockquote(
 					lastLine.Stop -= cutoff //
 					lines.Set(index, lastLine)
 
-					t := n.LastChild().LastChild().(*ast.Text)
-					t.Segment.Stop -= cutoff
+					// t := n.LastChild().LastChild().(*ast.Text)
+					// t.Segment.Stop -= cutoff
 					n.SetAttributeString(citationAttribute, m[1])
 					// n.LastChild().SetLines(lines)
 					// spew.Dump(t.Text(source))

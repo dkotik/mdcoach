@@ -1,5 +1,7 @@
 ## Primary
 
+- fix citation in blockquotes!
+- re-enable walk_test and fix all of its issues
 - create new node kind
 - Toggleable progress line at the bottom of the screen
 - support figure with a footnote! syntax

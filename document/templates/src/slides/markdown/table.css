@@ -1,0 +1,42 @@
+table {
+  border: 0;
+  border-spacing: 0;
+  font-family: sans-serif;
+  width: 100%;
+  font-size: 60%;
+}
+
+table tr:last-child td {
+  border-bottom-width: 0.2rem;
+  border-color: var(--color-menu-background);
+  border-bottom-style: solid;
+}
+
+table td, th {
+  padding: 1rem 2rem;
+}
+
+table thead th {
+  text-align: center;
+  background-color: var(--color-menu-background);
+  border-width: 0 0 1px 0;
+  border-color: var(--color-marker-background);
+  border-bottom-style: dashed;
+  padding-bottom: 0.8rem;
+}
+
+table tr:nth-child(even) {
+  background-color: var(--color-menu-background);
+}
+
+td:first-child {
+  border-left-width: 0.2rem;
+  border-color: var(--color-menu-background);
+  border-left-style: solid;
+}
+
+td:last-child {
+  border-right-width: 0.2rem;
+  border-color: var(--color-menu-background);
+  border-right-style: solid;
+}

@@ -3,7 +3,6 @@ package review
 import (
 	"errors"
 
-	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/renderer"
 )
 
@@ -31,6 +30,7 @@ func withDefaultRenderer() Option {
 		if o.renderer != nil {
 			return nil
 		}
-		return WithRenderer(goldmark.DefaultRenderer())(o)
+		return errors.New("Markdown renderer is required")
+		// return WithRenderer(mdcRenderer.New())(o)
 	}
 }
