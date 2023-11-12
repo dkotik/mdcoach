@@ -79,6 +79,7 @@ func reviewCmd() *cli.Command {
 			// TODO: add notify context to respond to Ctrl+C signal and others.
 			g, _ := errgroup.WithContext(context.TODO())
 			for _, filePath := range args {
+				filePath := filePath // Golang loop bug
 				g.Go(func() (err error) {
 					// TODO: make sure file is markdown file!
 					// prevent loading huge files!
@@ -86,6 +87,7 @@ func reviewCmd() *cli.Command {
 					if err != nil {
 						return fmt.Errorf("unable to read file %q: %w", filePath, err)
 					}
+					// fmt.Println("loading questions from:", filePath)
 					return questions.AddSource(markdown)
 				})
 			}

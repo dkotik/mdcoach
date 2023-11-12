@@ -21,7 +21,8 @@ func (r *Review) AddSource(markdown []byte) (err error) {
 	if err != nil {
 		return err
 	}
-	_ = p.Parse(text.NewReader(markdown), parser.WithContext(parser.NewContext()))
+	_ = p.Parse(text.NewReader(markdown))
+	// parser.WithContext(parser.NewContext())
 
 	b := &bytes.Buffer{}
 	for _, q := range questions {

@@ -37,7 +37,7 @@ func New(withOptions ...Option) (_ parser.Parser, err error) {
 			util.Prioritized(parser.NewThematicBreakParser(), 200),
 			util.Prioritized(parser.NewListParser(), 300),
 			// util.Prioritized(parser.NewListItemParser(), 400),
-			util.Prioritized(NewReviewQuestionParser(), 400),
+			util.Prioritized(o.listItemParser, 400),
 			util.Prioritized(o.listItemParser, 400),
 			util.Prioritized(parser.NewCodeBlockParser(), 500),
 			util.Prioritized(parser.NewATXHeadingParser(), 600),

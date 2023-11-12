@@ -10,7 +10,7 @@ import (
 
 var (
 	questionsContextKey = parser.NewContextKey()
-	reIsLineQuestion    = regexp.MustCompile(`\w\?\s*$`)
+	reIsLineQuestion    = regexp.MustCompile(`[^\s\\]\?\s*$`)
 )
 
 func IsQuestion(node ast.Node, reader text.Reader) bool {

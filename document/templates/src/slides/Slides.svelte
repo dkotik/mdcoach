@@ -77,11 +77,16 @@
   overflow-x: scroll;
   /* https://codepen.io/knowler/pen/eYGRwyb */
   /* scroll-snap-type: x mandatory; */
-  scrollbar-color: transparent transparent;
+  scrollbar-color: transparent transparent; /* Firefox */
   scrollbar-width: thin;
   /* @supports (overflow-inline: scroll) {
     overflow-inline: scroll;
     scroll-snap-type: inline mandatory;
   } */
+}
+
+.slides::-webkit-scrollbar {
+  /* Chrome, Safari */
+  display: none;
 }
 </style>

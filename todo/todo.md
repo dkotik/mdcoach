@@ -1,8 +1,8 @@
 ## Primary
 
-- fix citation in blockquotes!
-- re-enable walk_test and fix all of its issues
-- create new node kind
+- add header insertion for review:
+- parsers and renderers should be paired
+  - create new node kind for SlideCut instead of NotesBreak
 - Toggleable progress line at the bottom of the screen
 - support figure with a footnote! syntax
 - include documentation into .cache dir for all cache distributions?
