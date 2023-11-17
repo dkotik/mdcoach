@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-// TODO: move this to ember.text package, document carefully and make global.
-
 // \A = at beginning of text
 var emojiFilter = regexp.MustCompile(`(?:\A|\s)(:-\(|X-\(|:-0|8-\)|:P|\^ \^|B-\)|;\)|:-D|:\(|:-O|o\.0|o\.O|:\$|:\*\)|:/|:-\?|:-P|:-/|\^\^|;P|;-P|X\(|:-\)|:\)|;\(|%D|;-\)|:D|:X|%-\)|%\)|;-\(|:-X|\:\w+\:)`)
 

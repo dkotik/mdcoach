@@ -1,13 +1,11 @@
 Markdown Coach
 ==============
-CommonExtensions Extensions = NoIntraEmphasis | Tables | FencedCode |
-    Autolink | Strikethrough | SpaceHeadings | HeadingIDs |
-    BackslashLineBreak | DefinitionLists
-AutoHeadingIDs // Create the heading ID from the text
-Footnotes
-[included] HeadingIDs // specify heading IDs  with {#id} ?
-[included] BackslashLineBreak // Translate trailing backslashes into line breaks
-[included] DefinitionLists // Render definition lists
+
+Markdown to HTML slide compiler. Supports multiple displays with optional extended notes.
+
+```sh
+go install github.com/dkotik/mdcoach/cmd/mdcoach@latest
+```
 
 ## Slide Rendering
 
@@ -44,16 +42,3 @@ Two horizontal rule elements are rendered as one horizontal rule `<hr class="dou
 
 ### PDF Utilities
 Running `mdcoach <path-to-pdf.pdf>` will print the extracted text from each page of the chosen PDF file. Giving multiple PDF files as arguments will result in a single merged PDF file.
-
-### Installation
-license='Custom Lincense', or use GPL license - project can't be rolled into commercial software. https://drewdevault.com/2019/06/13/My-journey-from-MIT-to-GPL.html ? or should I try to sell this?
-    keywords='markdown coach', 'images/backgrounds/*'],
-
-producing HTML presentations, notes, and tests from markdown files.
-
-LICENSE
-=======
-
-Copyright (c) 2019 Dmitry Kotik
-
-Property of Dmitry Kotik, which can be used only with written and digitally signed permission from Dmitry Kotik @keybase.io/dkotik.
