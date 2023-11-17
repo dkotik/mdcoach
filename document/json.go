@@ -9,6 +9,7 @@ var escapeDataJSON = [256][]byte{
 	'<':  []byte("&lt;"),
 	'>':  []byte("&gt;"),
 	'\'': []byte("&#39;"),
+	'\\': []byte("\\\\"), // doubled \\
 	'"':  []byte("\\&#34;"),
 	'\n': []byte("&amp;#10;"),
 	'\r': []byte("&amp;#13;"),

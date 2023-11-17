@@ -68,7 +68,7 @@ func (r *Renderer) renderBlockquote(
 					for c := n.LastChild().LastChild(); c != nil; c = c.PreviousSibling() {
 						t, ok := c.(*ast.Text)
 						if !ok {
-							panic("not text node!")
+							// panic("not text node!")
 							break
 						}
 						available := t.Segment.Len()

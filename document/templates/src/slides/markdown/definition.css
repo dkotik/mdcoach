@@ -1,0 +1,17 @@
+dl {
+  /* // padding: 1rem 1rem 1rem 4rem */
+  /* // margin: 1rem 1.5rem 1rem 3rem */
+}
+
+dl > dt {
+  font-weight: bold;
+}
+
+dl > dd {
+  margin-top: 1em;
+  margin-left: 1em;
+}
+
+dl > dd:before {
+  content: "\2013\00A0";
+}

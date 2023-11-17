@@ -10,6 +10,7 @@
   import './markdown/list.css'
   import './markdown/thematicBreak.css'
   import './markdown/table.css'
+  import './markdown/definition.css'
   import scaling from './scaling.mjs'
   import { onMount } from 'svelte'
   let element

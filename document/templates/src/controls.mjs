@@ -21,7 +21,7 @@ export function revealedListItems(node, data) {
     if (target.listItems.length === 0) return
     // reveal items that should be visible based on previous depth
     for (var i = 0; i < allRevealedItems.get(currentSlide); i++) {
-      target.listItems[i].classList.add('revealed')
+      target.listItems[i]?.classList.add('revealed')
     }
   }
 
