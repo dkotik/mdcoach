@@ -1,8 +1,13 @@
 ## Primary
 
-- add header insertion for review:
+- [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
+- [ ] review should allow a percentage or count of bonus questions as a flag
+- [ ] add header insertion for review
+- [ ] native PDF creation (might have a problem with tables):
+  - [ ] https://github.com/ebuckley/write/blob/main/write/lib/pdf.go
 - parsers and renderers should be paired
   - create new node kind for SlideCut instead of NotesBreak
+- [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)
 - Toggleable progress line at the bottom of the screen
 - support figure with a footnote! syntax
 - include documentation into .cache dir for all cache distributions?
