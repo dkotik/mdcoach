@@ -205,7 +205,7 @@ func generateAutoHeadingID(node *ast.Heading, reader text.Reader, pc Context) {
 	node.SetAttribute(attrNameID, headingID)
 }
 
-func parseLastLineAttributes(node ast.Node, reader text.Reader, pc Context) {
+func parseLastLineAttributes(node ast.Node, reader text.Reader, _ Context) {
 	lastIndex := node.Lines().Len() - 1
 	if lastIndex < 0 { // empty headings
 		return

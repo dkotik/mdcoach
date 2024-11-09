@@ -65,7 +65,7 @@ var openComment = []byte("<!--")
 var closeComment = []byte("-->")
 var doubleHyphen = []byte("--")
 
-func (s *rawHTMLParser) parseComment(block text.Reader, pc Context) ast.Node {
+func (s *rawHTMLParser) parseComment(block text.Reader, _ Context) ast.Node {
 	savedLine, savedSegment := block.Position()
 	node := ast.NewRawHTML()
 	line, segment := block.PeekLine()
@@ -107,7 +107,7 @@ func (s *rawHTMLParser) parseComment(block text.Reader, pc Context) ast.Node {
 	return nil
 }
 
-func (s *rawHTMLParser) parseUntil(block text.Reader, closer []byte, pc Context) ast.Node {
+func (s *rawHTMLParser) parseUntil(block text.Reader, closer []byte, _ Context) ast.Node {
 	savedLine, savedSegment := block.Position()
 	node := ast.NewRawHTML()
 	for {
@@ -128,7 +128,7 @@ func (s *rawHTMLParser) parseUntil(block text.Reader, closer []byte, pc Context)
 	return nil
 }
 
-func (s *rawHTMLParser) parseMultiLineRegexp(reg *regexp.Regexp, block text.Reader, pc Context) ast.Node {
+func (s *rawHTMLParser) parseMultiLineRegexp(reg *regexp.Regexp, block text.Reader, _ Context) ast.Node {
 	sline, ssegment := block.Position()
 	if block.Match(reg) {
 		node := ast.NewRawHTML()

@@ -1,5 +1,6 @@
 ## Primary
 
+- [ ] implement aside.go
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
 - [ ] review should allow a percentage or count of bonus questions as a flag
 - [ ] add header insertion for review
@@ -30,7 +31,9 @@
 ## Considerations
 
 - Markdown javascript mind map
+- <https://voussoir.net/writing/css_for_printing>
 - scalp for features?
+  - <https://github.com/quail-ink/goldmark-enclave> - more embeds
   - https://www.deckset.com/features/
   - https://godoc.org/golang.org/x/tools/present
   - https://casual-effects.com/markdeep/
