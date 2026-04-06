@@ -1,3 +1,6 @@
+/*
+Package aside provides Goldmark Markdown extension for parsing and rending <aside> blocks marked with semicolons.
+*/
 package aside
 
 import (

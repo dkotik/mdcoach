@@ -1,4 +1,4 @@
-package renderer
+package notesbreak
 
 import (
 	"github.com/yuin/goldmark/ast"
@@ -6,8 +6,7 @@ import (
 	"github.com/yuin/goldmark/util"
 )
 
-// TODO: deprecate
-func (r *Renderer) renderNotesBreak(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
+func renderNotesBreak(w util.BufWriter, source []byte, n ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
 		return ast.WalkContinue, nil
 	}

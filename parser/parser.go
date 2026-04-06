@@ -74,6 +74,7 @@ func New(withOptions ...Option) (_ parser.Parser, err error) {
 	), nil
 }
 
+// TODO: depcrecate in favor of mdextension/figure/HasOnlyOneChildOfKind
 func HasOnlyOneChildOfKind(n ast.Node, k ast.NodeKind) bool {
 	if n.ChildCount() != 1 {
 		return false

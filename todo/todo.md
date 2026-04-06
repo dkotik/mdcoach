@@ -1,5 +1,6 @@
 ## Primary
 
+- [ ] https://github.com/gpdf-dev/gpdf for PDF generation
 - [ ] implement aside.go
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
 - [ ] review should allow a percentage or count of bonus questions as a flag

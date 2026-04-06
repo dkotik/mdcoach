@@ -1,4 +1,4 @@
-package parser
+package notesbreak
 
 import (
 	"github.com/yuin/goldmark/ast"
@@ -6,17 +6,6 @@ import (
 	"github.com/yuin/goldmark/text"
 	"github.com/yuin/goldmark/util"
 )
-
-// TODO: deprecate in favor of the package `notesbreak`
-var KindNotesBreak = ast.NewNodeKind("NotesBreak")
-
-type NotesBreak struct {
-	*ast.ThematicBreak
-}
-
-func (n *NotesBreak) Kind() ast.NodeKind {
-	return KindNotesBreak
-}
 
 type notesBreakParser struct{}
 
