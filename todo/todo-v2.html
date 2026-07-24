@@ -8,59 +8,99 @@
     body {
       background-color: black;
       color: antiquewhite;
-      padding: 4em;
-
+      padding: 1em;
+      display: grid;
+      align-items: center;
+      vertical-align: middle;
       overflow: hidden !important;
     }
 
-    section {
-      aspect-ratio: 4 / 3;
+    main {
       margin: 0 auto;
       width: min(80%, 80em);
+      max-height: 90%;
+      position: relative;
+    }
+
+    section {
+      width: 100%;
+      aspect-ratio: 4 / 3;
       align-items: center;
       justify-content: center;
       vertical-align: middle;
       border: 1px solid red;
+      border-radius: 2em;
 
       /* https://www.youtube.com/watch?v=KD3_l3S_D6M logic */
-      position: fixed;
+      position: absolute;
       z-index: -100;
-      display: none;
+      display: grid;
+      visibility: hidden;
       opacity: 0;
       translate: -20vw 0;
-      transition: display, opacity, translate;
-      transition-duration: 2000ms;
+      transition: visibility, opacity, translate, border-color;
+      transition-duration: 900ms;
       transition-behavior: allow-discrete; /* animates display */
     }
 
     section:target {
-      display: grid;
+      visibility: visible;
       opacity: 1;
       translate: 0 0;
+      border-color: black;
+      z-index: 1;
 
       @starting-style {
         opacity: 0;
         translate: 20vw 0;
       }
     }
+
+    section.reverse {
+      translate: 20vw 0;
+    }
+
+    section.reverse:target {
+      translate: 0 0;
+      border-color: black;
+
+      @starting-style {
+        translate: -20vw 0;
+      }
+    }
   </style>
   <script>
     let slide = 1;
     setInterval(() => {
-      slide = slide + ((Math.random() > 0.5) ? 1:-1)
-      if (slide < 1) slide = 3;
-      if (slide > 5) slide = 5;
-      window.location.hash = `${slide}`;
-    }, 4000);
+      let previous = slide
+      slide = slide + (Math.random() > 0.5 ? 1:-1)
+      if (slide < 1) slide = 1
+      if (slide > 5) slide = 5
+      if (previous > slide) {
+        document.getElementById(slide).classList.add("reverse")
+        document.getElementById(previous).classList.add("reverse")
+      } else {
+        document.getElementById(slide).classList.remove("reverse")
+        document.getElementById(previous).classList.remove("reverse")
+      }
+      window.location.hash = `${slide}`
+      // document.querySelectorAll("section").forEach(section => {
+      //   if (section.id == slide) {
+      //     section.classList.add("active")
+      //     return
+      //   }
+      //   section.classList.remove("active")
+      // })
+    }, 1000);
   </script>
   <body>
     <main>
-      <section id="1">1 - not on Firefox</section>
-      <section id="2">2 - not on Firefox</section>
-      <section id="3">3 - not on Firefox</section>
-      <section id="4">4 - not on Firefox</section>
-      <section id="5">5 - not on Firefox</section>
-      <section id="6">6 - not on Firefox</section>
+      <section class="reverse" id="1">1</section>
+      <section class="reverse" id="2">2</section>
+      <section class="reverse" id="3">3</section>
+      <section class="reverse" id="4">4</section>
+      <section class="reverse" id="5">5</section>
+      <section class="reverse" id="6">6</section>
     </main>
   </body>
 </html>
