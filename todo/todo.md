@@ -1,6 +1,8 @@
 ## Primary
 
-- [ ] https://github.com/gpdf-dev/gpdf for PDF generation
+- [ ] see the contents of todo-v2.html
+- [ ] <https://github.com/tendstofortytwo/goldmark-customtag> for custom aside tag, perhaps based on `>>` 
+- [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] implement aside.go
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
 - [ ] review should allow a percentage or count of bonus questions as a flag

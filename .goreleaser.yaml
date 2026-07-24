@@ -1,0 +1,68 @@
+version: 2
+before:
+  hooks:
+    - go generate ./...
+    - go test ./...
+builds:
+  - main: ./cmd/mdcoach
+    id: "mdcoach"
+    binary: mdcoach
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+archives:
+  - formats: ["zip"]
+checksum:
+  name_template: "checksums.txt"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs"
+      - "^testdata"
+homebrew_casks:
+  - name: mdcoach
+    url:
+      template: "https://github.com/dkotik/mdcoach/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+      verified: github.com/dkotik/mdcoach/
+      # Never `using: ":homebrew_curl"` as it requires installing homebrew
+      # curl before the cask itself can be installed
+      # MacOS comes with curl installed already.
+      using: ":homebrew_curl"
+    repository:
+      owner: dkotik
+      name: homebrew-tap
+      branch: main
+    homepage: "https://github.com/dkotik/mdcoach"
+    description: "Generate slide presentations with speaker notes from Markdown files."
+    license: "MIT"
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/mdcoach"]
+          end
+nfpms:
+  - id: mdcoach.deb
+    package_name: mdcoach
+    formats:
+      - deb
+    vendor: "Dmitry Kotik"
+    homepage: "https://github.com/dkotik/mdcoach"
+    maintainer: "Dmitry Kotik <7bt7hnl6f@relay.firefox.com>"
+    description: "Generate slide presentations with speaker notes from Markdown files."
+    license: "MIT" # required together with the copyright file below
+    contents:
+      - src: ./LICENSE
+        dst: /usr/share/doc/mdcoach/copyright
+        file_info:
+          mode: 0644
+signs:
+  - id: cosign
+    cmd: cosign
+    args: ["sign-blob", "--bundle", "${signature}", "${artifact}", "--yes"]
+    artifacts: checksum
+    signature: "${artifact}.sigstore.json"
