@@ -1,6 +1,6 @@
 module github.com/dkotik/mdcoach
 
-go 1.21.2
+go 1.25
 
 require (
 	github.com/OneOfOne/xxhash v1.2.8
@@ -14,9 +14,16 @@ require (
 )
 
 require (
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/sebdah/goldie/v2 v2.8.0
+	github.com/sergi/go-diff v1.0.0 // indirect
+)
+
+require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
+	github.com/yuin/goldmark/v2 v2.1.5
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

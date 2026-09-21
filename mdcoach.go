@@ -12,6 +12,8 @@ import (
 	"github.com/yuin/goldmark/renderer"
 )
 
+//go:generate go test . -update
+
 func Compile(w io.Writer, tree ast.Node, markdown []byte, r renderer.Renderer) error {
 	return Walk(tree, markdown, r, func(slide, notes, footnotes []byte) (err error) {
 		// slide = bytes.ReplaceAll(slide, []byte("\n"), []byte("&#10;"))

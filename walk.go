@@ -10,7 +10,7 @@ import (
 	"github.com/yuin/goldmark/renderer"
 )
 
-var EndWalk = errors.New("iteration interrupted")
+var ErrEndWalk = errors.New("iteration interrupted")
 
 type WalkFunc func(slide, notes, footnotes []byte) error
 
@@ -91,7 +91,7 @@ func (i *iterator) Flush() error {
 	i.notes.Reset()
 	i.footnotes.Reset()
 	i.w = i.slide
-	if !errors.Is(err, EndWalk) {
+	if !errors.Is(err, ErrEndWalk) {
 		return err
 	}
 	return nil
