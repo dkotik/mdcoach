@@ -17,6 +17,9 @@ func NewParser() parser.Parser {
 			extension.NewFootnoteParser(),
 			extension.NewTypographerParser(),
 		),
+		parser.WithBlockParsers(
+			util.Prioritized(NewAsideParser(), 10),
+		),
 		parser.WithASTTransformers(
 			// Run after extension AST transformers so slides contain their
 			// final block structure.

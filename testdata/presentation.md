@@ -32,6 +32,10 @@ footer: What would you change for the course?
 
     ft paragraph ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
 
+***
+
+Aside element here.
+
 # Presentation Title1
 
 :) :checkbox: \:cat: :salad: \;) \!\[slashes\]\(in brackets\) \\:cat: \\\ hmm:-)
@@ -104,7 +108,7 @@ second
 
     лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu
 
-*******************
+- - -
 
     [+] test-handout.md
 ``` chords

@@ -64,6 +64,12 @@ Document: MdCoach Demo {
         }
       }
     }
+    Aside: Aside element here. {
+      Paragraph: Aside element here. {
+        Text: Aside element here
+        Text: .
+      }
+    }
   }
   Slide: Presentation Title1 {
     [data-heading-level="1"]
