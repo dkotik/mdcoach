@@ -1,7 +1,12 @@
-Document: BLockquote Tests {
-  Slide {
-    MetaBlock
+Document: MdCoach Demo {
+  MetaBlock
+  Slide: MdCoach Demo {
+    Heading: MdCoach Demo {
+      Text: MdCoach
+      Text: Demo
+    }
   }
+  Slide
   Slide: BLockquote Tests {
     Heading: BLockquote Tests {
       Text: BLockquote
@@ -113,7 +118,8 @@ Document: BLockquote Tests {
       Text: paragraph
     }
     HTMLBlock
-    ThematicBreak
+  }
+  Slide: hmmm ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf s {
     Paragraph: hmmm ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf s {
       Text: hmmm
       Image: luth {
@@ -146,7 +152,6 @@ Document: BLockquote Tests {
         Text: Bold
       }
     }
-    ThematicBreak
   }
   Slide: Martin Luther {
     Heading: Martin Luther {
@@ -204,7 +209,6 @@ Document: BLockquote Tests {
         }
       }
     }
-    ThematicBreak
   }
   Slide: second title {
     Heading: second title {
@@ -224,7 +228,8 @@ Document: BLockquote Tests {
       Text: second
     }
     CodeBlock
-    ThematicBreak
+  }
+  Slide: Definition Title {
     CodeBlock
     CodeBlock
     CodeBlock
@@ -252,7 +257,8 @@ Document: BLockquote Tests {
         }
       }
     }
-    ThematicBreak
+  }
+  Slide: regular paragraph {
     CodeBlock
     Paragraph: regular paragraph {
       Text: regular
@@ -282,8 +288,6 @@ Document: BLockquote Tests {
       Text: hmm
     }
     HTMLBlock
-  }
-  Slide: Left Aside Block {
     Heading: Left Aside Block {
       Text: Left Aside
       Text: Block
@@ -305,14 +309,13 @@ Document: BLockquote Tests {
       Text: sdf
       RawHTML
     }
-    ThematicBreak
+  }
+  Slide: [>] aside right {
     Paragraph: [>] aside right {
       Text: [
       Text: >] aside
       Text: right
     }
-  }
-  Slide: Right Aside Block {
     Heading: Right Aside Block {
       Text: Right Aside
       Text: Block
@@ -325,13 +328,13 @@ Document: BLockquote Tests {
       Text: sdflksdf lsd jflksdjflk
       Text: sdf
     }
-    ThematicBreak
+  }
+  Slide: ![luth](https://i.stack.imgur.com/El2F7.png "weee") {
     Paragraph: ![luth](https://i.stack.imgur.com/El2F7.png "weee") {
       Image: luth {
         Text: luth
       }
     }
-    ThematicBreak
   }
   Slide: Demo Python Code {
     Heading: Demo Python Code {
@@ -375,7 +378,8 @@ Document: BLockquote Tests {
       }
     }
     CodeBlock
-    ThematicBreak
+  }
+  Slide: [!] # ывадлывоаы ывдаок8щу54 {
     Paragraph: [!] # ывадлывоаы ывдаок8щу54 {
       Text: [
       Text: !] # ывадлывоаы
@@ -399,7 +403,6 @@ Document: BLockquote Tests {
         Text: quote
       }
     }
-    ThematicBreak
   }
   Slide: ya this is greatski {
     Heading: ya this is greatski {
@@ -411,7 +414,6 @@ Document: BLockquote Tests {
       Text: ist
     }
     CodeBlock
-    ThematicBreak
   }
   Slide: ya this is greatski {
     Heading: ya this is greatski {
@@ -419,7 +421,8 @@ Document: BLockquote Tests {
       Text: greatski
     }
     CodeBlock
-    ThematicBreak
+  }
+  Slide: [!] ![](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg {
     Paragraph: [!] ![](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg {
       Text: [
       Text: !]
@@ -429,7 +432,6 @@ Document: BLockquote Tests {
       Text: yep it really
       Text: ist
     }
-    ThematicBreak
   }
   Slide: ya this is greatski {
     Heading: ya this is greatski {
@@ -440,7 +442,6 @@ Document: BLockquote Tests {
       Text: yep it really
       Text: ist
     }
-    ThematicBreak
   }
   Slide: ya this is greatski {
     Heading: ya this is greatski {
@@ -488,7 +489,8 @@ Document: BLockquote Tests {
       Text: Eiusmod do irure nulla aliquip aute eu tempor eu deserunt te
       Text: .
     }
-    ThematicBreak
+  }
+  Slide: block quote fun {
     Blockquote: block quote fun {
       Paragraph: block quote fun {
         Text: block quote
@@ -512,7 +514,8 @@ Document: BLockquote Tests {
         }
       }
     }
-    ThematicBreak
+  }
+  Slide: one {
     List: one {
       ListItem: one {
         Paragraph: one {
@@ -530,7 +533,8 @@ Document: BLockquote Tests {
         }
       }
     }
-    ThematicBreak
+  }
+  Slide: ![image](https://i.stack.imgur.com/El2F7.png) {
     Paragraph: ![image](https://i.stack.imgur.com/El2F7.png) {
       Image: image {
         Text: image
@@ -548,7 +552,8 @@ Document: BLockquote Tests {
       Text: ?]
       Text: question2
     }
-    ThematicBreak
+  }
+  Slide: dfgkldf glkj {
     Paragraph: dfgkldf glkj {
       Text: dfgkldf
       Text: glkj
@@ -558,7 +563,8 @@ Document: BLockquote Tests {
       Text: ?] prof
       Text: note1
     }
-    ThematicBreak
+  }
+  Slide: [?] student note1 {
     Paragraph: [?] student note1 {
       Text: [
       Text: ?] student
@@ -568,7 +574,6 @@ Document: BLockquote Tests {
       Text: dfgkldf
       Text: glkoreo
     }
-    ThematicBreak
   }
   Slide: title {
     Heading: title {

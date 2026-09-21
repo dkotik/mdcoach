@@ -1,6 +1,7 @@
 package mdcoach
 
 import (
+	meta "github.com/yuin/goldmark-meta/v2"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/parser"
 	"github.com/yuin/goldmark/v2/text"
@@ -57,18 +58,56 @@ func (*SlideTransformer) Transform(document *ast.Document, _ text.Reader, _ pars
 		return
 	}
 
-	children := make([]ast.Node, 0, document.ChildCount())
-	for child := document.FirstChild(); child != nil; child = child.NextSibling() {
-		children = append(children, child)
-	}
-	document.RemoveChildren()
-
-	var slide *Slide
-	for _, child := range children {
-		if slide == nil || child.Kind() == ast.KindHeading {
-			slide = &Slide{}
-			document.AppendChild(slide)
+	children := make([]ast.Node, 0, 12)
+	lastChild := document.FirstChild()
+	makeSlide := func() ast.Node {
+		slide := &Slide{}
+		document.InsertAfter(lastChild, slide)
+		for _, child := range children {
+			slide.AppendChild(child)
+			// document.RemoveChild(child)
 		}
-		slide.AppendChild(child)
+		children = children[:0]
+		return slide
 	}
+	var (
+		heading       *ast.Heading
+		thematicBreak *ast.ThematicBreak
+	)
+	for child := document.FirstChild(); child != nil; child = child.NextSibling() {
+		switch child.Kind() {
+		case meta.KindMetaBlock:
+			continue // skip
+		case ast.KindThematicBreak:
+			lastChild = child
+			thematicBreak = child.(*ast.ThematicBreak)
+			child = makeSlide()
+			document.RemoveChild(thematicBreak)
+		case ast.KindHeading:
+			heading = child.(*ast.Heading)
+			switch heading.Level {
+			case 1, 2:
+				if len(children) > 0 {
+					_ = makeSlide()
+				}
+			}
+			fallthrough
+		default:
+			lastChild = child
+			children = append(children, child)
+		}
+	}
+	if len(children) > 0 {
+		makeSlide()
+	}
+	// document.RemoveChildren()
+
+	// var slide *Slide
+	// for _, child := range children {
+	// 	if slide == nil || child.Kind() == ast.KindHeading {
+	// 		slide = &Slide{}
+	// 		document.AppendChild(slide)
+	// 	}
+	// 	slide.AppendChild(child)
+	// }
 }
