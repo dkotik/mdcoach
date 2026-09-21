@@ -23,8 +23,8 @@ var (
 type Slide struct {
 	ast.BaseBlock
 	HeadingLevel        int
-	AsideImage          *ast.Image
-	IsAsideRightAligned bool
+	Image               *ast.Image
+	IsImageRightAligned bool
 }
 
 func NewSlide(children ...ast.Node) (s *Slide) {
@@ -41,9 +41,9 @@ func (s *Slide) withChildren(children ...ast.Node) {
 		s.AppendChild(child)
 	}
 	ok := false
-	s.AsideImage, ok = s.FirstChild().(*ast.Image)
+	s.Image, ok = s.FirstChild().(*ast.Image)
 	if ok {
-		s.RemoveChild(s.AsideImage)
+		s.RemoveChild(s.Image)
 		return
 	}
 
@@ -57,15 +57,15 @@ func (s *Slide) withChildren(children ...ast.Node) {
 		))
 	}
 
-	s.AsideImage, ok = s.FirstChild().NextSibling().(*ast.Image)
+	s.Image, ok = s.FirstChild().NextSibling().(*ast.Image)
 	if ok {
-		s.RemoveChild(s.AsideImage)
+		s.RemoveChild(s.Image)
 		return
 	}
-	s.AsideImage, ok = s.LastChild().(*ast.Image)
+	s.Image, ok = s.LastChild().(*ast.Image)
 	if ok {
-		s.IsAsideRightAligned = true
-		s.RemoveChild(s.AsideImage)
+		s.IsImageRightAligned = true
+		s.RemoveChild(s.Image)
 	}
 }
 
@@ -77,8 +77,8 @@ func (*Slide) Kind() ast.NodeKind {
 // Dump dumps the slide and its children.
 func (s *Slide) Dump(_ []byte) *ast.NodeDump {
 	return ast.NewNodeDump(s, map[string]any{
-		"aside":             s.AsideImage,
-		"asideRightAligned": s.IsAsideRightAligned,
+		"aside":             s.Image,
+		"asideRightAligned": s.IsImageRightAligned,
 		// "headingLevel": s.HeadingLevel,
 		// "children":   s.Children(),
 	})
