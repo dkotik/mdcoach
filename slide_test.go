@@ -21,7 +21,7 @@ func TestSlideTransformer(t *testing.T) {
 	document.AppendChild(secondHeading)
 	document.AppendChild(secondContent)
 
-	(&SlideTransformer{}).Transform(document, nil, nil)
+	(&slideCutter{}).Transform(document, nil, nil)
 
 	if document.ChildCount() != 4 {
 		t.Fatalf("got %d slides, want 4", document.ChildCount())
@@ -47,7 +47,7 @@ func TestSlideTransformerDoesNotSplitNestedHeadings(t *testing.T) {
 	blockquote.AppendChild(ast.NewHeading(1, ast.HeadingKindATX))
 	document.AppendChild(blockquote)
 
-	(&SlideTransformer{}).Transform(document, nil, nil)
+	(&slideCutter{}).Transform(document, nil, nil)
 
 	if document.ChildCount() != 1 {
 		t.Fatalf("got %d slides, want 1", document.ChildCount())
@@ -59,7 +59,7 @@ func TestSlideTransformerDoesNotSplitNestedHeadings(t *testing.T) {
 
 func TestSlideTransformerEmptyDocument(t *testing.T) {
 	document := ast.NewDocument()
-	(&SlideTransformer{}).Transform(document, nil, nil)
+	(&slideCutter{}).Transform(document, nil, nil)
 	if document.ChildCount() != 0 {
 		t.Fatalf("got %d children, want 0", document.ChildCount())
 	}

@@ -10,6 +10,7 @@ import (
 
 	"github.com/sebdah/goldie/v2"
 	"github.com/yuin/goldmark/v2/ast"
+	"github.com/yuin/goldmark/v2/text"
 )
 
 func TestPresentationAST(t *testing.T) {
@@ -40,6 +41,34 @@ func dumpAST(tree ast.Node, source []byte, dump *bytes.Buffer) {
 			}
 			dump.WriteByte('\n')
 			level++
+			for _, attribute := range node.Attributes() {
+				fmt.Fprintf(
+					dump,
+					"%*s[%s=%q]\n",
+					level*2,
+					"",
+					attribute.Name,
+					attribute.Value.Value(source),
+				)
+			}
+			// properties := node.Dump(source).Properties
+			// propertyNames := make([]string, 0, len(properties))
+			// for name := range properties {
+			// 	if name != "attributes" && name != "children" {
+			// 		propertyNames = append(propertyNames, name)
+			// 	}
+			// }
+			// sort.Strings(propertyNames)
+			// for _, name := range propertyNames {
+			// 	fmt.Fprintf(
+			// 		dump,
+			// 		"%*s[%s=%q]\n",
+			// 		level*2,
+			// 		"",
+			// 		name,
+			// 		propertyValue(properties[name], source),
+			// 	)
+			// }
 		} else {
 			level--
 			if node.HasChildren() {
@@ -48,6 +77,17 @@ func dumpAST(tree ast.Node, source []byte, dump *bytes.Buffer) {
 		}
 		return ast.WalkContinue, nil
 	})
+}
+
+func propertyValue(value any, source []byte) string {
+	switch value := value.(type) {
+	case text.SingleLineValue:
+		return value.Value(source)
+	case text.MultiLineValue:
+		return value.Value(source)
+	default:
+		return fmt.Sprint(value)
+	}
 }
 
 func nodePreview(node ast.Node, source []byte) string {

@@ -1,6 +1,7 @@
 Document: MdCoach Demo {
   MetaBlock
   Slide: MdCoach Demo {
+    [data-heading-level="1"]
     Heading: MdCoach Demo {
       Text: MdCoach
       Text: Demo
@@ -8,6 +9,7 @@ Document: MdCoach Demo {
   }
   Slide
   Slide: BLockquote Tests {
+    [data-heading-level="1"]
     Heading: BLockquote Tests {
       Text: BLockquote
       Text: Tests
@@ -64,6 +66,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: Presentation Title1 {
+    [data-heading-level="1"]
     Heading: Presentation Title1 {
       Text: Presentation
       Text: Title1
@@ -74,23 +77,27 @@ Document: MdCoach Demo {
     }
     List: [x] # first ahem {
       ListItem: [x] # first ahem {
+        [task-status="completed"]
         Paragraph: [x] # first ahem {
           Text: # first
           Text: ahem
         }
       }
       ListItem: [ ] first long line dksfj sdfl ksdjf lskajf lsadkjf lsakjf l {
+        [task-status="active"]
         Paragraph: [ ] first long line dksfj sdfl ksdjf lskajf lsadkjf lsakjf l {
           Text: first long line dksfj sdfl ksdjf lskajf lsadkjf lsakjf lskjd
           Text: ksladfjsakdf
         }
       }
       ListItem: [X] last {
+        [task-status="completed"]
         Paragraph: [X] last {
           Text: last
         }
         List: [ ] almost {
           ListItem: [ ] almost {
+            [task-status="active"]
             Paragraph: [ ] almost {
               Text: almost
             }
@@ -102,6 +109,7 @@ Document: MdCoach Demo {
             }
           }
           ListItem: [ ] sdfskdf {
+            [task-status="active"]
             Paragraph: [ ] sdfskdf {
               Text: sdfskdf
             }
@@ -154,6 +162,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: Martin Luther {
+    [data-heading-level="2"]
     Heading: Martin Luther {
       Text: Martin
       Text: Luther
@@ -169,6 +178,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: Martin Luther Left {
+    [data-heading-level="2"]
     Heading: Martin Luther Left {
       Text: Martin Luther
       Text: Left
@@ -190,6 +200,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: Martin Luther Right {
+    [data-heading-level="2"]
     Heading: Martin Luther Right {
       Text: Martin Luther
       Text: Right
@@ -211,6 +222,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: second title {
+    [data-heading-level="1"]
     Heading: second title {
       Text: second
       Text: title
@@ -272,6 +284,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: Luther is the best hackman protestor test {
+    [data-heading-level="1"]
     Heading: Luther is the best hackman protestor test {
       Text: Luther is the best hackman protestor
       Text: test
@@ -337,6 +350,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: Demo Python Code {
+    [data-heading-level="1"]
     Heading: Demo Python Code {
       Text: Demo Python
       Text: Code
@@ -360,11 +374,13 @@ Document: MdCoach Demo {
     }
     List: [x] dfgdfg {
       ListItem: [x] dfgdfg {
+        [task-status="completed"]
         Paragraph: [x] dfgdfg {
           Text: dfgdfg
         }
       }
       ListItem: [ ] dfgdfg {
+        [task-status="active"]
         Paragraph: [ ] dfgdfg {
           Text: dfgdfg
         }
@@ -405,6 +421,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: ya this is greatski {
+    [data-heading-level="1"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
@@ -416,6 +433,7 @@ Document: MdCoach Demo {
     CodeBlock
   }
   Slide: ya this is greatski {
+    [data-heading-level="1"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
@@ -434,6 +452,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: ya this is greatski {
+    [data-heading-level="1"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
@@ -444,6 +463,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: ya this is greatski {
+    [data-heading-level="1"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
@@ -576,6 +596,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: title {
+    [data-heading-level="1"]
     Heading: title {
       Text: title
     }
