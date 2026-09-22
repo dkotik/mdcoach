@@ -11,6 +11,7 @@ import (
 var styleSheets = []string{
 	"layout.css",
 	"section.css",
+	"image.css",
 }
 
 func makeBefore(w io.Writer) error {

@@ -15,6 +15,11 @@ footer: What would you change for the course?
 # MdCoach Demo
 
 ---
+
+### Image Test
+
+![cat image](media/cat_3.jpg "some cat")
+
 ---
 
 # BLockquote Tests
@@ -96,8 +101,6 @@ quoted figure first
 
 - - -
 # second title
-
-![inclu](media/cat_3.jpg)
 
 first
 

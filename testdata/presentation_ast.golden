@@ -7,7 +7,18 @@ Document: MdCoach Demo {
       Text: Demo
     }
   }
-  Slide
+  Slide: Image Test {
+    [data-heading-level="3"]
+    Heading: Image Test {
+      Text: Image
+      Text: Test
+    }
+    Figure: cat image {
+      Image: cat image {
+        Text: cat image
+      }
+    }
+  }
   Slide: BLockquote Tests {
     [data-heading-level="1"]
     Heading: BLockquote Tests {
@@ -232,11 +243,6 @@ Document: MdCoach Demo {
     Heading: second title {
       Text: second
       Text: title
-    }
-    Figure: inclu {
-      Image: inclu {
-        Text: inclu
-      }
     }
     Paragraph: first {
       Text: first

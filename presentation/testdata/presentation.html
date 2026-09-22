@@ -72,9 +72,18 @@ section.reverse.is-focused {
     translate: 20vw 0;
   }
 }
+.mdcoachImage {
+	min-height: 1.5em;
+	min-width: 1.5em;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: contain;
+	aspect-ratio: attr(data-aspect-ratio type(<number>));
+}
 </style><main>
 <section data-heading-level="1"><h1>MdCoach Demo</h1>
-</section><section data-heading-level="0"></section><section data-heading-level="1"><h1>BLockquote Tests</h1>
+</section><section data-heading-level="3"><h3>Image Test</h3>
+<figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div><figcaption>cat image</figcaption></figure></section><section data-heading-level="1"><h1>BLockquote Tests</h1>
 <blockquote>
 <blockquote>
 <p>three<br>
@@ -152,7 +161,7 @@ quoted figure first</p>
 </blockquote>
 </blockquote>
 </section><section data-heading-level="1"><h1>second title</h1>
-<figure><div data-src="media/cat_3.jpg" data-alt="inclu" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div><figcaption>inclu</figcaption></figure><p>first</p>
+<p>first</p>
 <pre><code>comment **block** with image
 ![luth](media/cat_3.jpg &quot;weee&quot;)
 </code></pre>
@@ -347,15 +356,25 @@ let currentSlide = 0
 let currentListItem = 0
 
 const focusedClass = "is-focused"
+const reverseClass = "reverse"
 const slides = document.querySelectorAll('main > section')
 const finalSlideIndex = slides.length-1
 
 const navigate = (isForward) => {
   slides[currentSlide].classList.remove(focusedClass)
-  currentSlide = currentSlide + (
-    isForward ? 1 : -1
-  )
+  if (isForward) {
+    slides[currentSlide].classList.add(reverseClass)
+    currentSlide++
+  } else {
+    slides[currentSlide].classList.remove(reverseClass)
+    currentSlide--
+  }
   slides[currentSlide].classList.add(focusedClass)
+  if (isForward) {
+    slides[currentSlide].classList.remove(reverseClass)
+  } else {
+    slides[currentSlide].classList.add(reverseClass)
+  }
 }
 navigate(true)
 
