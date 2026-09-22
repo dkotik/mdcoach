@@ -16,14 +16,14 @@ const navigate = (isForward) => {
 }
 navigate(true)
 
-window.addEventListener(nextListItemOrSlide, (event) => {
+window.addEventListener(nextEventType, (event) => {
   if(currentSlide >= finalSlideIndex) {
     return
   }
   navigate(true)
 })
 
-window.addEventListener(previousSlide, (event) => {
+window.addEventListener(previousEventType, (event) => {
   if (currentSlide === 0) {
     return
   }

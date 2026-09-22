@@ -41,7 +41,7 @@ section {
   transition-behavior: allow-discrete; /* animates display */
 }
 
-section:is-focused {
+section.is-focused {
   visibility: visible;
   opacity: 1;
   translate: 0 0;
@@ -58,7 +58,7 @@ section.reverse {
   translate: -20vw 0;
 }
 
-section.reverse:is-focused {
+section.reverse.is-focused {
   translate: 0 0;
   border-color: black;
 
@@ -66,4 +66,4 @@ section.reverse:is-focused {
     translate: 20vw 0;
   }
 }
-</style>
+</style><main>

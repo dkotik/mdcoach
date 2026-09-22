@@ -16,7 +16,7 @@ var scripts = []string{
 }
 
 func makeBefore(w io.Writer) error {
-	if _, err := io.WriteString(w, "<script>\n"); err != nil {
+	if _, err := io.WriteString(w, "</main><script>\n"); err != nil {
 		return fmt.Errorf("write script start tag: %w", err)
 	}
 	for _, entry := range scripts {

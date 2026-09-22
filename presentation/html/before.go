@@ -31,7 +31,7 @@ func makeBefore(w io.Writer) error {
 			}
 		}
 	}
-	if _, err := io.WriteString(w, "</style>\n"); err != nil {
+	if _, err := io.WriteString(w, "</style><main>\n"); err != nil {
 		return fmt.Errorf("write style end tag: %w", err)
 	}
 	return nil

@@ -128,7 +128,7 @@ func (l *ImageLoader) loadImage(
 
 // LoadImages downloads image destinations that are owned by the AST nodes.
 // Use LoadImagesFromSource when the AST was parsed from Markdown source.
-func (l *ImageLoader) LoadImages(ctx context.Context, source []byte, tree *ast.Document) error {
+func (l *ImageLoader) LoadImages(ctx context.Context, source []byte, tree ast.Node) error {
 	group, ctx := errgroup.WithContext(ctx)
 	group.SetLimit(min(4, runtime.NumCPU()))
 	if err := ast.Walk(tree, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
