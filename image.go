@@ -11,18 +11,11 @@ import (
 
 var _ html.NodeRenderer = (*imageRenderer)(nil)
 
-type ImageRepository interface {
-	GetStyleClass(string) string
-}
-
 type imageRenderer struct {
-	Repository ImageRepository
 }
 
-func NewRenderer(repository ImageRepository) *imageRenderer {
-	return &imageRenderer{
-		Repository: repository,
-	}
+func NewRenderer() *imageRenderer {
+	return &imageRenderer{}
 }
 
 func (r *imageRenderer) Render(writer io.Writer, source []byte, node ast.Node, entering bool, rc renderer.Context) (ast.WalkStatus, error) {
