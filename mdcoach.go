@@ -26,6 +26,7 @@ func NewParser() parser.Parser {
 			// Run after extension AST transformers so slides contain their
 			// final block structure.
 			util.Prioritized(NewSlideTransformer(2), 999),
+			util.Prioritized(NewFigureTransformer(), 4),
 		),
 	)
 }
@@ -35,6 +36,8 @@ type imageRendererExtension struct{}
 func (*imageRendererExtension) RendererOptions(*html.Config) []html.Option {
 	return []html.Option{
 		html.WithNodeRenderer(ast.KindImage, NewImageRenderer()),
+		html.WithNodeRenderer(FigureKind, NewFigureRenderer()),
+		html.WithNodeRenderer(SlideKind, NewSlideRenderer()),
 	}
 }
 

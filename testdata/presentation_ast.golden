@@ -156,7 +156,7 @@ Document: MdCoach Demo {
     }
     CodeBlock
     CodeBlock
-    Paragraph: ![luth](media/cat_3.jpg) {
+    Figure: luth {
       Image: luth {
         Text: luth
       }
@@ -233,7 +233,7 @@ Document: MdCoach Demo {
       Text: second
       Text: title
     }
-    Paragraph: ![inclu](media/cat_3.jpg) {
+    Figure: inclu {
       Image: inclu {
         Text: inclu
       }
@@ -283,7 +283,7 @@ Document: MdCoach Demo {
       Text: paragraph
     }
     CodeBlock
-    Paragraph: ![luth](media/cat_1.jpg "weee Treisdf") {
+    Figure: luth {
       Image: luth {
         Text: luth
       }
@@ -348,8 +348,8 @@ Document: MdCoach Demo {
       Text: sdf
     }
   }
-  Slide: ![luth](media/cat_2.jpg "weee") {
-    Paragraph: ![luth](media/cat_2.jpg "weee") {
+  Slide: luth {
+    Figure: luth {
       Image: luth {
         Text: luth
       }
@@ -474,7 +474,7 @@ Document: MdCoach Demo {
       Text: ya this is
       Text: greatski
     }
-    Paragraph: ![splash](media/cat_1.jpg) {
+    Figure: splash {
       Image: splash {
         Text: splash
       }
@@ -560,8 +560,8 @@ Document: MdCoach Demo {
       }
     }
   }
-  Slide: ![image](media/cat_2.jpg) {
-    Paragraph: ![image](media/cat_2.jpg) {
+  Slide: image {
+    Figure: image {
       Image: image {
         Text: image
       }

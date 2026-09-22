@@ -2,17 +2,22 @@ package mdcoach
 
 import (
 	"fmt"
+	"io"
 
 	meta "github.com/yuin/goldmark-meta/v2"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/parser"
+	"github.com/yuin/goldmark/v2/renderer"
+	"github.com/yuin/goldmark/v2/renderer/html"
 	"github.com/yuin/goldmark/v2/text"
+	"github.com/yuin/goldmark/v2/util"
 )
 
 var (
 	// SlideKind is the node kind for presentation slides.
 	SlideKind                       = ast.NewNodeKind("Slide")
 	_         ast.Node              = (*Slide)(nil)
+	_         html.NodeRenderer     = (*slideRenderer)(nil)
 	_         parser.ASTTransformer = (*slideCutter)(nil)
 )
 
@@ -82,6 +87,38 @@ func (s *Slide) Dump(_ []byte) *ast.NodeDump {
 		// "headingLevel": s.HeadingLevel,
 		// "children":   s.Children(),
 	})
+}
+
+type slideRenderer struct{}
+
+// NewSlideRenderer returns a Goldmark v2 HTML renderer for Slide nodes.
+func NewSlideRenderer() html.NodeRenderer {
+	return &slideRenderer{}
+}
+
+func (*slideRenderer) Render(
+	writer io.Writer,
+	source []byte,
+	node ast.Node,
+	entering bool,
+	rc renderer.Context,
+) (ast.WalkStatus, error) {
+	w := writer.(util.BufWriter)
+	slide := node.(*Slide)
+	if entering {
+		_, _ = fmt.Fprintf(w, `<section data-heading-level="%d"`, slide.HeadingLevel)
+		if slide.IsImageRightAligned {
+			_, _ = w.WriteString(` data-is-right="true"`)
+		}
+		_ = w.WriteByte('>')
+		if slide.Image != nil {
+			return NewImageRenderer().Render(writer, source, slide.Image, true, rc)
+		}
+		return ast.WalkContinue, nil
+	}
+
+	_, _ = w.WriteString("</section>")
+	return ast.WalkContinue, nil
 }
 
 // slideCutter groups the document's top-level blocks into Slide nodes.

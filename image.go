@@ -44,16 +44,16 @@ func (r *imageRenderer) Render(writer io.Writer, source []byte, node ast.Node, e
 	}
 	w := writer.(util.BufWriter)
 	n := node.(*ast.Image)
-	_, _ = w.WriteString("<div src=\"")
+	_, _ = w.WriteString("<div data-src=\"")
 	dest := n.Destination.Value(source)
 	if !html.IsDangerousURL(dest) {
 		_, _ = html.ContextLinkURLWriter(rc).WriteString(dest)
 	}
-	_, _ = w.WriteString(`" alt="`)
+	_, _ = w.WriteString(`" data-alt="`)
 	renderTexts(w, source, n, rc)
 	_ = w.WriteByte('"')
 	if !n.Title.IsEmpty() {
-		_, _ = w.WriteString(` title="`)
+		_, _ = w.WriteString(` data-title="`)
 		_, _ = n.Title.WriteTo(html.ContextTextWriter(rc), source)
 		_ = w.WriteByte('"')
 	}
