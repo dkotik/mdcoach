@@ -1,10 +1,12 @@
 package mdcoach
 
 import (
+	"bytes"
 	"context"
 	"os"
 	"testing"
 
+	"github.com/sebdah/goldie/v2"
 	"github.com/yuin/goldmark/v2/ast"
 )
 
@@ -27,13 +29,12 @@ func TestImageLoader(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	t.Chdir("testdata")
 	tree, ok := NewParser().Parse(source).(*ast.Document)
 	if !ok {
 		t.Fatal("parser returned a non-document AST")
 	}
 	cache := NewImageCache()
-	loader := NewImageLoader(cache, ImageConstraints{})
+	loader := NewImageLoader(cache, MediaOptions{Path: "testdata"})
 	if err := loader.LoadImages(context.Background(), source, tree); err != nil {
 		t.Fatal(err)
 	}
@@ -49,4 +50,13 @@ func TestImageLoader(t *testing.T) {
 			t.Fatalf("cached image %q has invalid size %dx%d", hash, image.Width, image.Height)
 		}
 	}
+
+	var css bytes.Buffer
+	// if err := renderImagesOnly(&css, tree); err != nil {
+	// 	t.Fatal(err)
+	// }
+	if err := cache.WriteImageDataCSS(&css); err != nil {
+		t.Fatal(err)
+	}
+	goldie.New(t).Assert(t, "presentation_icss", css.Bytes())
 }

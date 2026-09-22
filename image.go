@@ -14,11 +14,14 @@ var _ html.NodeRenderer = (*imageRenderer)(nil)
 type imageRenderer struct {
 }
 
-func NewRenderer() *imageRenderer {
+func NewImageRenderer() html.NodeRenderer {
 	return &imageRenderer{}
 }
 
 func (r *imageRenderer) Render(writer io.Writer, source []byte, node ast.Node, entering bool, rc renderer.Context) (ast.WalkStatus, error) {
+	if node.Kind() != ast.KindImage {
+		return ast.WalkContinue, nil
+	}
 	if !entering {
 		return ast.WalkContinue, nil
 	}

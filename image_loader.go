@@ -20,19 +20,21 @@ import (
 )
 
 type ImageLoader struct {
+	path        string
 	widthLimit  int
 	heightLimit int
 	quality     int
 	cache       *ImageCache
 }
 
-type ImageConstraints struct {
+type MediaOptions struct {
+	Path        string
 	WidthLimit  int
 	HeightLimit int
 	Quality     int
 }
 
-func NewImageLoader(cache *ImageCache, ic ImageConstraints) *ImageLoader {
+func NewImageLoader(cache *ImageCache, ic MediaOptions) *ImageLoader {
 	if cache == nil {
 		panic("nil cache")
 	}
@@ -46,6 +48,7 @@ func NewImageLoader(cache *ImageCache, ic ImageConstraints) *ImageLoader {
 		ic.Quality = 80
 	}
 	return &ImageLoader{
+		path:        ic.Path,
 		widthLimit:  ic.WidthLimit,
 		heightLimit: ic.HeightLimit,
 		quality:     ic.Quality,
@@ -70,6 +73,13 @@ func (l *ImageLoader) decodeImage(r io.Reader) (*imageJPG, error) {
 	return newImageFromImage(decoded)
 }
 
+func (l *ImageLoader) localImagePath(location string) string {
+	if path.IsAbs(location) {
+		return location
+	}
+	return path.Join(l.path, location)
+}
+
 func (l *ImageLoader) loadImage(
 	ctx context.Context,
 	location string,
@@ -82,7 +92,7 @@ func (l *ImageLoader) loadImage(
 	}
 
 	if url.Host == "" {
-		file, err := os.Open(location)
+		file, err := os.Open(l.localImagePath(location))
 		if err != nil {
 			return nil, fmt.Errorf("open local image %q: %w", location, err)
 		}

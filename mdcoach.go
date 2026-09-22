@@ -2,8 +2,10 @@ package mdcoach
 
 import (
 	meta "github.com/yuin/goldmark-meta/v2"
+	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/extension"
 	"github.com/yuin/goldmark/v2/parser"
+	"github.com/yuin/goldmark/v2/renderer/html"
 	"github.com/yuin/goldmark/v2/util"
 )
 
@@ -25,5 +27,11 @@ func NewParser() parser.Parser {
 			// final block structure.
 			util.Prioritized(NewSlideTransformer(2), 999),
 		),
+	)
+}
+
+func NewRenderer() html.Renderer {
+	return html.New(
+		html.WithNodeRenderer(ast.KindImage, NewImageRenderer()),
 	)
 }

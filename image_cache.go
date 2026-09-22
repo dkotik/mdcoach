@@ -4,12 +4,24 @@ import (
 	"bytes"
 	"encoding/base64"
 	"fmt"
+	"html/template"
 	stdImage "image"
 	"image/jpeg"
+	"io"
 	"sync"
 
 	"github.com/OneOfOne/xxhash"
 )
+
+var imageDataTemplateCSS = template.Must(template.New("").Parse(`
+<style>
+	{{ range . }}
+		.{{ .Hash }} {
+			background-image: url("data:image/jpeg;base64,{{ .DataBase64 }}");
+		}
+	{{ end }}
+</style>
+`))
 
 type imageJPG struct {
 	Hash       string
@@ -73,4 +85,11 @@ func (c *ImageCache) Set(location string, img *imageJPG) {
 	defer c.mu.Unlock()
 	c.images[img.Hash] = img
 	c.hashes[location] = img.Hash
+}
+
+func (c *ImageCache) WriteImageDataCSS(w io.Writer) error {
+	if err := imageDataTemplateCSS.Execute(w, c.images); err != nil {
+		return fmt.Errorf("write image data CSS: %w", err)
+	}
+	return nil
 }
