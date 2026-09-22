@@ -18,6 +18,7 @@ func NewParser() parser.Parser {
 			extension.NewDefinitionListParser(),
 			extension.NewFootnoteParser(),
 			extension.NewTypographerParser(),
+			extension.NewTableParser(),
 		),
 		parser.WithBlockParsers(
 			util.Prioritized(NewAsideParser(), 10),
@@ -36,6 +37,7 @@ type imageRendererExtension struct{}
 func (*imageRendererExtension) RendererOptions(*html.Config) []html.Option {
 	return []html.Option{
 		html.WithNodeRenderer(ast.KindImage, NewImageRenderer()),
+		html.WithNodeRenderer(AsideKind, NewAsideRenderer()),
 		html.WithNodeRenderer(FigureKind, NewFigureRenderer()),
 		html.WithNodeRenderer(SlideKind, NewSlideRenderer()),
 	}

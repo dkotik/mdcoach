@@ -1,13 +1,19 @@
 package mdcoach
 
 import (
+	"io"
+
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/parser"
+	"github.com/yuin/goldmark/v2/renderer"
+	"github.com/yuin/goldmark/v2/renderer/html"
 	"github.com/yuin/goldmark/v2/text"
 	"github.com/yuin/goldmark/v2/util"
 )
 
 var AsideKind = ast.NewNodeKind("Aside")
+
+var _ html.NodeRenderer = (*asideRenderer)(nil)
 
 // A Aside struct represents a marginal note.
 type Aside struct {
@@ -29,6 +35,32 @@ func NewAside() *Aside {
 	n := &Aside{}
 	n.Init(n)
 	return n
+}
+
+type asideRenderer struct{}
+
+// NewAsideRenderer returns a Goldmark v2 HTML renderer for Aside nodes.
+func NewAsideRenderer() html.NodeRenderer {
+	return &asideRenderer{}
+}
+
+func (*asideRenderer) Render(
+	writer io.Writer,
+	_ []byte,
+	node ast.Node,
+	entering bool,
+	_ renderer.Context,
+) (ast.WalkStatus, error) {
+	w, ok := writer.(util.BufWriter)
+	if !ok {
+		w = util.NewErrorBufWriter(writer)
+	}
+	if entering {
+		_, _ = w.WriteString("<aside>")
+	} else {
+		_, _ = w.WriteString("</aside>")
+	}
+	return ast.WalkContinue, nil
 }
 
 type asideParser struct {
