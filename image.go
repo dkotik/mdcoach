@@ -2,6 +2,7 @@ package mdcoach
 
 import (
 	"io"
+	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark/v2/ast"
@@ -11,6 +12,8 @@ import (
 )
 
 var _ html.NodeRenderer = (*imageRenderer)(nil)
+
+var reIsYoutubeLink = regexp.MustCompile(`^https\:\/\/(youtu.be\/|www\.youtube\.com\/watch\?v\=)(?P<query>[^\"]+)$`)
 
 const (
 	ImageCSSClass           = "mdcoachImage"

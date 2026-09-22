@@ -9,10 +9,13 @@ import (
 )
 
 var styleSheets = []string{
+	"theme.css",
 	"layout.css",
 	"section.css",
 	"list_item.css",
 	"image.css",
+	"blockquote.css",
+	"code.css",
 }
 
 func makeBefore(w io.Writer) error {

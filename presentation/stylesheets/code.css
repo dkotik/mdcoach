@@ -1,0 +1,8 @@
+pre, code {
+  white-space: pre-wrap;       /* Preserves whitespace and wraps naturally */
+  overflow-wrap: break-word;
+
+  background-color: var(--color-alt);
+  padding: 1rem 1rem 1rem 4rem;
+  margin: 1rem 1.5rem 1rem 3rem;
+}

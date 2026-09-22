@@ -1,8 +1,8 @@
 /* =============== layout.css ================= */
 
 body {
-  background-color: black;
-  color: antiquewhite;
+  /*background-color: black;*/
+  /*color: antiquewhite;*/
   padding: 1em;
   display: grid;
   align-items: center;

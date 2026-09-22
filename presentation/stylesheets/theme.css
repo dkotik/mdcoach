@@ -1,0 +1,32 @@
+html {
+  overscroll-behavior: none;
+}
+
+body {
+  --color-body-text: black;
+  --color-body-subtext: #aaa;
+  --color-body-background: white;
+  --color-menu-background: #eee;
+  --color-menu-text: #666;
+  --color-button-background: #fff;
+
+  /* Notes */
+  /* #4527f4 */
+  --color-marker-background: #006eff;
+  --color-marker-trail: #003eaf;
+
+  color: var(--color-body-text);
+}
+
+body.dark {
+  --color-body-text: white;
+  --color-body-subtext: #4a4a4a;
+  --color-body-background: black;
+  --color-menu-background: #161623;
+  --color-menu-text: black;
+  --color-button-background: #999;
+
+  /* Notes */
+  --color-marker-background: #006eff;
+  --color-marker-trail: #003eaf;
+}
