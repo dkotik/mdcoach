@@ -1,0 +1,49 @@
+/* =================== section.css =================== */
+
+section {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  border: 1px solid red;
+  border-radius: 2em;
+  transform-origin: 50% 0%;
+
+  /* https://www.youtube.com/watch?v=KD3_l3S_D6M logic */
+  position: absolute;
+  z-index: -100;
+  display: grid;
+  visibility: hidden;
+  opacity: 0;
+  translate: 20vw 0;
+  transition: visibility, opacity, translate, border-color;
+  transition-duration: 900ms;
+  transition-behavior: allow-discrete; /* animates display */
+}
+
+section:is-focused {
+  visibility: visible;
+  opacity: 1;
+  translate: 0 0;
+  border-color: black;
+  z-index: 1;
+
+  @starting-style {
+    opacity: 0;
+    translate: -20vw 0;
+  }
+}
+
+section.reverse {
+  translate: -20vw 0;
+}
+
+section.reverse:is-focused {
+  translate: 0 0;
+  border-color: black;
+
+  @starting-style {
+    translate: 20vw 0;
+  }
+}

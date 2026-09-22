@@ -1,0 +1,106 @@
+<script>
+// ============== debounce.js =====================
+
+function debounce(func, wait) {
+  let timeoutId;
+
+  return function (...args) {
+    // Clear the previous timer if the function is called again before the delay finishes
+    clearTimeout(timeoutId);
+
+    // Set a new timer to execute the function after the specified delay
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, wait);
+  };
+}
+// ============== input.js =====================
+
+const nextEventType = "nextListItemOrSlide"
+const next = (event) => {
+  event.preventDefault()
+  window.dispatchEvent(new CustomEvent(nextEventType, {
+    bubbles: true,
+    cancelable: true,
+    detail: event
+  }))
+}
+
+const previousEventType = "previousSlide"
+const previous = (event) => {
+  event.preventDefault()
+  window.dispatchEvent(new CustomEvent(previousEventType, {
+    bubbles: true,
+    cancelable: true,
+    detail: event
+  }))
+}
+
+document.addEventListener(
+  'keydown',
+  (event) => {
+    switch (event.code) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+      case 'PageDown':
+      case 'Space':
+      case 'KeyJ':
+        next(event)
+        return
+      case 'ArrowLeft':
+      case 'ArrowUp':
+      case 'PageUp':
+      case 'Backspace':
+      case 'KeyK':
+        previous(event)
+        return
+      case 'KeyC':
+        window.open(window.location.href, '_blank')
+        return
+    }
+  }
+)
+
+document.addEventListener(
+  'wheel',
+  (event) => {
+    if (event.deltaY >= 0) {
+      next(event)
+    } else {
+      previous(event)
+    }
+  }
+)
+// ============== focus.js =====================
+
+let currentSlide = 0
+let currentListItem = 0
+
+const focusedClass = "is-focused"
+const slides = document.querySelectorAll('main > section')
+const finalSlideIndex = slides.length-1
+
+const navigate = (isForward) => {
+  slides[currentSlide].classList.remove(focusedClass)
+  currentSlide = currentSlide + (
+    isForward ? 1 : -1
+  )
+  slides[currentSlide].classList.add(focusedClass)
+}
+navigate(true)
+
+window.addEventListener(nextListItemOrSlide, (event) => {
+  if(currentSlide >= finalSlideIndex) {
+    return
+  }
+  navigate(true)
+})
+
+window.addEventListener(previousSlide, (event) => {
+  if (currentSlide === 0) {
+    return
+  }
+  navigate(false)
+})
+// ============== scale.js =====================
+</script>

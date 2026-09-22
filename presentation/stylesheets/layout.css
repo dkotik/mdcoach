@@ -1,0 +1,18 @@
+/* =============== layout.css ================= */
+
+body {
+  background-color: black;
+  color: antiquewhite;
+  padding: 1em;
+  display: grid;
+  align-items: center;
+  vertical-align: middle;
+  overflow: hidden !important;
+}
+
+main {
+  margin: 0 auto;
+  width: min(80%, 80em);
+  max-height: 90%;
+  position: relative;
+}
