@@ -52,11 +52,17 @@ func TestImageLoader(t *testing.T) {
 	}
 
 	var css bytes.Buffer
+	_, _ = css.WriteString("<!DOCTYPE html>\n<html>\n<body>\n")
+	_, _ = css.WriteString("<style>\n")
+	_, _ = css.WriteString(ImageStyle)
+	_, _ = css.WriteString("</style>\n")
+
 	if err := renderImagesOnly(&css, source, tree); err != nil {
 		t.Fatal(err)
 	}
 	if err := cache.WriteImageDataCSS(&css); err != nil {
 		t.Fatal(err)
 	}
+	_, _ = css.WriteString("</body>\n</html>")
 	goldie.New(t).Assert(t, "presentation_icss", css.Bytes())
 }

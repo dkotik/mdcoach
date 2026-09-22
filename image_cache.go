@@ -13,10 +13,15 @@ import (
 	"github.com/OneOfOne/xxhash"
 )
 
-var imageDataTemplateCSS = template.Must(template.New("").Parse(`
+var imageDataTemplateCSS = template.Must(template.New("").Funcs(template.FuncMap{
+	"safeCSS": func(s string) template.CSS {
+		return template.CSS(s)
+	},
+}).Parse(`
 <style>
 	{{ range . }}
-		.{{ .Hash }} {
+	  {{ safeCSS (printf "/* %s */" .Location) }}
+		.` + ImageContentClassPrefix + `{{ .Hash }} {
 			background-image: url("data:image/jpeg;base64,{{ .DataBase64 }}");
 		}
 	{{ end }}
@@ -24,8 +29,9 @@ var imageDataTemplateCSS = template.Must(template.New("").Parse(`
 `))
 
 type imageJPG struct {
+	Location   string
 	Hash       string
-	DataBase64 []byte
+	DataBase64 string
 	Width      int
 	Height     int
 }
@@ -49,7 +55,7 @@ func newImageFromImage(i stdImage.Image) (*imageJPG, error) {
 	bounds := i.Bounds()
 	return &imageJPG{
 		Hash:       fmt.Sprintf("%x", hash.Sum(nil)),
-		DataBase64: []byte(base64.StdEncoding.EncodeToString(encodedBytes)),
+		DataBase64: base64.StdEncoding.EncodeToString(encodedBytes),
 		Width:      bounds.Dx(),
 		Height:     bounds.Dy(),
 	}, nil
@@ -80,11 +86,11 @@ func (c *ImageCache) Get(location string) (*imageJPG, bool) {
 	return img, ok
 }
 
-func (c *ImageCache) Set(location string, img *imageJPG) {
+func (c *ImageCache) Set(img *imageJPG) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.images[img.Hash] = img
-	c.hashes[location] = img.Hash
+	c.hashes[img.Location] = img.Hash
 }
 
 func (c *ImageCache) WriteImageDataCSS(w io.Writer) error {

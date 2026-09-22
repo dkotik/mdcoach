@@ -121,7 +121,8 @@ func (l *ImageLoader) loadImage(
 		}
 	}
 
-	l.cache.Set(location, img)
+	img.Location = location
+	l.cache.Set(img)
 	return img, nil
 }
 

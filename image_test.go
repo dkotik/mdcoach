@@ -20,7 +20,7 @@ func TestImageRendererRendersOnlyImageNodes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	const want = `<img src="media/cat_1.jpg" alt="cat">`
+	const want = `<div src="media/cat_1.jpg" alt="cat"></div>`
 	if rendered.String() != want {
 		t.Fatalf("rendered image = %q, want %q", rendered.String(), want)
 	}

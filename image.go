@@ -12,6 +12,22 @@ import (
 
 var _ html.NodeRenderer = (*imageRenderer)(nil)
 
+const (
+	ImageCSSClass           = "mdcoachImage"
+	ImageContentClassPrefix = ImageCSSClass + "Content"
+)
+
+const ImageStyle = `.` + ImageCSSClass + ` {
+	min-height: 1.5em;
+	min-width: 1.5em;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: contain;
+	aspect-ratio: attr(data-aspect-ratio type(<number>));
+}
+
+`
+
 type imageRenderer struct {
 }
 
@@ -44,7 +60,7 @@ func (r *imageRenderer) Render(writer io.Writer, source []byte, node ast.Node, e
 	if n.Attributes() != nil {
 		renderImageAttributes(w, source, n)
 	}
-	_, _ = w.WriteString(">")
+	_, _ = w.WriteString("></div>")
 	return ast.WalkSkipChildren, nil
 }
 
@@ -64,14 +80,15 @@ func renderImageAttributes(writer io.Writer, source []byte, node ast.Node) {
 		w = util.NewErrorBufWriter(w)
 	}
 	tw := &textWriter{w}
-	classes := make([]string, 0, 1)
+	classes := make([]string, 0, 2)
+	classes = append(classes, ImageCSSClass)
 	for _, attr := range node.Attributes() {
 		if !html.ImageAttributeFilter.ContainsString(attr.Name) {
 			if !strings.HasPrefix(attr.Name, "data-") {
 				continue
 			}
 			if attr.Name == "data-hash" {
-				classes = append(classes, attr.Value.Str(source))
+				classes = append(classes, ImageContentClassPrefix+attr.Value.Str(source))
 				continue
 			}
 		}
