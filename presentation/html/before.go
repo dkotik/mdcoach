@@ -11,6 +11,7 @@ import (
 var styleSheets = []string{
 	"layout.css",
 	"section.css",
+	"list_item.css",
 	"image.css",
 }
 

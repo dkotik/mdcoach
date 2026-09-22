@@ -1,17 +1,15 @@
 </main><script>
 // ============== debounce.js =====================
 
-function debounce(func, wait) {
+function debounce(callback, delay = 0) {
   let timeoutId;
 
   return function (...args) {
-    // Clear the previous timer if the function is called again before the delay finishes
     clearTimeout(timeoutId);
-
-    // Set a new timer to execute the function after the specified delay
     timeoutId = setTimeout(() => {
-      func.apply(this, args);
-    }, wait);
+      timeoutId = undefined;
+      callback.apply(this, args);
+    }, Math.max(0, delay));
   };
 }
 // ============== input.js =====================
@@ -82,6 +80,11 @@ const slides = document.querySelectorAll('main > section')
 const finalSlideIndex = slides.length-1
 
 const navigate = (isForward) => {
+  for (const element of slides[currentSlide].querySelectorAll(":scope > ul > li:not(.is-revealed)")) {
+    element.classList.add("is-revealed")
+    return
+  }
+
   slides[currentSlide].classList.remove(focusedClass)
   if (isForward) {
     slides[currentSlide].classList.add(reverseClass)
