@@ -57,7 +57,7 @@ Document: MdCoach Demo {
         Text: slkfj sadlk fjsldkfj
         Text: slkdjf
       }
-      Paragraph: ft paragraph ![luth](https://i.stack.imgur.com/El2F7.png "we {
+      Paragraph: ft paragraph ![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd {
         Text: ft paragraph
         Image: luth {
           Text: luth
@@ -133,8 +133,8 @@ Document: MdCoach Demo {
     }
     HTMLBlock
   }
-  Slide: hmmm ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf s {
-    Paragraph: hmmm ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf s {
+  Slide: hmmm ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd {
+    Paragraph: hmmm ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd {
       Text: hmmm
       Image: luth {
         Text: luth
@@ -156,7 +156,7 @@ Document: MdCoach Demo {
     }
     CodeBlock
     CodeBlock
-    Paragraph: ![luth](https://external-content.duckduckgo.com/iu/?u=https% {
+    Paragraph: ![luth](media/cat_3.jpg) {
       Image: luth {
         Text: luth
       }
@@ -173,9 +173,9 @@ Document: MdCoach Demo {
       Text: Martin
       Text: Luther
     }
-    Blockquote: ![luth](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg {
-      Blockquote: ![luth](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg {
-        Paragraph: ![luth](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg {
+    Blockquote: ![luth](media/cat_3.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd {
+      Blockquote: ![luth](media/cat_3.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd {
+        Paragraph: ![luth](media/cat_3.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd  {
           Image: luth {
             Text: luth
           }
@@ -189,9 +189,9 @@ Document: MdCoach Demo {
       Text: Martin Luther
       Text: Left
     }
-    Blockquote: ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsd {
-      Blockquote: ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsd {
-        Paragraph: ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsd {
+    Blockquote: ![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd {
+      Blockquote: ![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd {
+        Paragraph: ![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd  {
           Image: luth {
             Text: luth
           }
@@ -217,9 +217,9 @@ Document: MdCoach Demo {
       Text: quoted figure
       Text: first
     }
-    Blockquote: ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsd {
-      Blockquote: ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsd {
-        Paragraph: ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsd {
+    Blockquote: ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd {
+      Blockquote: ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd {
+        Paragraph: ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd  {
           Image: luth {
             Text: luth
           }
@@ -233,7 +233,7 @@ Document: MdCoach Demo {
       Text: second
       Text: title
     }
-    Paragraph: ![inclu](test-handout.md) {
+    Paragraph: ![inclu](media/cat_3.jpg) {
       Image: inclu {
         Text: inclu
       }
@@ -283,7 +283,7 @@ Document: MdCoach Demo {
       Text: paragraph
     }
     CodeBlock
-    Paragraph: ![luth](https://i.stack.imgur.com/El2F7.png "weee Treisdf") {
+    Paragraph: ![luth](media/cat_1.jpg "weee Treisdf") {
       Image: luth {
         Text: luth
       }
@@ -348,8 +348,8 @@ Document: MdCoach Demo {
       Text: sdf
     }
   }
-  Slide: ![luth](https://i.stack.imgur.com/El2F7.png "weee") {
-    Paragraph: ![luth](https://i.stack.imgur.com/El2F7.png "weee") {
+  Slide: ![luth](media/cat_2.jpg "weee") {
+    Paragraph: ![luth](media/cat_2.jpg "weee") {
       Image: luth {
         Text: luth
       }
@@ -446,8 +446,8 @@ Document: MdCoach Demo {
     }
     CodeBlock
   }
-  Slide: [!] ![](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg {
-    Paragraph: [!] ![](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg {
+  Slide: [!] ![](media/cat_3.jpg) {
+    Paragraph: [!] ![](media/cat_3.jpg) {
       Text: [
       Text: !]
       Image
@@ -474,7 +474,7 @@ Document: MdCoach Demo {
       Text: ya this is
       Text: greatski
     }
-    Paragraph: ![splash](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.j {
+    Paragraph: ![splash](media/cat_1.jpg) {
       Image: splash {
         Text: splash
       }
@@ -560,8 +560,8 @@ Document: MdCoach Demo {
       }
     }
   }
-  Slide: ![image](https://i.stack.imgur.com/El2F7.png) {
-    Paragraph: ![image](https://i.stack.imgur.com/El2F7.png) {
+  Slide: ![image](media/cat_2.jpg) {
+    Paragraph: ![image](media/cat_2.jpg) {
       Image: image {
         Text: image
       }

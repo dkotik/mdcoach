@@ -1,13 +1,10 @@
 package mdcoach
 
 import (
-	"bytes"
 	"context"
-	"encoding/base64"
 	"fmt"
 	stdImage "image"
 	_ "image/gif"
-	"image/jpeg"
 	_ "image/png"
 	"io"
 	"net/http"
@@ -15,54 +12,18 @@ import (
 	"os"
 	"path"
 	"runtime"
-	"sync"
 
-	"github.com/OneOfOne/xxhash"
 	"github.com/nfnt/resize"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/text"
 	"golang.org/x/sync/errgroup"
 )
 
-type imageJPG struct {
-	Hash       string
-	DataBase64 []byte
-	Width      int
-	Height     int
-}
-
-func newImageFromImage(i stdImage.Image) (*imageJPG, error) {
-	if i == nil {
-		return nil, fmt.Errorf("encode image as JPEG: nil image")
-	}
-
-	var encoded bytes.Buffer
-	if err := jpeg.Encode(&encoded, i, nil); err != nil {
-		return nil, fmt.Errorf("encode image as JPEG: %w", err)
-	}
-
-	encodedBytes := encoded.Bytes()
-	hash := xxhash.New64()
-	if _, err := hash.Write(encodedBytes); err != nil {
-		return nil, fmt.Errorf("hash encoded image: %w", err)
-	}
-
-	bounds := i.Bounds()
-	return &imageJPG{
-		Hash:       fmt.Sprintf("%x", hash.Sum(nil)),
-		DataBase64: []byte(base64.StdEncoding.EncodeToString(encodedBytes)),
-		Width:      bounds.Dx(),
-		Height:     bounds.Dy(),
-	}, nil
-}
-
 type ImageLoader struct {
 	widthLimit  int
 	heightLimit int
 	quality     int
-
-	mu     *sync.Mutex
-	images map[string]*imageJPG
+	cache       *ImageCache
 }
 
 type ImageConstraints struct {
@@ -71,7 +32,10 @@ type ImageConstraints struct {
 	Quality     int
 }
 
-func NewImageLoader(ic ImageConstraints) *ImageLoader {
+func NewImageLoader(cache *ImageCache, ic ImageConstraints) *ImageLoader {
+	if cache == nil {
+		panic("nil cache")
+	}
 	if ic.WidthLimit == 0 {
 		ic.WidthLimit = 800
 	}
@@ -85,8 +49,7 @@ func NewImageLoader(ic ImageConstraints) *ImageLoader {
 		widthLimit:  ic.WidthLimit,
 		heightLimit: ic.HeightLimit,
 		quality:     ic.Quality,
-		mu:          &sync.Mutex{},
-		images:      make(map[string]*imageJPG),
+		cache:       cache,
 	}
 }
 
@@ -113,13 +76,10 @@ func (l *ImageLoader) loadImage(
 ) (img *imageJPG, err error) {
 	url := newURLFromLocation(location)
 	location = url.String()
-	l.mu.Lock()
-	img, ok := l.images[location]
+	img, ok := l.cache.Get(location)
 	if ok {
-		l.mu.Unlock()
 		return img, nil
 	}
-	l.mu.Unlock()
 
 	if url.Host == "" {
 		file, err := os.Open(location)
@@ -151,9 +111,7 @@ func (l *ImageLoader) loadImage(
 		}
 	}
 
-	l.mu.Lock()
-	l.images[location] = img
-	l.mu.Unlock()
+	l.cache.Set(location, img)
 	return img, nil
 }
 

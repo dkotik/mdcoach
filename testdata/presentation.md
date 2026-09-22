@@ -30,7 +30,7 @@ footer: What would you change for the course?
 [^ft]: notes des noteshrink
     slkfj sadlk fjsldkfj slkdjf
 
-    ft paragraph ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
+    ft paragraph ![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
 
 ***
 
@@ -52,9 +52,9 @@ Aside element here.
 just a regular paragraph
 
 <!-- - - -
-![youtube vid test](https://www.youtube.com/watch?v=r8AYLGJuyvw) -->
+![youtube vid test](media/cat_2.jpg) -->
 - - -
-hmmm ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
+hmmm ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
 
 > full block blockquote лыво адлыовалд :) ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu     лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu (Cite)
 >
@@ -75,15 +75,15 @@ hmmm ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsdfsd fsd fsdf sd
 1 Ἀρχὴ τοῦ εὐαγγελίου Ἰησοῦ Χριστοῦ [υἱοῦ θεοῦ]. 2 Καθὼς γέγραπται ἐν τῷ Ἠσαΐᾳ τῷ προφήτῃ, Ἰδοὺ ἀποστέλλω τὸν ἄγγελόν μου πρὸ προσώπου σου, ὃς κατασκευάσει τὴν ὁδόν σου: 3 φωνὴ βοῶντος ἐν τῇ ἐρήμῳ, Ἑτοιμάσατε τὴν ὁδὸν κυρίου, εὐθείας ποιεῖτε τὰς τρίβους αὐτοῦ 4 ἐγένετο Ἰωάννης [ὁ] βαπτίζων ἐν τῇ ἐρήμῳ καὶ κηρύσσων βάπτισμα μετανοίας εἰς ἄφεσιν ἁμαρτιῶν. 5 καὶ ἐξεπορεύετο πρὸς αὐτὸν πᾶσα ἡ Ἰουδαία χώρα καὶ οἱ Ἱεροσολυμῖται πάντες, καὶ ἐβαπτίζοντο ὑπ' αὐτοῦ ἐν τῷ Ἰορδάνῃ ποταμῷ ἐξομολογούμενοι τὰς ἁμαρτίας αὐτῶν. 6 καὶ ἦν ὁ Ἰωάννης ἐνδεδυμένος τρίχας καμήλου καὶ ζώνην δερματίνην περὶ τὴν ὀσφὺν αὐτοῦ, καὶ ἐσθίων ἀκρίδας καὶ μέλι ἄγριον. 7 καὶ ἐκήρυσσεν λέγων, Ἔρχεται ὁ ἰσχυρότερός μου ὀπίσω μου, οὗ οὐκ εἰμὶ ἱκανὸς κύψας λῦσαι τὸν ἱμάντα τῶν ὑποδημάτων αὐτοῦ: 8 ἐγὼ ἐβάπτισα ὑμᾶς ὕδατι, αὐτὸς δὲ βαπτίσει ὑμᾶς ἐν πνεύματι ἁγίῳ. 9 Καὶ ἐγένετο ἐν ἐκείναις ταῖς ἡμέραις ἦλθεν Ἰησοῦς ἀπὸ Ναζαρὲτ τῆς Γαλιλαίας καὶ ἐβαπτίσθη εἰς τὸν Ἰορδάνην ὑπὸ Ἰωάννου. 10 καὶ εὐθὺς ἀναβαίνων ἐκ τοῦ ὕδατος εἶδεν σχιζομένους τοὺς οὐρανοὺς καὶ τὸ πνεῦμα ὡς περιστερὰν καταβαῖνον εἰς αὐτόν: 11 καὶ φωνὴ ἐγένετο ἐκ τῶν οὐρανῶν, Σὺ εἶ ὁ υἱός μου ὁ ἀγαπητός, ἐν σοὶ εὐδόκησα. 12 Καὶ εὐθὺς τὸ πνεῦμα αὐτὸν ἐκβάλλει εἰς τὴν ἔρημον. 13 καὶ ἦν ἐν τῇ ἐρήμῳ τεσσεράκοντα ἡμέρας πειραζόμενος ὑπὸ τοῦ Σατανᾶ, καὶ ἦν μετὰ τῶν θηρίων, καὶ οἱ ἄγγελοι διηκόνουν αὐτῷ. 14 Μετὰ δὲ τὸ παραδοθῆναι τὸν Ἰωάννην ἦλθεν ὁ Ἰησοῦς εἰς τὴν Γαλιλαίαν κηρύσσων τὸ εὐαγγέλιον τοῦ θεοῦ 15 καὶ λέγων ὅτι Πεπλήρωται ὁ καιρὸς καὶ ἤγγικεν ἡ βασιλεία τοῦ θεοῦ: μετανοεῖτε καὶ πιστεύετε ἐν τῷ εὐαγγελίῳ. 16 Καὶ παράγων παρὰ τὴν θάλασσαν τῆς Γαλιλαίας εἶδεν Σίμωνα καὶ Ἀνδρέαν τὸν ἀδελφὸν Σίμωνος ἀμφιβάλλοντας ἐν τῇ θαλάσσῃ: ἦσαν γὰρ ἁλιεῖς. 17 καὶ εἶπεν αὐτοῖς ὁ Ἰησοῦς, Δεῦτε ὀπίσω μου, καὶ ποιήσω ὑμᾶς γενέσθαι ἁλιεῖς ἀνθρώπων. 18 καὶ εὐθὺς ἀφέντες τὰ δίκτυα ἠκολούθησαν αὐτῷ. (Citation!)
 ```
 
-![luth](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse3.mm.bing.net%2Fth%3Fid%3DOIP.7naJ2vXZmPbRk7v88E4edAAAAA%26pid%3DApi&f=1)
+![luth](media/cat_3.jpg)
 
 **Bold**
 - - -
 ## Martin Luther
->>![luth](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
+>>![luth](media/cat_3.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
 
 ## Martin Luther Left
->>![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
+>>![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
 
 is it something rather? or what?
 quoted figure first
@@ -92,17 +92,17 @@ quoted figure first
 is it something rather? or what?
 quoted figure first
 
->>![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
+>>![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
 
 - - -
 # second title
 
-![inclu](test-handout.md)
+![inclu](media/cat_3.jpg)
 
 first
 
     comment **block** with image
-    ![luth](https://i.stack.imgur.com/El2F7.png "weee")
+    ![luth](media/cat_3.jpg "weee")
 
 second
 
@@ -149,7 +149,7 @@ regular paragraph
 
     Should be stripped
 
-![luth](https://i.stack.imgur.com/El2F7.png "weee Treisdf")
+![luth](media/cat_1.jpg "weee Treisdf")
 # Luther is the best hackman protestor test
 aside left <cite>On the Freedom of the Will</cite> by Martin Luther
 
@@ -171,7 +171,7 @@ sdflksdf lsd <mark>jflksdjflk</mark> <emote>sdf</emote>
 sdflksdf lsd jflksdjflk sdf
 - - -
 
-![luth](https://i.stack.imgur.com/El2F7.png "weee")
+![luth](media/cat_2.jpg "weee")
 - - -
 # Demo Python Code
 
@@ -211,7 +211,7 @@ yep it really ist
 # ya this is greatski
     !!! yep it really ist
 - - -
-[!] ![](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg)
+[!] ![](media/cat_3.jpg)
 
 yep it really ist
 - - -
@@ -220,7 +220,7 @@ yep it really ist
 - - -
 # ya this is greatski
 
-![splash](https://i.ytimg.com/vi/mVyI-dzPawY/maxresdefault.jpg)
+![splash](media/cat_1.jpg)
 
 yep it really ist
 
@@ -250,7 +250,7 @@ Eiusmod do irure nulla aliquip aute eu tempor eu deserunt tempor. Consequat enim
 - two
 - three
 - - -
-![image](https://i.stack.imgur.com/El2F7.png)
+![image](media/cat_2.jpg)
 
 this is image test
 
