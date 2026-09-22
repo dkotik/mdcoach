@@ -2,6 +2,7 @@ package mdcoach
 
 import (
 	"io"
+	"strings"
 
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/renderer"
@@ -27,7 +28,7 @@ func (r *imageRenderer) Render(writer io.Writer, source []byte, node ast.Node, e
 	}
 	w := writer.(util.BufWriter)
 	n := node.(*ast.Image)
-	_, _ = w.WriteString("<img src=\"")
+	_, _ = w.WriteString("<div src=\"")
 	dest := n.Destination.Value(source)
 	if !html.IsDangerousURL(dest) {
 		_, _ = html.ContextLinkURLWriter(rc).WriteString(dest)
@@ -41,7 +42,7 @@ func (r *imageRenderer) Render(writer io.Writer, source []byte, node ast.Node, e
 		_ = w.WriteByte('"')
 	}
 	if n.Attributes() != nil {
-		html.RenderAttributes(w, source, n, html.ImageAttributeFilter, rc)
+		renderImageAttributes(w, source, n)
 	}
 	_, _ = w.WriteString(">")
 	return ast.WalkSkipChildren, nil
@@ -55,4 +56,37 @@ func renderTexts(w util.BufWriter, source []byte, node ast.Node, rc renderer.Con
 		}
 		renderTexts(w, source, child, rc)
 	}
+}
+
+func renderImageAttributes(writer io.Writer, source []byte, node ast.Node) {
+	w, ok := writer.(util.BufWriter)
+	if !ok {
+		w = util.NewErrorBufWriter(w)
+	}
+	tw := &textWriter{w}
+	classes := make([]string, 0, 1)
+	for _, attr := range node.Attributes() {
+		if !html.ImageAttributeFilter.ContainsString(attr.Name) {
+			if !strings.HasPrefix(attr.Name, "data-") {
+				continue
+			}
+			if attr.Name == "data-hash" {
+				classes = append(classes, attr.Value.Str(source))
+				continue
+			}
+		}
+		if attr.Name == "class" {
+			classes = append(classes, attr.Value.Str(source))
+			continue
+		}
+		_, _ = w.WriteString(" ")
+		_, _ = w.WriteString(attr.Name)
+		_, _ = w.WriteString(`="`)
+		_, _ = attr.Value.WriteTo(tw, source)
+		_ = w.WriteByte('"')
+	}
+
+	_, _ = w.WriteString(` class="`)
+	_, _ = tw.WriteString(strings.Join(classes, " "))
+	_ = w.WriteByte('"')
 }

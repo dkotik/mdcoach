@@ -3,18 +3,13 @@ package mdcoach
 import (
 	"bytes"
 	"io"
-	"os"
 	"testing"
 
 	"github.com/yuin/goldmark/v2/ast"
 )
 
 func TestImageRendererRendersOnlyImageNodes(t *testing.T) {
-	source, err := os.ReadFile("testdata/presentation.md")
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	source := []byte(`![cat](media/cat_1.jpg)`)
 	tree, ok := NewParser().Parse(source).(*ast.Document)
 	if !ok {
 		t.Fatal("parser returned a non-document AST")
