@@ -3,30 +3,25 @@ package mdcoach
 import (
 	"bytes"
 	"io"
+	"os"
 	"testing"
 
 	"github.com/yuin/goldmark/v2/ast"
-	"github.com/yuin/goldmark/v2/text"
 )
 
 func TestImageRendererRendersOnlyImageNodes(t *testing.T) {
-	imageNode := ast.NewImage(text.NewSingleLineValueFromString(
-		"media/cat_1.jpg",
-		text.IdentityDecoder,
-	))
-	imageNode.AppendChild(ast.NewText(text.NewSingleLineValueFromString(
-		"cat",
-		text.IdentityDecoder,
-	)))
+	source, err := os.ReadFile("testdata/presentation.md")
+	if err != nil {
+		t.Fatal(err)
+	}
 
-	tree := ast.NewDocument()
-	paragraph := ast.NewParagraph()
-	paragraph.AppendChild(imageNode)
-	tree.AppendChild(paragraph)
-	tree.AppendChild(ast.NewParagraph())
+	tree, ok := NewParser().Parse(source).(*ast.Document)
+	if !ok {
+		t.Fatal("parser returned a non-document AST")
+	}
 
 	var rendered bytes.Buffer
-	if err := renderImagesOnly(&rendered, tree); err != nil {
+	if err := renderImagesOnly(&rendered, source, tree); err != nil {
 		t.Fatal(err)
 	}
 
@@ -36,7 +31,7 @@ func TestImageRendererRendersOnlyImageNodes(t *testing.T) {
 	}
 }
 
-func renderImagesOnly(writer io.Writer, tree ast.Node) error {
+func renderImagesOnly(writer io.Writer, source []byte, tree ast.Node) error {
 	var (
 		renderer  = NewRenderer()
 		renderErr error
@@ -49,7 +44,7 @@ func renderImagesOnly(writer io.Writer, tree ast.Node) error {
 			return ast.WalkContinue, nil
 		}
 
-		if err := renderer.Render(writer, nil, node); err != nil {
+		if err := renderer.Render(writer, source, node); err != nil {
 			renderErr = err
 			return ast.WalkStop, err
 		}

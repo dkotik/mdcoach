@@ -52,9 +52,9 @@ func TestImageLoader(t *testing.T) {
 	}
 
 	var css bytes.Buffer
-	// if err := renderImagesOnly(&css, tree); err != nil {
-	// 	t.Fatal(err)
-	// }
+	if err := renderImagesOnly(&css, source, tree); err != nil {
+		t.Fatal(err)
+	}
 	if err := cache.WriteImageDataCSS(&css); err != nil {
 		t.Fatal(err)
 	}
