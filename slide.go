@@ -28,7 +28,7 @@ var (
 type Slide struct {
 	ast.BaseBlock
 	HeadingLevel        int
-	Image               *ast.Image
+	Figure              *Figure
 	IsImageRightAligned bool
 }
 
@@ -42,16 +42,19 @@ func (s *Slide) withChildren(children ...ast.Node) {
 	if len(children) == 0 {
 		return
 	}
-	for _, child := range children {
+	var child ast.Node
+	contentElementCount := 0
+	for _, child = range children {
 		s.AppendChild(child)
-	}
-	ok := false
-	s.Image, ok = s.FirstChild().(*ast.Image)
-	if ok {
-		s.RemoveChild(s.Image)
-		return
+		switch child.Kind() {
+		case ast.KindHeading:
+		case KindFigure:
+		default:
+			contentElementCount++
+		}
 	}
 
+	ok := false
 	var firstHeading *ast.Heading
 	firstHeading, ok = s.FirstChild().(*ast.Heading)
 	if ok {
@@ -60,17 +63,37 @@ func (s *Slide) withChildren(children ...ast.Node) {
 			fmt.Sprintf("%d", s.HeadingLevel),
 			text.IdentityDecoder,
 		))
+		if s.HeadingLevel == 1 && contentElementCount == 0 {
+			// possible background image in the last element
+			s.Figure, ok = s.LastChild().(*Figure)
+			if ok {
+				s.RemoveChild(s.Figure)
+				return
+			}
+		}
 	}
-
-	s.Image, ok = s.FirstChild().NextSibling().(*ast.Image)
-	if ok {
-		s.RemoveChild(s.Image)
+	if contentElementCount == 0 {
 		return
 	}
-	s.Image, ok = s.LastChild().(*ast.Image)
+	s.Figure, ok = s.LastChild().(*Figure)
 	if ok {
 		s.IsImageRightAligned = true
-		s.RemoveChild(s.Image)
+		s.RemoveChild(s.Figure)
+		return
+	}
+
+	for _, child = range children {
+		switch child.Kind() {
+		case ast.KindHeading:
+		case KindFigure:
+			s.Figure, ok = child.(*Figure)
+			if ok {
+				s.RemoveChild(s.Figure)
+			}
+			return
+		default:
+			return
+		}
 	}
 }
 
@@ -82,21 +105,25 @@ func (*Slide) Kind() ast.NodeKind {
 // Dump dumps the slide and its children.
 func (s *Slide) Dump(_ []byte) *ast.NodeDump {
 	return ast.NewNodeDump(s, map[string]any{
-		"aside":             s.Image,
+		"figure":            s.Figure,
 		"asideRightAligned": s.IsImageRightAligned,
 		// "headingLevel": s.HeadingLevel,
 		// "children":   s.Children(),
 	})
 }
 
-type slideRenderer struct{}
-
-// NewSlideRenderer returns a Goldmark v2 HTML renderer for Slide nodes.
-func NewSlideRenderer() html.NodeRenderer {
-	return &slideRenderer{}
+type slideRenderer struct {
+	FigureRenderer html.NodeRenderer
 }
 
-func (*slideRenderer) Render(
+// NewSlideRenderer returns a Goldmark v2 HTML renderer for Slide nodes.
+func NewSlideRenderer(fr html.NodeRenderer) html.NodeRenderer {
+	return &slideRenderer{
+		FigureRenderer: fr,
+	}
+}
+
+func (s *slideRenderer) Render(
 	writer io.Writer,
 	source []byte,
 	node ast.Node,
@@ -111,9 +138,19 @@ func (*slideRenderer) Render(
 			_, _ = w.WriteString(` data-is-right="true"`)
 		}
 		_ = w.WriteByte('>')
+
+		if slide.Figure != nil {
+			_, _ = w.WriteString(`<aside>`)
+			_, err := s.FigureRenderer.Render(writer, source, slide.Figure, entering, rc)
+			if err != nil {
+				return ast.WalkStop, err
+			}
+			_, _ = w.WriteString(`</aside>`)
+		}
+
 		_, _ = w.WriteString(`<div class="content">`)
-		if slide.Image != nil {
-			return NewImageRenderer().Render(writer, source, slide.Image, true, rc)
+		if slide.Figure != nil {
+			return NewImageRenderer().Render(writer, source, slide.Figure, true, rc)
 		}
 		return ast.WalkContinue, nil
 	}

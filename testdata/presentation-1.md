@@ -30,11 +30,21 @@ footer: What would you change for the course?
 ---
 # MdCoach Demo
 
+![cat image](media/cat_3.jpg "some cat")
+
 ---
 
-### Image Test
+### Figure To the Right
+
+Some text before figure.
 
 ![cat image](media/cat_3.jpg "some cat")
+
+## Figure To the Left
+
+![cat image](media/cat_3.jpg "some cat")
+
+Some text after figure.
 
 ---
 

@@ -11,7 +11,7 @@ import (
 	"github.com/yuin/goldmark/v2/util"
 )
 
-var AsideKind = ast.NewNodeKind("Aside")
+var KindAside = ast.NewNodeKind("Aside")
 
 var _ html.NodeRenderer = (*asideRenderer)(nil)
 
@@ -27,7 +27,7 @@ func (n *Aside) Dump(_ []byte) *ast.NodeDump {
 
 // Kind implements Node.Kind.
 func (n *Aside) Kind() ast.NodeKind {
-	return AsideKind
+	return KindAside
 }
 
 // NewAside returns a new [Aside] node.

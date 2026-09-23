@@ -11,8 +11,8 @@ import (
 	"github.com/yuin/goldmark/v2/util"
 )
 
-// FigureKind is the node kind for image-only figures.
-var FigureKind = ast.NewNodeKind("Figure")
+// KindFigure is the node kind for image-only figures.
+var KindFigure = ast.NewNodeKind("Figure")
 
 // Figure is a figure containing a single image.
 type Figure struct {
@@ -25,7 +25,7 @@ var _ parser.ASTTransformer = (*figureTransformer)(nil)
 
 // Kind returns FigureKind.
 func (*Figure) Kind() ast.NodeKind {
-	return FigureKind
+	return KindFigure
 }
 
 // Dump dumps the figure and its children.

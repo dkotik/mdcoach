@@ -37,9 +37,11 @@ type imageRendererExtension struct{}
 func (*imageRendererExtension) RendererOptions(*html.Config) []html.Option {
 	return []html.Option{
 		html.WithNodeRenderer(ast.KindImage, NewImageRenderer()),
-		html.WithNodeRenderer(AsideKind, NewAsideRenderer()),
-		html.WithNodeRenderer(FigureKind, NewFigureRenderer()),
-		html.WithNodeRenderer(SlideKind, NewSlideRenderer()),
+		html.WithNodeRenderer(KindAside, NewAsideRenderer()),
+		html.WithNodeRenderer(KindFigure, NewFigureRenderer()),
+		html.WithNodeRenderer(SlideKind, NewSlideRenderer(
+			NewFigureRenderer(),
+		)),
 	}
 }
 

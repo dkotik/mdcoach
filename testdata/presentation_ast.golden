@@ -7,16 +7,26 @@ Document: MdCoach Demo {
       Text: Demo
     }
   }
-  Slide: Image Test {
+  Slide: Figure To the Right {
     [data-heading-level="3"]
-    Heading: Image Test {
-      Text: Image
-      Text: Test
+    Heading: Figure To the Right {
+      Text: Figure To the
+      Text: Right
     }
-    Figure: cat image {
-      Image: cat image {
-        Text: cat image
-      }
+    Paragraph: Some text before figure. {
+      Text: Some text before figure
+      Text: .
+    }
+  }
+  Slide: Figure To the Left {
+    [data-heading-level="2"]
+    Heading: Figure To the Left {
+      Text: Figure To the
+      Text: Left
+    }
+    Paragraph: Some text after figure. {
+      Text: Some text after figure
+      Text: .
     }
   }
   Slide: BLockquote Tests {
@@ -289,11 +299,6 @@ Document: MdCoach Demo {
       Text: paragraph
     }
     CodeBlock
-    Figure: luth {
-      Image: luth {
-        Text: luth
-      }
-    }
   }
   Slide: Luther is the best hackman protestor test {
     [data-heading-level="1"]
@@ -480,11 +485,6 @@ Document: MdCoach Demo {
       Text: ya this is
       Text: greatski
     }
-    Figure: splash {
-      Image: splash {
-        Text: splash
-      }
-    }
     Paragraph: yep it really ist {
       Text: yep it really
       Text: ist
@@ -566,12 +566,7 @@ Document: MdCoach Demo {
       }
     }
   }
-  Slide: image {
-    Figure: image {
-      Image: image {
-        Text: image
-      }
-    }
+  Slide: this is image test {
     Paragraph: this is image test {
       Text: this is image
       Text: test
