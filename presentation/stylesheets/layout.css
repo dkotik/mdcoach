@@ -10,6 +10,28 @@ body {
   overflow: hidden !important;
 }
 
+aside.curtain {
+  display: none;
+  position: fixed;
+  top: -0.3rem;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  color: var(--color-body-subtext);
+  font-weight: bold;
+  font-size: 3rem;
+  background-color: var(--color-body-background);
+  z-index: 9999998;
+  border-bottom: 0.2rem solid var(--color-marker-background);
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  transition: visibility, opacity;
+  transition-duration: 1900ms;
+  transition-behavior: allow-discrete; /* animates display */
+}
+
 main {
   margin: 0 auto;
   width: min(80%, 80rem);

@@ -6,7 +6,9 @@ let currentListItem = 0
 const focusedClass = "is-focused"
 const reverseClass = "reverse"
 const slides = document.querySelectorAll('main > section')
-const finalSlideIndex = slides.length-1
+const finalSlideIndex = slides.length - 1
+slides[currentSlide].classList.add(focusedClass)
+slides[currentSlide].classList.add(reverseClass)
 
 const navigate = (isForward) => {
   if (isForward) {
@@ -31,7 +33,6 @@ const navigate = (isForward) => {
     slides[currentSlide].classList.add(reverseClass)
   }
 }
-navigate(true)
 
 window.addEventListener(nextEventType, (event) => {
   if(currentSlide >= finalSlideIndex) {

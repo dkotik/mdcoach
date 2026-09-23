@@ -25,7 +25,7 @@ function scaleDown() {
   }
 
   if (scaling) {
-    window.setTimeout(scaleDown, 50)
+    window.setTimeout(scaleDown, 150)
   }
 }
 
@@ -34,4 +34,10 @@ window.setTimeout(() => {
   scaleDown()
 }, 150)
 
-window.addEventListener("resize", debounce(scaleDown, 100))
+window.addEventListener("resize", debounce(() => {
+  for (const slide of slides) {
+    const element = slide.querySelector(":scope > .content")
+    element.setAttribute("data-scale", "100")
+  }
+  window.setTimeout(scaleDown, 150)
+}, 200))

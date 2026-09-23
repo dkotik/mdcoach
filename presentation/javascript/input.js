@@ -1,5 +1,16 @@
 // ============== input.js =====================
 
+let isCurtainVisible = false
+const curtain = document.querySelector("body > aside.curtain")
+const showCurtain = () => {
+  curtain.style.display = "grid";
+  isCurtainVisible = true
+}
+const hideCurtain = () => {
+  curtain.style.display = "none";
+  isCurtainVisible = false
+}
+
 const nextEventType = "nextListItemOrSlide"
 const next = (event) => {
   event.preventDefault()
@@ -23,6 +34,14 @@ const previous = (event) => {
 document.addEventListener(
   'keydown',
   (event) => {
+    if (isCurtainVisible) {
+      switch (event.code) {
+        case 'Escape':
+        case 'Period':
+          hideCurtain()
+      }
+      return
+    }
     switch (event.code) {
       case 'ArrowRight':
       case 'ArrowDown':
@@ -41,6 +60,8 @@ document.addEventListener(
       case 'KeyC':
         window.open(window.location.href, '_blank')
         return
+      case 'Period':
+        showCurtain()
     }
   }
 )
@@ -48,6 +69,9 @@ document.addEventListener(
 document.addEventListener(
   'wheel',
   debounce((event) => {
+    if (isCurtainVisible) {
+      return
+    }
     if (event.deltaY >= 0) {
       next(event)
     } else {

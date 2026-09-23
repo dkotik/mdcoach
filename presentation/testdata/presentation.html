@@ -4,6 +4,7 @@
     <title>???</title>
   </head>
 <body>
+  <aside class="curtain">⏸</aside>
 <style>
 html {
   overscroll-behavior: none;
@@ -28,7 +29,7 @@ html[data-theme="dark"] {
   --color-body-subtext: #4a4a4a;
   --color-body-background: black;
   --color-menu-background: #161623;
-  --color-menu-text: black;
+  --color-menu-text: #333;
   --color-button-background: #999;
 
   /* Notes */
@@ -45,6 +46,28 @@ body {
   align-items: center;
   vertical-align: middle;
   overflow: hidden !important;
+}
+
+aside.curtain {
+  display: none;
+  position: fixed;
+  top: -0.3rem;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  color: var(--color-body-subtext);
+  font-weight: bold;
+  font-size: 3rem;
+  background-color: var(--color-body-background);
+  z-index: 9999998;
+  border-bottom: 0.2rem solid var(--color-marker-background);
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  transition: visibility, opacity;
+  transition-duration: 1900ms;
+  transition-behavior: allow-discrete; /* animates display */
 }
 
 main {
@@ -116,27 +139,27 @@ section > .content[data-scale="70"] {
 }
 
 section > .content[data-scale="60"] {
-  font-size: 60%;
+  font-size: 65%;
 }
 
 section > .content[data-scale="50"] {
-  font-size: 50%;
+  font-size: 60%;
 }
 
 section > .content[data-scale="40"] {
-  font-size: 40%;
+  font-size: 55%;
 }
 
 section > .content[data-scale="30"] {
-  font-size: 30%;
+  font-size: 50%;
 }
 
 section > .content[data-scale="20"] {
-  font-size: 20%;
+  font-size: 45%;
 }
 
 section > .content[data-scale="10"] {
-  font-size: 10%;
+  font-size: 40%;
 }
 
 section > .content[data-scale="60"] .mdcoachImage {
@@ -158,12 +181,14 @@ section > .content[data-scale="30"] .mdcoachImage {
 
 section > .content[data-scale="20"] .mdcoachImage {
   float: right;
+  margin-left: 1rem;
   max-width: 30%;
   max-height: 15vh;
 }
 
 section > .content[data-scale="10"] .mdcoachImage {
   float: right;
+  margin-left: 1rem;
   max-width: 5em;
   max-height: 5em;
 }
@@ -449,6 +474,17 @@ function debounce(callback, delay = 0) {
 }
 // ============== input.js =====================
 
+let isCurtainVisible = false
+const curtain = document.querySelector("body > aside.curtain")
+const showCurtain = () => {
+  curtain.style.display = "grid";
+  isCurtainVisible = true
+}
+const hideCurtain = () => {
+  curtain.style.display = "none";
+  isCurtainVisible = false
+}
+
 const nextEventType = "nextListItemOrSlide"
 const next = (event) => {
   event.preventDefault()
@@ -472,6 +508,14 @@ const previous = (event) => {
 document.addEventListener(
   'keydown',
   (event) => {
+    if (isCurtainVisible) {
+      switch (event.code) {
+        case 'Escape':
+        case 'Period':
+          hideCurtain()
+      }
+      return
+    }
     switch (event.code) {
       case 'ArrowRight':
       case 'ArrowDown':
@@ -490,6 +534,8 @@ document.addEventListener(
       case 'KeyC':
         window.open(window.location.href, '_blank')
         return
+      case 'Period':
+        showCurtain()
     }
   }
 )
@@ -497,6 +543,9 @@ document.addEventListener(
 document.addEventListener(
   'wheel',
   debounce((event) => {
+    if (isCurtainVisible) {
+      return
+    }
     if (event.deltaY >= 0) {
       next(event)
     } else {
@@ -512,7 +561,9 @@ let currentListItem = 0
 const focusedClass = "is-focused"
 const reverseClass = "reverse"
 const slides = document.querySelectorAll('main > section')
-const finalSlideIndex = slides.length-1
+const finalSlideIndex = slides.length - 1
+slides[currentSlide].classList.add(focusedClass)
+slides[currentSlide].classList.add(reverseClass)
 
 const navigate = (isForward) => {
   if (isForward) {
@@ -537,7 +588,6 @@ const navigate = (isForward) => {
     slides[currentSlide].classList.add(reverseClass)
   }
 }
-navigate(true)
 
 window.addEventListener(nextEventType, (event) => {
   if(currentSlide >= finalSlideIndex) {
@@ -579,7 +629,7 @@ function scaleDown() {
   }
 
   if (scaling) {
-    window.setTimeout(scaleDown, 50)
+    window.setTimeout(scaleDown, 150)
   }
 }
 
@@ -588,7 +638,13 @@ window.setTimeout(() => {
   scaleDown()
 }, 150)
 
-window.addEventListener("resize", debounce(scaleDown, 100))
+window.addEventListener("resize", debounce(() => {
+  for (const slide of slides) {
+    const element = slide.querySelector(":scope > .content")
+    element.setAttribute("data-scale", "100")
+  }
+  window.setTimeout(scaleDown, 150)
+}, 200))
 </script>
 
 <style>

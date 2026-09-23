@@ -21,7 +21,7 @@ html[data-theme="dark"] {
   --color-body-subtext: #4a4a4a;
   --color-body-background: black;
   --color-menu-background: #161623;
-  --color-menu-text: black;
+  --color-menu-text: #333;
   --color-button-background: #999;
 
   /* Notes */
