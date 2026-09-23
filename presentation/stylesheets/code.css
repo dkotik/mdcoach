@@ -1,4 +1,4 @@
-pre, code {
+.content pre, code {
   white-space: pre-wrap;       /* Preserves whitespace and wraps naturally */
   overflow-wrap: break-word;
 

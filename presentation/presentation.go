@@ -94,17 +94,10 @@ func New(
 		return fmt.Errorf("failed to write after main: %w", err)
 	}
 
-	_, err = w.Write([]byte("<style>"))
-	if err != nil {
-		return fmt.Errorf("failed to write image contents style start: %w", err)
-	}
 	if err = cache.WriteImageDataCSS(w); err != nil {
 		return fmt.Errorf("failed to write image data CSS: %w", err)
 	}
-	_, err = w.Write([]byte("</style>"))
-	if err != nil {
-		return fmt.Errorf("failed to write image contents style end: %w", err)
-	}
+
 	_, err = w.Write(footer)
 	if err != nil {
 		return fmt.Errorf("failed to write footer: %w", err)

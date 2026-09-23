@@ -111,13 +111,14 @@ func (*slideRenderer) Render(
 			_, _ = w.WriteString(` data-is-right="true"`)
 		}
 		_ = w.WriteByte('>')
+		_, _ = w.WriteString(`<div class="content">`)
 		if slide.Image != nil {
 			return NewImageRenderer().Render(writer, source, slide.Image, true, rc)
 		}
 		return ast.WalkContinue, nil
 	}
 
-	_, _ = w.WriteString("</section>")
+	_, _ = w.WriteString("</div></section>")
 	return ast.WalkContinue, nil
 }
 

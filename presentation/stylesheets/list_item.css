@@ -1,26 +1,26 @@
 /* =============== list_item.css ================= */
 
-li {
-  margin: 0.4em;
+.content li {
+  margin: 0.4rem;
 }
 
-section > ul > li {
+.content > ul > li {
   position: relative; /* Establishes a bounding box for the overlay */
   overflow: hidden;    /* Optional: Prevents the color from bleeding past rounded corners */
 }
 
-section > ul > li::after {
+.content > ul > li::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  border-left: 0.7em solid var(--color-marker-background);
+  border-left: 0.7rem solid var(--color-marker-background);
   background-color: var(--color-marker-trail); /* Change to your desired covering color */
   z-index: 10;               /* Ensures the color sits on top of the content */
 }
 
-section > ul > li.is-revealed::after {
+.content > ul > li.is-revealed::after {
   display: none;
 }

@@ -7,7 +7,7 @@ section {
   justify-content: center;
   vertical-align: middle;
   border: 1px solid red;
-  border-radius: 2em;
+  border-radius: 2rem;
   transform-origin: 50% 0%;
 
   /* https://www.youtube.com/watch?v=KD3_l3S_D6M logic */
@@ -46,4 +46,66 @@ section.reverse.is-focused {
   @starting-style {
     translate: 20vw 0;
   }
+}
+
+section > .content[data-scale="90"] {
+  font-size: 90%;
+}
+
+section > .content[data-scale="80"] {
+  font-size: 80%;
+}
+
+section > .content[data-scale="70"] {
+  font-size: 70%;
+}
+
+section > .content[data-scale="60"] {
+  font-size: 60%;
+}
+
+section > .content[data-scale="50"] {
+  font-size: 50%;
+}
+
+section > .content[data-scale="40"] {
+  font-size: 40%;
+}
+
+section > .content[data-scale="30"] {
+  font-size: 30%;
+}
+
+section > .content[data-scale="20"] {
+  font-size: 20%;
+}
+
+section > .content[data-scale="10"] {
+  font-size: 10%;
+}
+
+section > .content[data-scale="60"] > .mdcoachImage {
+  max-width: 90%;
+}
+
+section > .content[data-scale="50"] > .mdcoachImage {
+  max-width: 80%;
+}
+
+section > .content[data-scale="40"] > .mdcoachImage {
+  max-width: 70%;
+}
+
+section > .content[data-scale="30"] > .mdcoachImage {
+  max-width: 50%;
+}
+
+section > .content[data-scale="20"] > .mdcoachImage {
+  float: right;
+  max-width: 30%;
+}
+
+section > .content[data-scale="10"] > .mdcoachImage {
+  float: right;
+  max-width: 5em;
 }

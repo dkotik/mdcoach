@@ -1,9 +1,9 @@
 /* =============== layout.css ================= */
 
 body {
-  /*background-color: black;*/
-  /*color: antiquewhite;*/
-  padding: 1em;
+  color: var(--color-body-text);
+  background-color: var(--color-body-background);
+  padding: 1rem;
   display: grid;
   align-items: center;
   vertical-align: middle;
@@ -12,7 +12,7 @@ body {
 
 main {
   margin: 0 auto;
-  width: min(80%, 80em);
+  width: min(80%, 80rem);
   max-height: 90%;
   position: relative;
 }

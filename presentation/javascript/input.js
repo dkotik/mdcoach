@@ -47,11 +47,11 @@ document.addEventListener(
 
 document.addEventListener(
   'wheel',
-  (event) => {
+  debounce((event) => {
     if (event.deltaY >= 0) {
       next(event)
     } else {
       previous(event)
     }
-  }
+  }, 20)
 )

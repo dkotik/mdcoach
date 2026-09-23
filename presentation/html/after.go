@@ -10,8 +10,8 @@ import (
 
 var scripts = []string{
 	"debounce.js",
+	"slides.js",
 	"input.js",
-	"focus.js",
 	"scale.js",
 }
 

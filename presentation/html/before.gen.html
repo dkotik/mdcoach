@@ -3,7 +3,7 @@ html {
   overscroll-behavior: none;
 }
 
-body {
+:root {
   --color-body-text: black;
   --color-body-subtext: #aaa;
   --color-body-background: white;
@@ -15,12 +15,9 @@ body {
   /* #4527f4 */
   --color-marker-background: #006eff;
   --color-marker-trail: #003eaf;
-
-  color: var(--color-body-text);
-  background-color: var(--color-body-background);
 }
 
-body.dark {
+html[data-theme="dark"] {
   --color-body-text: white;
   --color-body-subtext: #4a4a4a;
   --color-body-background: black;
@@ -35,9 +32,9 @@ body.dark {
 /* =============== layout.css ================= */
 
 body {
-  /*background-color: black;*/
-  /*color: antiquewhite;*/
-  padding: 1em;
+  color: var(--color-body-text);
+  background-color: var(--color-body-background);
+  padding: 1rem;
   display: grid;
   align-items: center;
   vertical-align: middle;
@@ -46,7 +43,7 @@ body {
 
 main {
   margin: 0 auto;
-  width: min(80%, 80em);
+  width: min(80%, 80rem);
   max-height: 90%;
   position: relative;
 }
@@ -59,7 +56,7 @@ section {
   justify-content: center;
   vertical-align: middle;
   border: 1px solid red;
-  border-radius: 2em;
+  border-radius: 2rem;
   transform-origin: 50% 0%;
 
   /* https://www.youtube.com/watch?v=KD3_l3S_D6M logic */
@@ -99,44 +96,106 @@ section.reverse.is-focused {
     translate: 20vw 0;
   }
 }
-/* =============== list_item.css ================= */
 
-li {
-  margin: 0.4em;
+section > .content[data-scale="90"] {
+  font-size: 90%;
 }
 
-section > ul > li {
+section > .content[data-scale="80"] {
+  font-size: 80%;
+}
+
+section > .content[data-scale="70"] {
+  font-size: 70%;
+}
+
+section > .content[data-scale="60"] {
+  font-size: 60%;
+}
+
+section > .content[data-scale="50"] {
+  font-size: 50%;
+}
+
+section > .content[data-scale="40"] {
+  font-size: 40%;
+}
+
+section > .content[data-scale="30"] {
+  font-size: 30%;
+}
+
+section > .content[data-scale="20"] {
+  font-size: 20%;
+}
+
+section > .content[data-scale="10"] {
+  font-size: 10%;
+}
+
+section > .content[data-scale="60"] > .mdcoachImage {
+  max-width: 90%;
+}
+
+section > .content[data-scale="50"] > .mdcoachImage {
+  max-width: 80%;
+}
+
+section > .content[data-scale="40"] > .mdcoachImage {
+  max-width: 70%;
+}
+
+section > .content[data-scale="30"] > .mdcoachImage {
+  max-width: 50%;
+}
+
+section > .content[data-scale="20"] > .mdcoachImage {
+  float: right;
+  max-width: 30%;
+}
+
+section > .content[data-scale="10"] > .mdcoachImage {
+  float: right;
+  max-width: 5em;
+}
+/* =============== list_item.css ================= */
+
+.content li {
+  margin: 0.4rem;
+}
+
+.content > ul > li {
   position: relative; /* Establishes a bounding box for the overlay */
   overflow: hidden;    /* Optional: Prevents the color from bleeding past rounded corners */
 }
 
-section > ul > li::after {
+.content > ul > li::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  border-left: 0.7em solid var(--color-marker-background);
+  border-left: 0.7rem solid var(--color-marker-background);
   background-color: var(--color-marker-trail); /* Change to your desired covering color */
   z-index: 10;               /* Ensures the color sits on top of the content */
 }
 
-section > ul > li.is-revealed::after {
+.content > ul > li.is-revealed::after {
   display: none;
 }
 /* =============== image.css ================= */
 
 .mdcoachImage {
-	min-height: 1.5em;
-	min-width: 1.5em;
+	min-height: 1.5rem;
+	min-width: 1.5rem;
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: contain;
 	aspect-ratio: attr(data-aspect-ratio type(<number>));
 }
-main > section > blockquote {
-  padding: 1.5em 2em;
+.content > blockquote {
+  padding: 1.5rem 2rem;
   border-left: 0.5rem solid var(--color-marker-background);
   background-color: var(--color-menu-background);
   /*background-color: var(--color-alt);*/
@@ -145,22 +204,22 @@ main > section > blockquote {
   margin: 0;
 }
 
-main > section > blockquote > p+cite {
+.content > blockquote > p+cite {
   display: block;
   font-family: sans-serif;
-  margin-right: 2em;
-  margin-bottom: -1em;
-  margin-top: 0.8em;
+  margin-right: 2rem;
+  margin-bottom: -1rem;
+  margin-top: 0.8rem;
   text-align: right;
   font-size: 80%;
   color: var(--color-body-subtext);
 }
 
-main > section > blockquote > p+cite:before {
+.content > blockquote > p+cite:before {
   color: var(--color-body-subtext);
   content: "\2013\00A0";
 }
-pre, code {
+.content pre, code {
   white-space: pre-wrap;       /* Preserves whitespace and wraps naturally */
   overflow-wrap: break-word;
 

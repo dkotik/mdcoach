@@ -1,8 +1,8 @@
 /* =============== image.css ================= */
 
 .mdcoachImage {
-	min-height: 1.5em;
-	min-width: 1.5em;
+	min-height: 1.5rem;
+	min-width: 1.5rem;
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: contain;

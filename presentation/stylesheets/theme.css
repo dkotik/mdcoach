@@ -2,7 +2,7 @@ html {
   overscroll-behavior: none;
 }
 
-body {
+:root {
   --color-body-text: black;
   --color-body-subtext: #aaa;
   --color-body-background: white;
@@ -14,12 +14,9 @@ body {
   /* #4527f4 */
   --color-marker-background: #006eff;
   --color-marker-trail: #003eaf;
-
-  color: var(--color-body-text);
-  background-color: var(--color-body-background);
 }
 
-body.dark {
+html[data-theme="dark"] {
   --color-body-text: white;
   --color-body-subtext: #4a4a4a;
   --color-body-background: black;

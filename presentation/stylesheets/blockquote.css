@@ -1,5 +1,5 @@
-main > section > blockquote {
-  padding: 1.5em 2em;
+.content > blockquote {
+  padding: 1.5rem 2rem;
   border-left: 0.5rem solid var(--color-marker-background);
   background-color: var(--color-menu-background);
   /*background-color: var(--color-alt);*/
@@ -8,18 +8,18 @@ main > section > blockquote {
   margin: 0;
 }
 
-main > section > blockquote > p+cite {
+.content > blockquote > p+cite {
   display: block;
   font-family: sans-serif;
-  margin-right: 2em;
-  margin-bottom: -1em;
-  margin-top: 0.8em;
+  margin-right: 2rem;
+  margin-bottom: -1rem;
+  margin-top: 0.8rem;
   text-align: right;
   font-size: 80%;
   color: var(--color-body-subtext);
 }
 
-main > section > blockquote > p+cite:before {
+.content > blockquote > p+cite:before {
   color: var(--color-body-subtext);
   content: "\2013\00A0";
 }

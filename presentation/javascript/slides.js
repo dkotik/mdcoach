@@ -1,4 +1,4 @@
-// ============== focus.js =====================
+// ============== slides.js =====================
 
 let currentSlide = 0
 let currentListItem = 0
@@ -9,7 +9,7 @@ const slides = document.querySelectorAll('main > section')
 const finalSlideIndex = slides.length-1
 
 const navigate = (isForward) => {
-  for (const element of slides[currentSlide].querySelectorAll(":scope > ul > li:not(.is-revealed)")) {
+  for (const element of slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")) {
     element.classList.add("is-revealed")
     return
   }
