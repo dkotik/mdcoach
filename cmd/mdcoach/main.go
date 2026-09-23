@@ -4,12 +4,13 @@ Package main provides command line interface to [mdcoach.Iterator].
 package main
 
 import (
+	"context"
 	"errors"
 	"log"
 	"os"
 	"os/exec"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func isCapableOfPDF() bool {
@@ -29,7 +30,7 @@ func isDirectory(p string) (bool, error) {
 }
 
 func main() {
-	app := &cli.App{
+	app := &cli.Command{
 		Name:  "mdcoach",
 		Usage: "convert markdown documents to HTML slide presentations with notes",
 		Commands: []*cli.Command{
@@ -40,7 +41,7 @@ func main() {
 		},
 	}
 
-	if err := app.Run(os.Args); err != nil {
+	if err := app.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
 }

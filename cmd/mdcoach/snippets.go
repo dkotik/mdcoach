@@ -2,11 +2,12 @@ package main
 
 import (
 	"bytes"
+	"context"
 	_ "embed"
 	"io"
 	"os"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 //go:embed assets/snippets.cson
@@ -16,11 +17,11 @@ func snippetsCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "snippets",
 		Usage: "display text editor autocompletion snippets that can accelerate presentation composition",
-		Subcommands: []*cli.Command{
+		Commands: []*cli.Command{
 			{
 				Name:  "pulsar",
 				Usage: "snippets.cson for Pulsar or Atom",
-				Action: func(_ *cli.Context) error {
+				Action: func(_ context.Context, _ *cli.Command) error {
 					_, err := io.Copy(
 						os.Stdout,
 						bytes.NewReader(pulsarSnippets),

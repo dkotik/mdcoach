@@ -14,7 +14,7 @@ import (
 	"github.com/dkotik/mdcoach/picture"
 	"github.com/dkotik/mdcoach/renderer"
 	"github.com/skratchdot/open-golang/open"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -30,12 +30,12 @@ func reviewCmd() *cli.Command {
 			titleFlag,
 			// TODO: add -C flag.
 		},
-		Action: func(c *cli.Context) (err error) {
+		Action: func(_ context.Context, c *cli.Command) (err error) {
 			cwd, err := os.Getwd() // TODO: should be flag -C
 			if err != nil {
 				return fmt.Errorf("cannot locate working directory: %w", err)
 			}
-			output := c.Value("output").(string)
+			output := c.String("output")
 			if filepath.IsLocal(output) {
 				output = filepath.Join(cwd, output)
 			}
@@ -120,7 +120,7 @@ func reviewCmd() *cli.Command {
 				return fmt.Errorf("output format %q is not supported", ext)
 			}
 			if err = questions.RenderToFile(output, &document.Metadata{
-				Title: c.Value("title").(string),
+				Title: c.String("title"),
 			}); err != nil {
 				return err
 			}

@@ -17,7 +17,7 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
 
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -100,7 +100,7 @@ func compileCmd() *cli.Command {
 			overwriteFlag,
 			silentFlag,
 		},
-		Action: func(c *cli.Context) (err error) {
+		Action: func(_ context.Context, c *cli.Command) (err error) {
 			// TODO: use c.IsSet("open") instead of output value!
 			// if outputFlagValue == nil {
 			// 	return errors.New("output flag is required")
@@ -111,7 +111,7 @@ func compileCmd() *cli.Command {
 			if err != nil {
 				return fmt.Errorf("cannot locate working directory: %w", err)
 			}
-			output := c.Value("output").(string)
+			output := c.String("output")
 			args := c.Args().Slice()
 			if len(args) == 0 {
 				return errors.New("compile command requires a file path to at least one Markdown file")
