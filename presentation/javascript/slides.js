@@ -101,10 +101,16 @@ const getSlideIndexFromLocationHash = () => {
   return numericValue
 }
 
-window.addEventListener("hashchange", () => {
+const navigateToWindowHashLocation = () => {
   const slideIndex = getSlideIndexFromLocationHash()
   if (slideIndex === currentSlide) {
     return
   }
   navigate(slideIndex)
-})
+}
+window.addEventListener(
+  "hashchange",
+  navigateToWindowHashLocation
+)
+
+navigateToWindowHashLocation()

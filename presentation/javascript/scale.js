@@ -30,7 +30,9 @@ function scaleDown() {
 }
 
 window.setTimeout(() => {
-  topEdge = slides[0]?.getBoundingClientRect().top ?? 20
+  // topEdge = slides[0]?.getBoundingClientRect().top ?? 20
+  // console.log("topEdge", topEdge)
+  topEdge = parseFloat(window.getComputedStyle(slides[0].querySelector(":scope > .grid")).paddingTop)
   scaleDown()
 }, 150)
 
