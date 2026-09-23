@@ -3,6 +3,7 @@ package mdcoach
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	meta "github.com/yuin/goldmark-meta/v2"
 	"github.com/yuin/goldmark/v2/ast"
@@ -149,13 +150,13 @@ func (s *slideRenderer) Render(
 	slide := node.(*Slide)
 	if entering {
 		_, _ = fmt.Fprintf(w, `<section data-heading-level="%d"`, slide.HeadingLevel)
-		renderImageAttributes(w, source, slide)
+		renderSlideAttributes(w, source, slide)
 		_ = w.WriteByte('>')
-		_, _ = w.WriteString(`<div class="content">`)
+		_, _ = w.WriteString(`<div class="grid"><div class="content">`)
 		return ast.WalkContinue, nil
 	}
 
-	_, _ = w.WriteString("</div></section>")
+	_, _ = w.WriteString("</div></div></section>")
 	return ast.WalkContinue, nil
 }
 
@@ -233,4 +234,30 @@ func (s *slideCutter) Transform(document *ast.Document, _ text.Reader, _ parser.
 	// 	}
 	// 	slide.AppendChild(child)
 	// }
+}
+
+func renderSlideAttributes(writer io.Writer, source []byte, node ast.Node) {
+	w, ok := writer.(util.BufWriter)
+	if !ok {
+		w = util.NewErrorBufWriter(w)
+	}
+	tw := &textWriter{w}
+	classes := make([]string, 0, 2)
+	classes = append(classes, ImageCSSClass)
+	for _, attr := range node.Attributes() {
+		if !html.ImageAttributeFilter.ContainsString(attr.Name) {
+			if !strings.HasPrefix(attr.Name, "data-") {
+				continue
+			}
+			if attr.Name == "data-hash" {
+				classes = append(classes, ImageContentClassPrefix+attr.Value.Str(source))
+				continue
+			}
+		}
+		_, _ = w.WriteString(" ")
+		_, _ = w.WriteString(attr.Name)
+		_, _ = w.WriteString(`="`)
+		_, _ = attr.Value.WriteTo(tw, source)
+		_ = w.WriteByte('"')
+	}
 }

@@ -11,7 +11,7 @@ slides[currentSlide].classList.add(focusedClass)
 slides[currentSlide].classList.add(reverseClass)
 
 const getCurrentConcealedListItems = () => {
-  return slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")
+  return slides[currentSlide].querySelectorAll(":scope > .grid > .content > ul > li:not(.is-revealed)")
 }
 
 const navigate = (targetSlide) => {

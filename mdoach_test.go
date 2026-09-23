@@ -19,5 +19,17 @@ func TestPresentationAST(t *testing.T) {
 	var dump bytes.Buffer
 	internal.WriteAST(&dump, tree, source)
 
+	for child := range tree.Children() {
+		switch child.Kind() {
+		case SlideKind:
+			for _, attr := range child.Attributes() {
+				switch attr.Name {
+				case "class":
+					t.Error("slide contains class attribute:", attr.Value.Str(source))
+				}
+			}
+		}
+	}
+
 	goldie.New(t).Assert(t, "presentation_ast", dump.Bytes())
 }

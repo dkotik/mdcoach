@@ -18,7 +18,7 @@ function isTooLarge(element) {
 function scaleDown() {
   let scaling = false
   for (const slide of slides) {
-    const element = slide.querySelector(":scope > .content")
+    const element = slide.querySelector(":scope > .grid > .content")
     if (isTooLarge(element)) {
       scaling = scaleElementDown(element)
     }
@@ -36,7 +36,7 @@ window.setTimeout(() => {
 
 window.addEventListener("resize", debounce(() => {
   for (const slide of slides) {
-    const element = slide.querySelector(":scope > .content")
+    const element = slide.querySelector(":scope > .grid > .content")
     element.setAttribute("data-scale", "100")
   }
   window.setTimeout(scaleDown, 150)
