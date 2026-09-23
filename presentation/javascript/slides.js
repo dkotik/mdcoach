@@ -9,9 +9,11 @@ const slides = document.querySelectorAll('main > section')
 const finalSlideIndex = slides.length-1
 
 const navigate = (isForward) => {
-  for (const element of slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")) {
-    element.classList.add("is-revealed")
-    return
+  if (isForward) {
+    for (const element of slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")) {
+      element.classList.add("is-revealed")
+      return
+    }
   }
 
   slides[currentSlide].classList.remove(focusedClass)

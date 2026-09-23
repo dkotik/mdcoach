@@ -8,6 +8,6 @@ function debounce(callback, delay = 0) {
     timeoutId = setTimeout(() => {
       timeoutId = undefined;
       callback.apply(this, args);
-    }, Math.max(0, delay));
+    }, Math.max(10, delay));
   };
 }

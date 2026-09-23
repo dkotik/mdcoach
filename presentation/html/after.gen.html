@@ -9,55 +9,9 @@ function debounce(callback, delay = 0) {
     timeoutId = setTimeout(() => {
       timeoutId = undefined;
       callback.apply(this, args);
-    }, Math.max(0, delay));
+    }, Math.max(10, delay));
   };
 }
-// ============== slides.js =====================
-
-let currentSlide = 0
-let currentListItem = 0
-
-const focusedClass = "is-focused"
-const reverseClass = "reverse"
-const slides = document.querySelectorAll('main > section')
-const finalSlideIndex = slides.length-1
-
-const navigate = (isForward) => {
-  for (const element of slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")) {
-    element.classList.add("is-revealed")
-    return
-  }
-
-  slides[currentSlide].classList.remove(focusedClass)
-  if (isForward) {
-    slides[currentSlide].classList.add(reverseClass)
-    currentSlide++
-  } else {
-    slides[currentSlide].classList.remove(reverseClass)
-    currentSlide--
-  }
-  slides[currentSlide].classList.add(focusedClass)
-  if (isForward) {
-    slides[currentSlide].classList.remove(reverseClass)
-  } else {
-    slides[currentSlide].classList.add(reverseClass)
-  }
-}
-navigate(true)
-
-window.addEventListener(nextEventType, (event) => {
-  if(currentSlide >= finalSlideIndex) {
-    return
-  }
-  navigate(true)
-})
-
-window.addEventListener(previousEventType, (event) => {
-  if (currentSlide === 0) {
-    return
-  }
-  navigate(false)
-})
 // ============== input.js =====================
 
 const nextEventType = "nextListItemOrSlide"
@@ -115,4 +69,89 @@ document.addEventListener(
     }
   }, 20)
 )
+// ============== slides.js =====================
+
+let currentSlide = 0
+let currentListItem = 0
+
+const focusedClass = "is-focused"
+const reverseClass = "reverse"
+const slides = document.querySelectorAll('main > section')
+const finalSlideIndex = slides.length-1
+
+const navigate = (isForward) => {
+  if (isForward) {
+    for (const element of slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")) {
+      element.classList.add("is-revealed")
+      return
+    }
+  }
+
+  slides[currentSlide].classList.remove(focusedClass)
+  if (isForward) {
+    slides[currentSlide].classList.add(reverseClass)
+    currentSlide++
+  } else {
+    slides[currentSlide].classList.remove(reverseClass)
+    currentSlide--
+  }
+  slides[currentSlide].classList.add(focusedClass)
+  if (isForward) {
+    slides[currentSlide].classList.remove(reverseClass)
+  } else {
+    slides[currentSlide].classList.add(reverseClass)
+  }
+}
+navigate(true)
+
+window.addEventListener(nextEventType, (event) => {
+  if(currentSlide >= finalSlideIndex) {
+    return
+  }
+  navigate(true)
+})
+
+window.addEventListener(previousEventType, (event) => {
+  if (currentSlide === 0) {
+    return
+  }
+  navigate(false)
+})
+// ============== scale.js =====================
+
+function scaleElementDown(element) {
+  const attribute = element.getAttribute("data-scale")
+  const current = Number.parseInt(attribute ?? "100", 10)
+  if (current < 20) {
+    return false
+  }
+  element.setAttribute("data-scale", String(current - 10))
+  return true
+}
+
+let topEdge = 20
+function isTooLarge(element) {
+  return (element.getBoundingClientRect().height + topEdge) > window.innerHeight
+}
+
+function scaleDown() {
+  let scaling = false
+  for (const slide of slides) {
+    const element = slide.querySelector(":scope > .content")
+    if (isTooLarge(element)) {
+      scaling = scaleElementDown(element)
+    }
+  }
+
+  if (scaling) {
+    window.setTimeout(scaleDown, 50)
+  }
+}
+
+window.setTimeout(() => {
+  topEdge = slides[0]?.getBoundingClientRect().top ?? 20
+  scaleDown()
+}, 150)
+
+window.addEventListener("resize", debounce(scaleDown, 100))
 </script>
