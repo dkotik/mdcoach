@@ -33,3 +33,15 @@ func TestFigureTransformerPreservesImage(t *testing.T) {
 	dumpAST(tree, source, &dump)
 	goldie.New(t).Assert(t, "figure_ast", dump.Bytes())
 }
+
+func TestFigureRenderer(t *testing.T) {
+	source := []byte("![cat](media/cat_1.jpg)\n")
+	tree := NewParser().Parse(source)
+
+	var rendered bytes.Buffer
+	if err := NewRenderer().Render(&rendered, source, tree); err != nil {
+		t.Fatal(err)
+	}
+
+	goldie.New(t).Assert(t, "figure_html", rendered.Bytes())
+}

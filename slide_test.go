@@ -1,6 +1,7 @@
 package mdcoach
 
 import (
+	"bytes"
 	"testing"
 
 	"github.com/yuin/goldmark/v2/ast"
@@ -50,11 +51,21 @@ func TestSlideTransformerDoesNotSplitNestedHeadings(t *testing.T) {
 	(&slideCutter{}).Transform(document, nil, nil)
 
 	if document.ChildCount() != 1 {
-		t.Fatalf("got %d slides, want 1", document.ChildCount())
+		t.Errorf("got %d slides, want 1", document.ChildCount())
+		for child := range document.Children() {
+			t.Log("child", child.Kind())
+		}
 	}
 	if document.FirstChild().ChildCount() != 1 {
-		t.Fatalf("nested heading was not retained in the slide")
+		t.Errorf("nested heading was not retained in the slide")
 	}
+
+	if !t.Failed() {
+		return
+	}
+	var dump bytes.Buffer
+	dumpAST(document, nil, &dump)
+	t.Log(dump.String())
 }
 
 func TestSlideTransformerEmptyDocument(t *testing.T) {

@@ -6,6 +6,11 @@ Document: MdCoach Demo {
       Text: MdCoach
       Text: Demo
     }
+    Aside: notes {
+      Paragraph: notes {
+        Text: notes
+      }
+    }
   }
   Slide: Figure To the Right {
     [data-heading-level="3"]

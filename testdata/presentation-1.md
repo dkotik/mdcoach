@@ -32,6 +32,10 @@ footer: What would you change for the course?
 
 ![cat image](media/cat_3.jpg "some cat")
 
+***
+
+notes
+
 ---
 
 ### Figure To the Right

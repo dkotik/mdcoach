@@ -45,6 +45,7 @@ func (s *Slide) withChildren(children ...ast.Node) {
 	var child ast.Node
 	contentElementCount := 0
 	for _, child = range children {
+		// s.OwnerDocument().RemoveChild(child)
 		s.AppendChild(child)
 		switch child.Kind() {
 		case ast.KindHeading:
@@ -140,8 +141,16 @@ func (s *slideRenderer) Render(
 		_ = w.WriteByte('>')
 
 		if slide.Figure != nil {
-			_, _ = w.WriteString(`<aside>`)
-			_, err := s.FigureRenderer.Render(writer, source, slide.Figure, entering, rc)
+			_, _ = w.WriteString(`<aside>[Aside]`)
+			_, err := s.FigureRenderer.Render(writer, source, slide.Figure, true, rc)
+			if err != nil {
+				return ast.WalkStop, err
+			}
+			_, err = NewImageRenderer().Render(writer, source, slide.Figure.FirstChild(), true, rc)
+			if err != nil {
+				return ast.WalkStop, err
+			}
+			_, err = s.FigureRenderer.Render(writer, source, slide.Figure, false, rc)
 			if err != nil {
 				return ast.WalkStop, err
 			}
@@ -149,9 +158,6 @@ func (s *slideRenderer) Render(
 		}
 
 		_, _ = w.WriteString(`<div class="content">`)
-		if slide.Figure != nil {
-			return NewImageRenderer().Render(writer, source, slide.Figure, true, rc)
-		}
 		return ast.WalkContinue, nil
 	}
 
@@ -189,6 +195,9 @@ func (s *slideCutter) Transform(document *ast.Document, _ text.Reader, _ parser.
 	makeSlide := func() ast.Node {
 		slide := &Slide{}
 		document.InsertAfter(lastChild, slide)
+		// for _, child := range children {
+		// 	document.RemoveChild(child)
+		// }
 		slide.withChildren(children...)
 		children = children[:0]
 		return slide
