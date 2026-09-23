@@ -13,7 +13,7 @@ func TestNewPresentation(t *testing.T) {
 	if err := New(
 		context.Background(),
 		&output,
-		[]string{"../testdata/presentation.md"},
+		[]string{"../testdata/presentation-1.md"},
 	); err != nil {
 		t.Fatal(err)
 	}

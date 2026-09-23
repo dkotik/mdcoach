@@ -24,7 +24,7 @@ func TestLocalURLPath(t *testing.T) {
 }
 
 func TestImageLoader(t *testing.T) {
-	source, err := os.ReadFile("testdata/presentation.md")
+	source, err := os.ReadFile("testdata/presentation-1.md")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,137 +4,96 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/dkotik/mdcoach/document"
-	"github.com/dkotik/mdcoach/document/review"
-	"github.com/dkotik/mdcoach/picture"
-	"github.com/dkotik/mdcoach/renderer"
+	"github.com/dkotik/mdcoach"
+	"github.com/gpdf-dev/gpdf"
+	gpdfdocument "github.com/gpdf-dev/gpdf/document"
+	gpdftemplate "github.com/gpdf-dev/gpdf/template"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/urfave/cli/v3"
-	"golang.org/x/sync/errgroup"
+	"github.com/yuin/goldmark/v2/ast"
 )
 
 func reviewCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "review",
-		Usage: "generate a review sheet using questions found in Markdown list items",
+		Usage: "generate a review sheet using questions from Markdown frontmatter",
 		Flags: []cli.Flag{
 			outputFlag,
 			openFlag,
 			overwriteFlag,
 			silentFlag,
 			titleFlag,
-			// TODO: add -C flag.
 		},
-		Action: func(_ context.Context, c *cli.Command) (err error) {
-			cwd, err := os.Getwd() // TODO: should be flag -C
+		Action: func(_ context.Context, c *cli.Command) error {
+			cwd, err := os.Getwd()
 			if err != nil {
 				return fmt.Errorf("cannot locate working directory: %w", err)
-			}
-			output := c.String("output")
-			if filepath.IsLocal(output) {
-				output = filepath.Join(cwd, output)
-			}
-
-			pictureProvider, err := picture.NewInternetProvider(
-				picture.WithDestinationPath(filepath.Join(
-					filepath.Dir(output),
-					"presentationMedia",
-				)),
-			)
-			if err != nil {
-				return err
-			}
-
-			r, err := renderer.New(
-				renderer.WithPictureProvider(&picture.SourceFilter{
-					Provider: pictureProvider,
-					IsAllowed: func(source *picture.Source) (bool, error) {
-						// trim output path from the source set
-						source.Location = strings.TrimPrefix(source.Location, filepath.Dir(output)+"/")
-						return true, nil
-					},
-				}),
-			)
-			if err != nil {
-				return err
 			}
 
 			args := c.Args().Slice()
 			if len(args) == 0 {
-				return errors.New("compile command requires a file path to a Markdown file")
+				return errors.New("review command requires a file path to a Markdown file")
 			}
 
-			questions, err := review.New(
-				review.WithRenderer(r),
+			questions := make([]string, 0)
+			for _, filePath := range args {
+				if filepath.IsLocal(filePath) {
+					filePath = filepath.Join(cwd, filePath)
+				}
+
+				markdown, err := os.ReadFile(filePath)
+				if err != nil {
+					return fmt.Errorf("unable to read file %q: %w", filePath, err)
+				}
+
+				document, ok := mdcoach.NewParser().Parse(markdown).(*ast.Document)
+				if !ok {
+					return fmt.Errorf("parser returned a non-document AST for %q", filePath)
+				}
+				fileQuestions, err := questionsFromMetadata(document.Metadata())
+				if err != nil {
+					return fmt.Errorf("read questions from %q: %w", filePath, err)
+				}
+				questions = append(questions, fileQuestions...)
+			}
+
+			if len(questions) == 0 {
+				return errors.New("no questions were found in Markdown frontmatter")
+			}
+			rand.New(rand.NewSource(time.Now().UnixNano())).Shuffle(
+				len(questions),
+				func(i, j int) { questions[i], questions[j] = questions[j], questions[i] },
 			)
+
+			output := c.String("output")
+			if filepath.IsLocal(output) {
+				output = filepath.Join(cwd, output)
+			}
+			switch ext := strings.ToLower(filepath.Ext(output)); ext {
+			case ".pdf":
+			case "":
+				output = filepath.Join(
+					output,
+					"review"+time.Now().Format("2006-01-02")+".pdf",
+				)
+			default:
+				return fmt.Errorf("output format %q is not supported; use a .pdf file or directory", ext)
+			}
+
+			pdf, err := renderQuestionsPDF(questions, c.String("title"))
 			if err != nil {
 				return err
 			}
-
-			// TODO: add notify context to respond to Ctrl+C signal and others.
-			g, _ := errgroup.WithContext(context.TODO())
-			for _, filePath := range args {
-				filePath := filePath // Golang loop bug
-				g.Go(func() (err error) {
-					// TODO: make sure file is markdown file!
-					// prevent loading huge files!
-					markdown, err := os.ReadFile(filepath.Join(cwd, filePath))
-					if err != nil {
-						return fmt.Errorf("unable to read file %q: %w", filePath, err)
-					}
-					// fmt.Println("loading questions from:", filePath)
-					return questions.AddSource(markdown)
-				})
-			}
-			if err = g.Wait(); err != nil {
-				return err
-			}
-			if questions.Len() == 0 {
-				return errors.New("no questions were found in list items of given files")
-			}
-			questions.Shuffle()
-
-			// if err = questions.Render(os.Stdout); err != nil {
-			// 	return err
-			// }
-			// time.Now().Format(`2006-01-02`)
-			pdf := isCapableOfPDF()
-			switch ext := filepath.Ext(output); ext {
-			case ".html":
-			case ".pdf":
-				if !pdf {
-					return errors.New("PDF generator weasyprint is not installed")
-				}
-				output = strings.TrimSuffix(output, ".pdf") + ".html"
-			case "": // directory
-				output = filepath.Join(
-					output,
-					"review"+time.Now().Format(`2006-01-02`)+".html",
-				)
-			default:
-				return fmt.Errorf("output format %q is not supported", ext)
-			}
-			if err = questions.RenderToFile(output, &document.Metadata{
-				Title: c.String("title"),
-			}); err != nil {
-				return err
+			if err := os.WriteFile(output, pdf, 0o644); err != nil {
+				return fmt.Errorf("write PDF %q: %w", output, err)
 			}
 
-			if pdf {
-				renderered := output
-				output = strings.TrimSuffix(output, ".html") + ".pdf"
-				if err = Exec(
-					`weasyprint`, renderered, output,
-					`-p`, // -p is important for ol! https://github.com/Kozea/WeasyPrint/issues/398
-				); err != nil {
-					return err
-				}
-			}
 			fmt.Println(output)
 			if c.IsSet("open") {
 				return open.Run("file://" + output)
@@ -144,13 +103,55 @@ func reviewCmd() *cli.Command {
 	}
 }
 
-func uniqueOnly(set []string) (unique []string) {
-	known := make(map[string]struct{})
-	for _, check := range set {
-		if _, ok := known[check]; !ok {
-			known[check] = struct{}{}
-			unique = append(unique, check)
+func questionsFromMetadata(metadata map[string]any) ([]string, error) {
+	var value any
+	for key, candidate := range metadata {
+		if strings.EqualFold(key, "questions") {
+			value = candidate
+			break
 		}
 	}
-	return unique
+	if value == nil {
+		return nil, nil
+	}
+
+	items, ok := value.([]any)
+	if !ok {
+		if stringsValue, ok := value.([]string); ok {
+			return stringsValue, nil
+		}
+		return nil, fmt.Errorf("questions must be a list, got %T", value)
+	}
+
+	questions := make([]string, 0, len(items))
+	for i, item := range items {
+		question, ok := item.(string)
+		if !ok {
+			return nil, fmt.Errorf("question %d must be a string, got %T", i+1, item)
+		}
+		questions = append(questions, question)
+	}
+	return questions, nil
+}
+
+func renderQuestionsPDF(questions []string, title string) ([]byte, error) {
+	document := gpdf.NewDocument(
+		gpdf.WithPageSize(gpdf.A4),
+		gpdf.WithMargins(gpdfdocument.UniformEdges(gpdfdocument.Mm(20))),
+		gpdf.WithMetadata(gpdfdocument.DocumentMetadata{Title: title}),
+	)
+	page := document.AddPage()
+	for _, question := range questions {
+		question := question
+		page.AutoRow(func(row *gpdftemplate.RowBuilder) {
+			row.Col(12, func(column *gpdftemplate.ColBuilder) {
+				column.Text(question, gpdftemplate.FontSize(14))
+			})
+		})
+	}
+	data, err := document.Generate()
+	if err != nil {
+		return nil, fmt.Errorf("generate questions PDF: %w", err)
+	}
+	return data, nil
 }
