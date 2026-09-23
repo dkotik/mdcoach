@@ -3,10 +3,11 @@
 body {
   color: var(--color-body-text);
   background-color: var(--color-body-background);
-  padding: 1rem;
-  display: grid;
+  padding: 0;
+  margin: 0;
+  /*display: grid;
   align-items: center;
-  vertical-align: middle;
+  vertical-align: middle;*/
   overflow: hidden !important;
 }
 
@@ -32,9 +33,9 @@ aside.curtain {
   transition-behavior: allow-discrete; /* animates display */
 }
 
-main {
+/*main {
   margin: 0 auto;
   width: min(80%, 80rem);
   max-height: 90%;
   position: relative;
-}
+}*/

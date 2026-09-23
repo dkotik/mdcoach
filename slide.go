@@ -21,15 +21,23 @@ var (
 	_         parser.ASTTransformer = (*slideCutter)(nil)
 )
 
+type SlideLayout string
+
+const (
+	SlideNormalLayout     SlideLayout = "normal"
+	SlideSplashLayout     SlideLayout = "splash"
+	SlideLeftAsideLayout  SlideLayout = "left-aside"
+	SlideRightAsideLayout SlideLayout = "right-aside"
+)
+
 // Slide is a presentation slide containing a section of the document.
 //
 // The heading that starts a section is part of that section and is therefore
 // the first child of the corresponding Slide node.
 type Slide struct {
 	ast.BaseBlock
-	HeadingLevel        int
-	Figure              *Figure
-	IsImageRightAligned bool
+	HeadingLevel int
+	SlideLayout  SlideLayout
 }
 
 func NewSlide(children ...ast.Node) (s *Slide) {
@@ -39,6 +47,10 @@ func NewSlide(children ...ast.Node) (s *Slide) {
 }
 
 func (s *Slide) withChildren(children ...ast.Node) {
+	s.SlideLayout = SlideNormalLayout
+	defer func() {
+		s.SetAttribute("data-layout", text.NewMultiLineValueFromString(string(s.SlideLayout), text.IdentityDecoder))
+	}()
 	if len(children) == 0 {
 		return
 	}
@@ -50,6 +62,7 @@ func (s *Slide) withChildren(children ...ast.Node) {
 		switch child.Kind() {
 		case ast.KindHeading:
 		case KindFigure:
+		case KindAside:
 		default:
 			contentElementCount++
 		}
@@ -64,11 +77,12 @@ func (s *Slide) withChildren(children ...ast.Node) {
 			fmt.Sprintf("%d", s.HeadingLevel),
 			text.IdentityDecoder,
 		))
-		if s.HeadingLevel == 1 && contentElementCount == 0 {
+		if s.HeadingLevel == 1 {
+			// && contentElementCount == 0
 			// possible background image in the last element
-			s.Figure, ok = s.LastChild().(*Figure)
+			_, ok = s.LastChild().(*Figure)
 			if ok {
-				s.RemoveChild(s.Figure)
+				s.SlideLayout = SlideSplashLayout
 				return
 			}
 		}
@@ -76,20 +90,21 @@ func (s *Slide) withChildren(children ...ast.Node) {
 	if contentElementCount == 0 {
 		return
 	}
-	s.Figure, ok = s.LastChild().(*Figure)
+	_, ok = s.LastChild().(*Figure)
 	if ok {
-		s.IsImageRightAligned = true
-		s.RemoveChild(s.Figure)
+		s.SlideLayout = SlideRightAsideLayout
 		return
 	}
 
 	for _, child = range children {
 		switch child.Kind() {
 		case ast.KindHeading:
+		case KindAside:
 		case KindFigure:
-			s.Figure, ok = child.(*Figure)
+			_, ok = child.(*Figure)
 			if ok {
-				s.RemoveChild(s.Figure)
+				s.SlideLayout = SlideLeftAsideLayout
+				return
 			}
 			return
 		default:
@@ -106,8 +121,7 @@ func (*Slide) Kind() ast.NodeKind {
 // Dump dumps the slide and its children.
 func (s *Slide) Dump(_ []byte) *ast.NodeDump {
 	return ast.NewNodeDump(s, map[string]any{
-		"figure":            s.Figure,
-		"asideRightAligned": s.IsImageRightAligned,
+		"layout": s.SlideLayout,
 		// "headingLevel": s.HeadingLevel,
 		// "children":   s.Children(),
 	})
@@ -135,28 +149,8 @@ func (s *slideRenderer) Render(
 	slide := node.(*Slide)
 	if entering {
 		_, _ = fmt.Fprintf(w, `<section data-heading-level="%d"`, slide.HeadingLevel)
-		if slide.IsImageRightAligned {
-			_, _ = w.WriteString(` data-is-right="true"`)
-		}
+		renderImageAttributes(w, source, slide)
 		_ = w.WriteByte('>')
-
-		if slide.Figure != nil {
-			_, _ = w.WriteString(`<aside>[Aside]`)
-			_, err := s.FigureRenderer.Render(writer, source, slide.Figure, true, rc)
-			if err != nil {
-				return ast.WalkStop, err
-			}
-			_, err = NewImageRenderer().Render(writer, source, slide.Figure.FirstChild(), true, rc)
-			if err != nil {
-				return ast.WalkStop, err
-			}
-			_, err = s.FigureRenderer.Render(writer, source, slide.Figure, false, rc)
-			if err != nil {
-				return ast.WalkStop, err
-			}
-			_, _ = w.WriteString(`</aside>`)
-		}
-
 		_, _ = w.WriteString(`<div class="content">`)
 		return ast.WalkContinue, nil
 	}

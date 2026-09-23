@@ -1,5 +1,7 @@
 Document: cat {
+  [id="a1b16bad02225eb2"]
   Slide: cat {
+    [data-layout="normal"]
     Figure: cat {
       Image: cat {
         Text: cat

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/dkotik/mdcoach/internal"
 	"github.com/yuin/goldmark/v2/ast"
 )
 
@@ -64,7 +65,7 @@ func TestSlideTransformerDoesNotSplitNestedHeadings(t *testing.T) {
 		return
 	}
 	var dump bytes.Buffer
-	dumpAST(document, nil, &dump)
+	internal.WriteAST(&dump, document, nil)
 	t.Log(dump.String())
 }
 

@@ -41,10 +41,11 @@ html[data-theme="dark"] {
 body {
   color: var(--color-body-text);
   background-color: var(--color-body-background);
-  padding: 1rem;
-  display: grid;
+  padding: 0;
+  margin: 0;
+  /*display: grid;
   align-items: center;
-  vertical-align: middle;
+  vertical-align: middle;*/
   overflow: hidden !important;
 }
 
@@ -70,20 +71,17 @@ aside.curtain {
   transition-behavior: allow-discrete; /* animates display */
 }
 
-main {
+/*main {
   margin: 0 auto;
   width: min(80%, 80rem);
   max-height: 90%;
   position: relative;
-}
+}*/
 /* =================== section.css =================== */
 
 section {
+  display: grid;
   width: 100%;
-  aspect-ratio: 4 / 3;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
   border: 1px solid red;
   border-radius: 2rem;
   transform-origin: 50% 0%;
@@ -91,7 +89,9 @@ section {
   /* https://www.youtube.com/watch?v=KD3_l3S_D6M logic */
   position: absolute;
   z-index: -100;
-  display: grid;
+  /*display: grid;*/
+  /*grid-template-columns: 1fr 1fr 1fr;*/
+  /*grid-template-areas: "content content content";*/
   visibility: hidden;
   opacity: 0;
   translate: 20vw 0;
@@ -133,6 +133,20 @@ section > aside {
   width: 30%;
   background-color: red;
   height: 100vh;
+}
+
+section > .content {
+  aspect-ratio: 4 / 3;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  /*grid-area: content;*/
+  /*grid-template-columns: subgrid;*/
+}
+
+section > aside {
+  grid-area: notes;
 }
 
 section > .content[data-scale="90"] {
@@ -271,13 +285,13 @@ section > .content[data-scale="10"] .mdcoachImage {
   margin: 1rem 1.5rem 1rem 3rem;
 }
 </style><main>
-<section data-heading-level="1"><aside>[Aside]<figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat"></div><figcaption>cat image</figcaption></figure></aside><div class="content"><h1>MdCoach Demo</h1>
-<aside><p>notes</p>
-</aside></div></section><section data-heading-level="3" data-is-right="true"><aside>[Aside]<figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat"></div><figcaption>cat image</figcaption></figure></aside><div class="content"><h3>Figure To the Right</h3>
+<section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>MdCoach Demo</h1>
+<figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div><figcaption>cat image</figcaption></figure><aside><p>notes</p>
+</aside></div></section><section data-heading-level="3" data-heading-level="3" data-layout="right-aside" class="mdcoachImage"><div class="content"><h3>Figure To the Right</h3>
 <p>Some text before figure.</p>
-</div></section><section data-heading-level="2"><aside>[Aside]<figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat"></div><figcaption>cat image</figcaption></figure></aside><div class="content"><h2>Figure To the Left</h2>
-<p>Some text after figure.</p>
-</div></section><section data-heading-level="1"><div class="content"><h1>BLockquote Tests</h1>
+<figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div><figcaption>cat image</figcaption></figure></div></section><section data-heading-level="2" data-heading-level="2" data-layout="left-aside" class="mdcoachImage"><div class="content"><h2>Figure To the Left</h2>
+<figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div><figcaption>cat image</figcaption></figure><p>Some text after figure.</p>
+</div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>BLockquote Tests</h1>
 <blockquote>
 <blockquote>
 <p>three<br>
@@ -294,7 +308,7 @@ continue teh quote</p>
 slkfj sadlk fjsldkfj slkdjf</p>
 <p>ft paragraph <div data-src="media/cat_1.jpg" data-alt="luth" data-title="weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentbfa2df515cc21a94"></div></p>
 <aside><p>Aside element here.</p>
-</aside></div></section><section data-heading-level="1"><div class="content"><h1>Presentation Title1</h1>
+</aside></div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>Presentation Title1</h1>
 <p>:) :checkbox: :cat: :salad: ;) ![slashes](in brackets) \:cat: \\ hmm:-)</p>
 <ul>
 <li># first ahem</li>
@@ -316,7 +330,7 @@ slkfj sadlk fjsldkfj slkdjf</p>
 </ul>
 <p>just a regular paragraph</p>
 <!-- raw HTML omitted -->
-</div></section><section data-heading-level="0"><div class="content"><p>hmmm <div data-src="media/cat_2.jpg" data-alt="luth" data-title="weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent386bcf30afde4762"></div></p>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><p>hmmm <div data-src="media/cat_2.jpg" data-alt="luth" data-title="weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent386bcf30afde4762"></div></p>
 <blockquote>
 <p>full block blockquote лыво адлыовалд :) ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu     лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu (Cite)</p>
 <p>лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu full block blockquote лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu (cite 2)</p>
@@ -332,13 +346,13 @@ slkfj sadlk fjsldkfj slkdjf</p>
 <pre><code class="language-greek">1 Ἀρχὴ τοῦ εὐαγγελίου Ἰησοῦ Χριστοῦ [υἱοῦ θεοῦ]. 2 Καθὼς γέγραπται ἐν τῷ Ἠσαΐᾳ τῷ προφήτῃ, Ἰδοὺ ἀποστέλλω τὸν ἄγγελόν μου πρὸ προσώπου σου, ὃς κατασκευάσει τὴν ὁδόν σου: 3 φωνὴ βοῶντος ἐν τῇ ἐρήμῳ, Ἑτοιμάσατε τὴν ὁδὸν κυρίου, εὐθείας ποιεῖτε τὰς τρίβους αὐτοῦ 4 ἐγένετο Ἰωάννης [ὁ] βαπτίζων ἐν τῇ ἐρήμῳ καὶ κηρύσσων βάπτισμα μετανοίας εἰς ἄφεσιν ἁμαρτιῶν. 5 καὶ ἐξεπορεύετο πρὸς αὐτὸν πᾶσα ἡ Ἰουδαία χώρα καὶ οἱ Ἱεροσολυμῖται πάντες, καὶ ἐβαπτίζοντο ὑπ' αὐτοῦ ἐν τῷ Ἰορδάνῃ ποταμῷ ἐξομολογούμενοι τὰς ἁμαρτίας αὐτῶν. 6 καὶ ἦν ὁ Ἰωάννης ἐνδεδυμένος τρίχας καμήλου καὶ ζώνην δερματίνην περὶ τὴν ὀσφὺν αὐτοῦ, καὶ ἐσθίων ἀκρίδας καὶ μέλι ἄγριον. 7 καὶ ἐκήρυσσεν λέγων, Ἔρχεται ὁ ἰσχυρότερός μου ὀπίσω μου, οὗ οὐκ εἰμὶ ἱκανὸς κύψας λῦσαι τὸν ἱμάντα τῶν ὑποδημάτων αὐτοῦ: 8 ἐγὼ ἐβάπτισα ὑμᾶς ὕδατι, αὐτὸς δὲ βαπτίσει ὑμᾶς ἐν πνεύματι ἁγίῳ. 9 Καὶ ἐγένετο ἐν ἐκείναις ταῖς ἡμέραις ἦλθεν Ἰησοῦς ἀπὸ Ναζαρὲτ τῆς Γαλιλαίας καὶ ἐβαπτίσθη εἰς τὸν Ἰορδάνην ὑπὸ Ἰωάννου. 10 καὶ εὐθὺς ἀναβαίνων ἐκ τοῦ ὕδατος εἶδεν σχιζομένους τοὺς οὐρανοὺς καὶ τὸ πνεῦμα ὡς περιστερὰν καταβαῖνον εἰς αὐτόν: 11 καὶ φωνὴ ἐγένετο ἐκ τῶν οὐρανῶν, Σὺ εἶ ὁ υἱός μου ὁ ἀγαπητός, ἐν σοὶ εὐδόκησα. 12 Καὶ εὐθὺς τὸ πνεῦμα αὐτὸν ἐκβάλλει εἰς τὴν ἔρημον. 13 καὶ ἦν ἐν τῇ ἐρήμῳ τεσσεράκοντα ἡμέρας πειραζόμενος ὑπὸ τοῦ Σατανᾶ, καὶ ἦν μετὰ τῶν θηρίων, καὶ οἱ ἄγγελοι διηκόνουν αὐτῷ. 14 Μετὰ δὲ τὸ παραδοθῆναι τὸν Ἰωάννην ἦλθεν ὁ Ἰησοῦς εἰς τὴν Γαλιλαίαν κηρύσσων τὸ εὐαγγέλιον τοῦ θεοῦ 15 καὶ λέγων ὅτι Πεπλήρωται ὁ καιρὸς καὶ ἤγγικεν ἡ βασιλεία τοῦ θεοῦ: μετανοεῖτε καὶ πιστεύετε ἐν τῷ εὐαγγελίῳ. 16 Καὶ παράγων παρὰ τὴν θάλασσαν τῆς Γαλιλαίας εἶδεν Σίμωνα καὶ Ἀνδρέαν τὸν ἀδελφὸν Σίμωνος ἀμφιβάλλοντας ἐν τῇ θαλάσσῃ: ἦσαν γὰρ ἁλιεῖς. 17 καὶ εἶπεν αὐτοῖς ὁ Ἰησοῦς, Δεῦτε ὀπίσω μου, καὶ ποιήσω ὑμᾶς γενέσθαι ἁλιεῖς ἀνθρώπων. 18 καὶ εὐθὺς ἀφέντες τὰ δίκτυα ἠκολούθησαν αὐτῷ. (Citation!)
 </code></pre>
 <figure><div data-src="media/cat_3.jpg" data-alt="luth" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div><figcaption>luth</figcaption></figure><p><strong>Bold</strong></p>
-</div></section><section data-heading-level="2"><div class="content"><h2>Martin Luther</h2>
+</div></section><section data-heading-level="2" data-heading-level="2" data-layout="normal" class="mdcoachImage"><div class="content"><h2>Martin Luther</h2>
 <blockquote>
 <blockquote>
 <p><div data-src="media/cat_3.jpg" data-alt="luth" data-title="weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div></p>
 </blockquote>
 </blockquote>
-</div></section><section data-heading-level="2"><div class="content"><h2>Martin Luther Left</h2>
+</div></section><section data-heading-level="2" data-heading-level="2" data-layout="normal" class="mdcoachImage"><div class="content"><h2>Martin Luther Left</h2>
 <blockquote>
 <blockquote>
 <p><div data-src="media/cat_1.jpg" data-alt="luth" data-title="weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentbfa2df515cc21a94"></div></p>
@@ -346,7 +360,7 @@ slkfj sadlk fjsldkfj slkdjf</p>
 </blockquote>
 <p>is it something rather? or what?
 quoted figure first</p>
-</div></section><section data-heading-level="2"><div class="content"><h2>Martin Luther Right</h2>
+</div></section><section data-heading-level="2" data-heading-level="2" data-layout="normal" class="mdcoachImage"><div class="content"><h2>Martin Luther Right</h2>
 <p>is it something rather? or what?
 quoted figure first</p>
 <blockquote>
@@ -354,7 +368,7 @@ quoted figure first</p>
 <p><div data-src="media/cat_2.jpg" data-alt="luth" data-title="weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent386bcf30afde4762"></div></p>
 </blockquote>
 </blockquote>
-</div></section><section data-heading-level="1"><div class="content"><h1>second title</h1>
+</div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>second title</h1>
 <p>first</p>
 <pre><code>comment **block** with image
 ![luth](media/cat_3.jpg &quot;weee&quot;)
@@ -362,7 +376,7 @@ quoted figure first</p>
 <p>second</p>
 <pre><code>лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдлвао дылвоа дылвао sdf ksdlfk jsldkf jsldkf jsdlkfj slkdjf lskdfj lsakdjf lskjdf lkjshdf kljsahkfj ahskdjf hsdklj hfskldj fhslakjdf lhskdajf sdfjs fsjdflkjsdklf ore ndkl hiudlgreiu
 </code></pre>
-</div></section><section data-heading-level="0"><div class="content"><pre><code>[+] test-handout.md
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><pre><code>[+] test-handout.md
 </code></pre>
 <pre><code class="language-chords">    G                  Em
 i heard there was a secret chord
@@ -385,7 +399,7 @@ hallelujah,  hallelujah, hallelujah, hallelu-jah,
 Definition Title<p>1 Definition Content @TODO</p>
 <p>2 Definition Content @TODO</p>
 <p>3 Definition Content @TODO</p>
-</div></section><section data-heading-level="0" data-is-right="true"><aside>[Aside]<figure><div data-src="media/cat_1.jpg" data-alt="luth" data-title="weee Treisdf"></div><figcaption>luth</figcaption></figure></aside><div class="content"><pre><code class="language-bibliography">- one
+</div></section><section data-heading-level="0" data-layout="right-aside" class="mdcoachImage"><div class="content"><pre><code class="language-bibliography">- one
 - two
 - three
 </code></pre>
@@ -394,18 +408,18 @@ Definition Title<p>1 Definition Content @TODO</p>
 
 Should be stripped
 </code></pre>
-</div></section><section data-heading-level="1"><div class="content"><h1>Luther is the best hackman protestor test</h1>
+<figure><div data-src="media/cat_1.jpg" data-alt="luth" data-title="weee Treisdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentbfa2df515cc21a94"></div><figcaption>luth</figcaption></figure></div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>Luther is the best hackman protestor test</h1>
 <p>aside left <!-- raw HTML omitted -->On the Freedom of the Will<!-- raw HTML omitted --> by Martin Luther</p>
 <p>hmm</p>
 <!-- raw HTML omitted -->
 <h3>Left Aside Block</h3>
 <p>{» dsfsdfdf s «}</p>
 <p>sdflksdf lsd <!-- raw HTML omitted -->jflksdjflk<!-- raw HTML omitted --> <!-- raw HTML omitted -->sdf<!-- raw HTML omitted --></p>
-</div></section><section data-heading-level="0"><div class="content"><p>[&gt;] aside right</p>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><p>[&gt;] aside right</p>
 <h3>Right Aside Block</h3>
 <p>лоыв адлывоа длывоадл ывоа длыовадл ыовдало ыдвлаоыдвлоа гш цр лоавтбмьиыва ыва78979 ыв7 6876876</p>
 <p>sdflksdf lsd jflksdjflk sdf</p>
-</div></section><section data-heading-level="0"><div class="content"><figure><div data-src="media/cat_2.jpg" data-alt="luth" data-title="weee" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent386bcf30afde4762"></div><figcaption>luth</figcaption></figure></div></section><section data-heading-level="1"><div class="content"><h1>Demo Python Code</h1>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><figure><div data-src="media/cat_2.jpg" data-alt="luth" data-title="weee" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent386bcf30afde4762"></div><figcaption>luth</figcaption></figure></div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>Demo Python Code</h1>
 <p>notice :*) sdfjskdf <em>fdgkj</em> dfgkj :-) :home: :winkey:</p>
 <p>ok :enterkey: :100: :100: :)</p>
 <p>sdf kjsdkfj sdf :-) dksjfkds ;-) :ok: sddsf :-D %-)</p>
@@ -419,25 +433,25 @@ dsfsdf dfgdfgfdg</p>
     print('Defying')
     print(arg if arg else 'no-arg')
 </code></pre>
-</div></section><section data-heading-level="0"><div class="content"><p>[!] # ывадлывоаы ывдаок8щу54</p>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><p>[!] # ывадлывоаы ывдаок8щу54</p>
 <p>The archive containing this game weighs 13.21 megabytes, which includes roughly 3 megabytes of data devoted to sound and graphics. Despite fitting its entire logic in under 10 megabytes of data, Dwarf Fortress has been dubbed the most complex computer game ever made. The number of its states and events is astronomical. Arguably, it simulates behaviors nearly as complicated as can be seen in animals sentient enough to communicate socially. This has got me thinking.</p>
 <p>this is a great test question <code>code in it</code></p>
 <blockquote>
 <p>and a block quote</p>
 </blockquote>
-</div></section><section data-heading-level="1"><div class="content"><h1>ya this is greatski</h1>
+</div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>ya this is greatski</h1>
 <p>yep it really ist</p>
 <pre><code>comment block
 </code></pre>
-</div></section><section data-heading-level="1"><div class="content"><h1>ya this is greatski</h1>
+</div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>ya this is greatski</h1>
 <pre><code>!!! yep it really ist
 </code></pre>
-</div></section><section data-heading-level="0"><div class="content"><p>[!] <div data-src="media/cat_3.jpg" data-alt="" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div></p>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><p>[!] <div data-src="media/cat_3.jpg" data-alt="" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentad23dba4f33dd7af"></div></p>
 <p>yep it really ist</p>
-</div></section><section data-heading-level="1"><div class="content"><h1>ya this is greatski</h1>
+</div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>ya this is greatski</h1>
 <p>yep it really ist</p>
-</div></section><section data-heading-level="1"><aside>[Aside]<figure><div data-src="media/cat_1.jpg" data-alt="splash"></div><figcaption>splash</figcaption></figure></aside><div class="content"><h1>ya this is greatski</h1>
-<p>yep it really ist</p>
+</div></section><section data-heading-level="1" data-heading-level="1" data-layout="left-aside" class="mdcoachImage"><div class="content"><h1>ya this is greatski</h1>
+<figure><div data-src="media/cat_1.jpg" data-alt="splash" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContentbfa2df515cc21a94"></div><figcaption>splash</figcaption></figure><p>yep it really ist</p>
 <p>Commodo cillum cupidatat minim quis nostrud excepteur fugiat. Culpa pariatur anim laborum dolore labore minim adipisicing ea sunt commodo sunt velit magna eu eu. Anim laboris velit fugiat eu consequat amet ex magna ad cupidatat ea esse. Adipisicing quis proident est ullamco deserunt eiusmod nulla minim laboris ad cupidatat amet quis culpa. Qui anim magna aliqua et ullamco cillum voluptate. Cupidatat minim amet nisi id ut non dolore. Duis sunt excepteur qui incididunt irure dolor et deserunt.</p>
 <p>Incididunt ea nostrud esse cupidatat ipsum ullamco labore est et enim anim incididunt et. Voluptate laboris et nostrud ullamco adipisicing minim est aliquip pariatur consequat non eu aliquip mollit ea nisi pariatur. Dolor magna commodo cillum enim laborum tempor mollit laborum magna ad aliquip. Aute officia Lorem anim consequat pariatur irure nulla.</p>
 <p>Labore reprehenderit tempor incididunt velit minim non nisi ad Lorem fugiat anim in. Duis cupidatat non in dolore labore nulla aliqua ullamco laborum aliqua ullamco nulla sit esse ex consequat deserunt. Duis sunt in anim et nulla nostrud veniam enim laborum Lorem pariatur. Sunt duis culpa qui elit magna elit ipsum non labore qui. Mollit pariatur aliquip nostrud amet duis cupidatat irure do aliqua id consequat incididunt occaecat eiusmod. Cupidatat dolore cupidatat exercitation culpa ea reprehenderit do nostrud non. Id enim eu nostrud eiusmod excepteur do est enim id cillum cupidatat reprehenderit elit.</p>
@@ -446,7 +460,7 @@ dsfsdf dfgdfgfdg</p>
 <p>Aute aliqua voluptate culpa cupidatat pariatur consectetur amet in consectetur. Culpa et consequat commodo cupidatat eiusmod eu veniam laboris aute. Consectetur ex dolor culpa aliqua irure pariatur ad adipisicing mollit aliquip fugiat elit Lorem ea laboris cupidatat cillum. Aute Lorem in occaecat laboris nisi reprehenderit occaecat exercitation pariatur labore ex commodo esse.</p>
 <p>Commodo non enim ex laborum nostrud aute Lorem et quis non do velit eiusmod. Cillum laboris exercitation et ullamco ullamco eu ullamco velit velit officia sunt mollit sit non adipisicing ut. Do ipsum ut aute laboris voluptate nisi ullamco minim amet. Mollit dolor nisi Lorem enim esse dolore voluptate mollit incididunt. Amet esse exercitation deserunt voluptate ex non officia.</p>
 <p>Eiusmod do irure nulla aliquip aute eu tempor eu deserunt tempor. Consequat enim fugiat dolor anim ipsum in voluptate deserunt anim ut. Anim voluptate eiusmod aute labore aliquip fugiat qui. Labore esse exercitation aliqua ullamco aliqua ex non magna exercitation aliqua. Dolore tempor ullamco velit aute ipsum id magna tempor quis sint cillum nostrud.</p>
-</div></section><section data-heading-level="0"><div class="content"><blockquote>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><blockquote>
 <p>block quote fun</p>
 </blockquote>
 <ul>
@@ -454,19 +468,19 @@ dsfsdf dfgdfgfdg</p>
 <li>!two</li>
 <li>!three</li>
 </ul>
-</div></section><section data-heading-level="0"><div class="content"><ul>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><ul>
 <li>one</li>
 <li>two</li>
 <li>three</li>
 </ul>
-</div></section><section data-heading-level="0"><aside>[Aside]<figure><div data-src="media/cat_2.jpg" data-alt="image"></div><figcaption>image</figcaption></figure></aside><div class="content"><p>this is image test</p>
+</div></section><section data-heading-level="0" data-layout="left-aside" class="mdcoachImage"><div class="content"><figure><div data-src="media/cat_2.jpg" data-alt="image" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent386bcf30afde4762"></div><figcaption>image</figcaption></figure><p>this is image test</p>
 <p>[?] question1?
 [?] question2</p>
-</div></section><section data-heading-level="0"><div class="content"><p>dfgkldf glkj</p>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><p>dfgkldf glkj</p>
 <p>[?] prof note1</p>
-</div></section><section data-heading-level="0"><div class="content"><p>[?] student note1</p>
+</div></section><section data-heading-level="0" data-layout="normal" class="mdcoachImage"><div class="content"><p>[?] student note1</p>
 <p>dfgkldf glkoreo</p>
-</div></section><section data-heading-level="1"><div class="content"><h1>title</h1>
+</div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal" class="mdcoachImage"><div class="content"><h1>title</h1>
 <p>The archive containing this game weighs 13.21 megabytes, which includes roughly 3 megabytes of data devoted to sound and graphics. Despite fitting its entire logic in under 10 megabytes of data, Dwarf Fortress has been dubbed the most complex computer game ever made. The number of its states and events is astronomical. Arguably, it simulates behaviors nearly as complicated as can be seen in animals sentient enough to communicate socially. This has got me thinking.</p>
 <blockquote>
 <p>block quote fun</p>

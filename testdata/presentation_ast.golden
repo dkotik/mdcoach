@@ -1,10 +1,17 @@
 Document: MdCoach Demo {
+  [id="4f47da9831d79145"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: MdCoach Demo {
       Text: MdCoach
       Text: Demo
+    }
+    Figure: cat image {
+      Image: cat image {
+        Text: cat image
+      }
     }
     Aside: notes {
       Paragraph: notes {
@@ -14,6 +21,7 @@ Document: MdCoach Demo {
   }
   Slide: Figure To the Right {
     [data-heading-level="3"]
+    [data-layout="right-aside"]
     Heading: Figure To the Right {
       Text: Figure To the
       Text: Right
@@ -22,12 +30,23 @@ Document: MdCoach Demo {
       Text: Some text before figure
       Text: .
     }
+    Figure: cat image {
+      Image: cat image {
+        Text: cat image
+      }
+    }
   }
   Slide: Figure To the Left {
     [data-heading-level="2"]
+    [data-layout="left-aside"]
     Heading: Figure To the Left {
       Text: Figure To the
       Text: Left
+    }
+    Figure: cat image {
+      Image: cat image {
+        Text: cat image
+      }
     }
     Paragraph: Some text after figure. {
       Text: Some text after figure
@@ -36,6 +55,7 @@ Document: MdCoach Demo {
   }
   Slide: BLockquote Tests {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: BLockquote Tests {
       Text: BLockquote
       Text: Tests
@@ -99,6 +119,7 @@ Document: MdCoach Demo {
   }
   Slide: Presentation Title1 {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: Presentation Title1 {
       Text: Presentation
       Text: Title1
@@ -160,6 +181,7 @@ Document: MdCoach Demo {
     HTMLBlock
   }
   Slide: hmmm ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd {
+    [data-layout="normal"]
     Paragraph: hmmm ![luth](media/cat_2.jpg "weee sdf sd fsdfsd fsd fsdf sd {
       Text: hmmm
       Image: luth {
@@ -195,6 +217,7 @@ Document: MdCoach Demo {
   }
   Slide: Martin Luther {
     [data-heading-level="2"]
+    [data-layout="normal"]
     Heading: Martin Luther {
       Text: Martin
       Text: Luther
@@ -211,6 +234,7 @@ Document: MdCoach Demo {
   }
   Slide: Martin Luther Left {
     [data-heading-level="2"]
+    [data-layout="normal"]
     Heading: Martin Luther Left {
       Text: Martin Luther
       Text: Left
@@ -233,6 +257,7 @@ Document: MdCoach Demo {
   }
   Slide: Martin Luther Right {
     [data-heading-level="2"]
+    [data-layout="normal"]
     Heading: Martin Luther Right {
       Text: Martin Luther
       Text: Right
@@ -255,6 +280,7 @@ Document: MdCoach Demo {
   }
   Slide: second title {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: second title {
       Text: second
       Text: title
@@ -269,6 +295,7 @@ Document: MdCoach Demo {
     CodeBlock
   }
   Slide: Definition Title {
+    [data-layout="normal"]
     CodeBlock
     CodeBlock
     CodeBlock
@@ -298,15 +325,22 @@ Document: MdCoach Demo {
     }
   }
   Slide: regular paragraph {
+    [data-layout="right-aside"]
     CodeBlock
     Paragraph: regular paragraph {
       Text: regular
       Text: paragraph
     }
     CodeBlock
+    Figure: luth {
+      Image: luth {
+        Text: luth
+      }
+    }
   }
   Slide: Luther is the best hackman protestor test {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: Luther is the best hackman protestor test {
       Text: Luther is the best hackman protestor
       Text: test
@@ -346,6 +380,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: [>] aside right {
+    [data-layout="normal"]
     Paragraph: [>] aside right {
       Text: [
       Text: >] aside
@@ -365,6 +400,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: luth {
+    [data-layout="normal"]
     Figure: luth {
       Image: luth {
         Text: luth
@@ -373,6 +409,7 @@ Document: MdCoach Demo {
   }
   Slide: Demo Python Code {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: Demo Python Code {
       Text: Demo Python
       Text: Code
@@ -418,6 +455,7 @@ Document: MdCoach Demo {
     CodeBlock
   }
   Slide: [!] # ывадлывоаы ывдаок8щу54 {
+    [data-layout="normal"]
     Paragraph: [!] # ывадлывоаы ывдаок8щу54 {
       Text: [
       Text: !] # ывадлывоаы
@@ -444,6 +482,7 @@ Document: MdCoach Demo {
   }
   Slide: ya this is greatski {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
@@ -456,6 +495,7 @@ Document: MdCoach Demo {
   }
   Slide: ya this is greatski {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
@@ -463,6 +503,7 @@ Document: MdCoach Demo {
     CodeBlock
   }
   Slide: [!] ![](media/cat_3.jpg) {
+    [data-layout="normal"]
     Paragraph: [!] ![](media/cat_3.jpg) {
       Text: [
       Text: !]
@@ -475,6 +516,7 @@ Document: MdCoach Demo {
   }
   Slide: ya this is greatski {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
@@ -486,9 +528,15 @@ Document: MdCoach Demo {
   }
   Slide: ya this is greatski {
     [data-heading-level="1"]
+    [data-layout="left-aside"]
     Heading: ya this is greatski {
       Text: ya this is
       Text: greatski
+    }
+    Figure: splash {
+      Image: splash {
+        Text: splash
+      }
     }
     Paragraph: yep it really ist {
       Text: yep it really
@@ -528,6 +576,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: block quote fun {
+    [data-layout="normal"]
     Blockquote: block quote fun {
       Paragraph: block quote fun {
         Text: block quote
@@ -553,6 +602,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: one {
+    [data-layout="normal"]
     List: one {
       ListItem: one {
         Paragraph: one {
@@ -571,7 +621,13 @@ Document: MdCoach Demo {
       }
     }
   }
-  Slide: this is image test {
+  Slide: image {
+    [data-layout="left-aside"]
+    Figure: image {
+      Image: image {
+        Text: image
+      }
+    }
     Paragraph: this is image test {
       Text: this is image
       Text: test
@@ -586,6 +642,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: dfgkldf glkj {
+    [data-layout="normal"]
     Paragraph: dfgkldf glkj {
       Text: dfgkldf
       Text: glkj
@@ -597,6 +654,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: [?] student note1 {
+    [data-layout="normal"]
     Paragraph: [?] student note1 {
       Text: [
       Text: ?] student
@@ -609,6 +667,7 @@ Document: MdCoach Demo {
   }
   Slide: title {
     [data-heading-level="1"]
+    [data-layout="normal"]
     Heading: title {
       Text: title
     }

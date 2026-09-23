@@ -26,8 +26,9 @@ func NewParser() parser.Parser {
 		parser.WithASTTransformers(
 			// Run after extension AST transformers so slides contain their
 			// final block structure.
-			util.Prioritized(NewSlideTransformer(2), 999),
 			util.Prioritized(NewFigureTransformer(), 4),
+			util.Prioritized(NewSlideTransformer(2), 900),
+			util.Prioritized(NewDocumentIDInjector(), 1400),
 		),
 	)
 }

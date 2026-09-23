@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"testing"
 
+	"github.com/dkotik/mdcoach/internal"
 	"github.com/sebdah/goldie/v2"
 	"github.com/yuin/goldmark/v2/ast"
 )
@@ -30,7 +31,7 @@ func TestFigureTransformerPreservesImage(t *testing.T) {
 	}
 
 	var dump bytes.Buffer
-	dumpAST(tree, source, &dump)
+	internal.WriteAST(&dump, tree, source)
 	goldie.New(t).Assert(t, "figure_ast", dump.Bytes())
 }
 
