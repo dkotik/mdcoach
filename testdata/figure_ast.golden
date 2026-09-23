@@ -1,0 +1,9 @@
+Document: cat {
+  Slide: cat {
+    Figure: cat {
+      Image: cat {
+        Text: cat
+      }
+    }
+  }
+}
