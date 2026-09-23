@@ -13,6 +13,7 @@ var scripts = []string{
 	"input.js",
 	"slides.js",
 	"scale.js",
+	"synchronize.js",
 }
 
 func makeBefore(w io.Writer) error {

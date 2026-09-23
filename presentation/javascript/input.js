@@ -62,6 +62,8 @@ document.addEventListener(
         return
       case 'Period':
         showCurtain()
+      case 'KeyR':
+        window.location.reload()
     }
   }
 )
@@ -77,5 +79,5 @@ document.addEventListener(
     } else {
       previous(event)
     }
-  }, 20)
+  }, 4)
 )

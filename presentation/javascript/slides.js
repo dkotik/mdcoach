@@ -10,40 +10,101 @@ const finalSlideIndex = slides.length - 1
 slides[currentSlide].classList.add(focusedClass)
 slides[currentSlide].classList.add(reverseClass)
 
-const navigate = (isForward) => {
-  if (isForward) {
-    for (const element of slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")) {
-      element.classList.add("is-revealed")
-      return
-    }
-  }
+const getCurrentConcealedListItems = () => {
+  return slides[currentSlide].querySelectorAll(":scope > .content > ul > li:not(.is-revealed)")
+}
 
-  slides[currentSlide].classList.remove(focusedClass)
+const navigate = (targetSlide) => {
+  const isForward = targetSlide > currentSlide
+
+  let currentSlideClassList = slides[currentSlide].classList
+  currentSlideClassList.remove(focusedClass)
   if (isForward) {
-    slides[currentSlide].classList.add(reverseClass)
-    currentSlide++
+    currentSlideClassList.add(reverseClass)
   } else {
-    slides[currentSlide].classList.remove(reverseClass)
-    currentSlide--
+    currentSlideClassList.remove(reverseClass)
   }
-  slides[currentSlide].classList.add(focusedClass)
+  currentSlide = targetSlide
+
+  currentSlideClassList = slides[currentSlide].classList
+  currentSlideClassList.add(focusedClass)
   if (isForward) {
-    slides[currentSlide].classList.remove(reverseClass)
+    currentSlideClassList.remove(reverseClass)
   } else {
-    slides[currentSlide].classList.add(reverseClass)
+    currentSlideClassList.add(reverseClass)
   }
+  window.history.replaceState(null, null, '#' + (currentSlide + 1))
+  document.title = `${currentSlide+1}/${finalSlideIndex+1}`
+}
+
+const navigationCompleteEventType = "slideNavigationFinished"
+const dispatchNavigationCompleteEvent = (concealedListItemCount) => {
+  window.dispatchEvent(
+    new CustomEvent(
+      navigationCompleteEventType,
+      {
+        detail: {
+          slideIndex: currentSlide,
+          concealedListItemCount: concealedListItemCount
+        }
+    })
+  )
 }
 
 window.addEventListener(nextEventType, (event) => {
   if(currentSlide >= finalSlideIndex) {
     return
   }
-  navigate(true)
+  let concealedListItems = getCurrentConcealedListItems()
+  for (const element of concealedListItems) {
+    element.classList.add("is-revealed")
+    debounce(dispatchNavigationCompleteEvent, 100)(
+      concealedListItems.length-1
+    )
+    return
+  }
+  navigate(currentSlide + 1)
+  concealedListItems = getCurrentConcealedListItems()
+  debounce(dispatchNavigationCompleteEvent, 100)(
+    concealedListItems.length
+  )
 })
 
 window.addEventListener(previousEventType, (event) => {
   if (currentSlide === 0) {
     return
   }
-  navigate(false)
+  navigate(currentSlide - 1)
+  const concealedListItems = getCurrentConcealedListItems()
+  debounce(dispatchNavigationCompleteEvent, 100)(
+    concealedListItems.length
+  )
+})
+
+const getSlideIndexFromLocationHash = () => {
+  const rawHash = window.location.hash.substring(1);
+
+  // Parse the string into a numeric value
+  let numericValue = parseInt(rawHash, 10);
+
+  // Check if it is a valid number
+  if (isNaN(numericValue)) {
+    return
+  }
+  numericValue--
+  if (numericValue < 0) {
+    return 0
+  }
+  if (numericValue > finalSlideIndex) {
+    return finalSlideIndex
+  }
+  return numericValue
+}
+
+window.addEventListener("hashchange", () => {
+  const slideIndex = getSlideIndexFromLocationHash()
+  if (slideIndex === currentSlide) {
+    return
+  }
+  navigate(slideIndex)
 })
