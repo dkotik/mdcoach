@@ -9,13 +9,14 @@ import (
 func TestWriteFiles(t *testing.T) {
 	temp := t.TempDir()
 	sources := []string{
-		filepath.Join("..", "testdata", "presentation-1.md"),
-		filepath.Join("..", "testdata", "presentation-2.md"),
-		filepath.Join("..", "testdata", "presentation-3.md"),
-		filepath.Join("..", "testdata", "presentation-4.md"),
+		"presentation-1.md",
+		"presentation-2.md",
+		"presentation-3.md",
+		"presentation-4.md",
 	}
 
-	for _, source := range sources {
+	for _, sourceName := range sources {
+		source := filepath.Join("..", "testdata", sourceName)
 		questions, err := LoadQuestions(source)
 		if err != nil {
 			t.Fatalf("load questions from %q: %v", source, err)
@@ -46,16 +47,21 @@ func TestWriteFiles(t *testing.T) {
 }
 
 func TestQuestionsFromAllSources(t *testing.T) {
-	sources := []string{
-		filepath.Join("..", "testdata", "presentation-1.md"),
-		filepath.Join("..", "testdata", "presentation-2.md"),
-		filepath.Join("..", "testdata", "presentation-3.md"),
-		filepath.Join("..", "testdata", "presentation-4.md"),
+	sourceNames := []string{
+		"presentation-1.md",
+		"presentation-2.md",
+		"presentation-3.md",
+		"presentation-4.md",
 	}
 
-	questions, err := LoadQuestions(sources...)
-	if err != nil {
-		t.Fatal(err)
+	var questions []string
+	for _, sourceName := range sourceNames {
+		source := filepath.Join("..", "testdata", sourceName)
+		fileQuestions, err := LoadQuestions(source)
+		if err != nil {
+			t.Fatal(err)
+		}
+		questions = append(questions, fileQuestions...)
 	}
 	if len(questions) < 5 {
 		t.Fatalf("got %d questions, want at least 5", len(questions))

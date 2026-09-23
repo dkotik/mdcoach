@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -24,6 +25,11 @@ func reviewCmd() *cli.Command {
 			overwriteFlag,
 			silentFlag,
 			titleFlag,
+			&cli.IntFlag{
+				Name:  "limit",
+				Value: 0,
+				Usage: "maximum number of questions to include",
+			},
 		},
 		Action: func(ctx context.Context, c *cli.Command) error {
 			cwd, err := os.Getwd()
@@ -59,6 +65,12 @@ func reviewCmd() *cli.Command {
 			questions, err := review.LoadQuestions(args...)
 			if err != nil {
 				return err
+			}
+			rand.Shuffle(len(questions), func(i, j int) {
+				questions[i], questions[j] = questions[j], questions[i]
+			})
+			if limit := c.Int("limit"); limit > 0 && limit < len(questions) {
+				questions = questions[:limit]
 			}
 
 			w, err := os.Create(output)

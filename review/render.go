@@ -5,6 +5,7 @@ import (
 
 	"github.com/gpdf-dev/gpdf"
 	gpdfdocument "github.com/gpdf-dev/gpdf/document"
+	"github.com/gpdf-dev/gpdf/pdf"
 	gpdftemplate "github.com/gpdf-dev/gpdf/template"
 )
 
@@ -37,8 +38,25 @@ func New(page Page) ([]byte, error) {
 	}
 	for _, question := range page.Questions {
 		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
-			row.Col(12, func(column *gpdftemplate.ColBuilder) {
+			row.Col(11, func(column *gpdftemplate.ColBuilder) {
 				column.Text(question, gpdftemplate.FontSize(14))
+			})
+		})
+
+		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
+			row.Col(11, func(column *gpdftemplate.ColBuilder) {
+				column.Text(page.Description, gpdftemplate.FontSize(12))
+			})
+			row.Col(1, func(column *gpdftemplate.ColBuilder) {
+				for i := 1; i <= 5; i++ {
+					column.Text(
+						fmt.Sprintf("-%d", i),
+						gpdftemplate.FontSize(7),
+						gpdftemplate.TextColor(pdf.Gray(0.7)),
+						gpdftemplate.AlignRight(),
+					)
+					column.Spacer(gpdfdocument.Mm(2))
+				}
 			})
 		})
 	}
