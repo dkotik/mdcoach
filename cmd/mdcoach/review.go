@@ -56,7 +56,22 @@ func reviewCmd() *cli.Command {
 				return fmt.Errorf("output format %q is not supported; use a .pdf file or directory", ext)
 			}
 
-			if err := review.WriteFile(ctx, output, c.String("title"), args...); err != nil {
+			questions, err := review.LoadQuestions(args...)
+			if err != nil {
+				return err
+			}
+
+			w, err := os.Create(output)
+			if err != nil {
+				return fmt.Errorf("create output file: %w", err)
+			}
+			defer w.Close()
+
+			if err := review.Write(w, review.Page{
+				Title:       c.String("title"),
+				Description: c.String("description"),
+				Questions:   questions,
+			}); err != nil {
 				return err
 			}
 

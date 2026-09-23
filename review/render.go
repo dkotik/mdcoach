@@ -8,15 +8,35 @@ import (
 	gpdftemplate "github.com/gpdf-dev/gpdf/template"
 )
 
-func New(questions []string, title string) ([]byte, error) {
+type Page struct {
+	Title       string
+	Description string
+	Questions   []string
+}
+
+func New(page Page) ([]byte, error) {
 	document := gpdf.NewDocument(
 		gpdf.WithPageSize(gpdf.A4),
 		gpdf.WithMargins(gpdfdocument.UniformEdges(gpdfdocument.Mm(20))),
-		gpdf.WithMetadata(gpdfdocument.DocumentMetadata{Title: title}),
+		gpdf.WithMetadata(gpdfdocument.DocumentMetadata{Title: page.Title}),
 	)
-	page := document.AddPage()
-	for _, question := range questions {
-		page.AutoRow(func(row *gpdftemplate.RowBuilder) {
+	pdfPage := document.AddPage()
+	if page.Title != "" {
+		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
+			row.Col(12, func(column *gpdftemplate.ColBuilder) {
+				column.Text(page.Title, gpdftemplate.FontSize(18))
+			})
+		})
+	}
+	if page.Description != "" {
+		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
+			row.Col(12, func(column *gpdftemplate.ColBuilder) {
+				column.Text(page.Description, gpdftemplate.FontSize(12))
+			})
+		})
+	}
+	for _, question := range page.Questions {
+		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
 			row.Col(12, func(column *gpdftemplate.ColBuilder) {
 				column.Text(question, gpdftemplate.FontSize(14))
 			})

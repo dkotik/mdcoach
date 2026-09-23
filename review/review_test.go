@@ -1,13 +1,13 @@
 package review
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
 )
 
 func TestWriteFiles(t *testing.T) {
+	temp := t.TempDir()
 	sources := []string{
 		filepath.Join("..", "testdata", "presentation-1.md"),
 		filepath.Join("..", "testdata", "presentation-2.md"),
@@ -16,10 +16,23 @@ func TestWriteFiles(t *testing.T) {
 	}
 
 	for _, source := range sources {
+		questions, err := LoadQuestions(source)
+		if err != nil {
+			t.Fatalf("load questions from %q: %v", source, err)
+		}
+
 		name := filepath.Base(source) + ".pdf"
-		output := filepath.Join(t.TempDir(), name)
-		if err := WriteFile(context.Background(), output, "Review", source); err != nil {
+		output := filepath.Join(temp, name)
+		file, err := os.Create(output)
+		if err != nil {
+			t.Fatalf("create review for %q: %v", source, err)
+		}
+		if err := Write(file, Page{Title: "Review", Questions: questions}); err != nil {
+			_ = file.Close()
 			t.Fatalf("write review for %q: %v", source, err)
+		}
+		if err := file.Close(); err != nil {
+			t.Fatalf("close review for %q: %v", source, err)
 		}
 
 		data, err := os.ReadFile(output)
@@ -40,7 +53,7 @@ func TestQuestionsFromAllSources(t *testing.T) {
 		filepath.Join("..", "testdata", "presentation-4.md"),
 	}
 
-	questions, err := LoadQuestions(context.Background(), sources...)
+	questions, err := LoadQuestions(sources...)
 	if err != nil {
 		t.Fatal(err)
 	}

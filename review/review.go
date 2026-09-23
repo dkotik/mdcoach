@@ -2,7 +2,6 @@
 package review
 
 import (
-	"context"
 	"fmt"
 	"io"
 	"math/rand"
@@ -16,12 +15,9 @@ import (
 
 // LoadQuestions parses sources and returns all questions from their Markdown
 // frontmatter in randomized order.
-func LoadQuestions(ctx context.Context, sources ...string) ([]string, error) {
+func LoadQuestions(sources ...string) ([]string, error) {
 	questions := make([]string, 0)
 	for _, sourcePath := range sources {
-		if err := ctx.Err(); err != nil {
-			return nil, err
-		}
 		markdown, err := os.ReadFile(sourcePath)
 		if err != nil {
 			return nil, fmt.Errorf("read Markdown file %q: %w", sourcePath, err)
@@ -49,33 +45,13 @@ func LoadQuestions(ctx context.Context, sources ...string) ([]string, error) {
 
 // Write parses sources, collects and shuffles their questions, and writes a
 // generated PDF to w.
-func Write(ctx context.Context, w io.Writer, title string, sources ...string) error {
-	questions, err := LoadQuestions(ctx, sources...)
-	if err != nil {
-		return err
-	}
-	data, err := New(questions, title)
+func Write(w io.Writer, p Page) error {
+	data, err := New(p)
 	if err != nil {
 		return err
 	}
 	if _, err := w.Write(data); err != nil {
 		return fmt.Errorf("write review PDF: %w", err)
-	}
-	return nil
-}
-
-// WriteFile generates a review PDF and writes it to path.
-func WriteFile(ctx context.Context, path, title string, sources ...string) error {
-	file, err := os.Create(path)
-	if err != nil {
-		return fmt.Errorf("create review PDF %q: %w", path, err)
-	}
-	if err := Write(ctx, file, title, sources...); err != nil {
-		_ = file.Close()
-		return err
-	}
-	if err := file.Close(); err != nil {
-		return fmt.Errorf("close review PDF %q: %w", path, err)
 	}
 	return nil
 }
