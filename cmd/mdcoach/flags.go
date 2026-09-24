@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/urfave/cli/v3"
@@ -28,14 +29,12 @@ var (
 		Usage:       "open created files in system browser",
 	}
 
-	overwriteFlagValue    *bool
 	confirmOverwriteMutex = &sync.Mutex{}
 	errSkip               = errors.New("skip file, do not overwrite")
 	overwriteFlag         = &cli.BoolFlag{
-		Destination: overwriteFlagValue,
-		Name:        "force",
-		Aliases:     []string{"f"},
-		Usage:       "overwrite files without requesting confirmation",
+		Name:    "force",
+		Aliases: []string{"f"},
+		Usage:   "overwrite files without requesting confirmation",
 	}
 
 	silentFlagValue *bool
@@ -56,45 +55,33 @@ var ( // Document flags
 	}
 )
 
-func confirmOverwrite(destination string) error {
-	fmt.Println("Confirm override disabled for now:", destination)
-	return nil
-	// confirmOverwriteMutex.Lock()
-	// defer confirmOverwriteMutex.Unlock()
-	//
-	// if overwriteFlagValue != nil && *overwriteFlagValue {
-	// 	return nil // always overwrite
-	// }
-	// stat, err := os.Stat(destination)
-	// if err != nil {
-	// 	if errors.Is(err, os.ErrNotExist) {
-	// 		return nil // conflict not possible
-	// 	}
-	// 	return err
-	// }
-	//
-	// if stat.IsDir() {
-	// 	return fmt.Errorf("target %q cannot be overwritten, because it is a directory", destination)
-	// }
-	//
-	// sync.OnceFunc(func() {
-	// 	fmt.Println("Detected file conflict. Type 'yes' or 'y' to confirm. Type 'all' to assume 'yes' answer for every other file conflict. You may also use --force command line flag to assume 'all' answer when the program runs.")
-	// })
-	// fmt.Printf("File %q already exists. Overwrite? ", destination)
-	// var answer string
-	// if _, err = fmt.Scanf("%s", &answer); err != nil {
-	// 	return err
-	// }
-	// switch answer {
-	// case "all":
-	// 	all := true
-	// 	overwriteFlagValue = &all
-	// 	fallthrough
-	// case "y", "Y", "yes", "Yes":
-	// 	return nil
-	// default:
-	// 	// 	return errSkip
-	// }
+func confirmOverwrite(destination string, force bool) error {
+	confirmOverwriteMutex.Lock()
+	defer confirmOverwriteMutex.Unlock()
 
-	// return fmt.Errorf("file %s already exists", destination)
+	stat, err := os.Stat(destination)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return nil
+		}
+		return fmt.Errorf("check output file %q: %w", destination, err)
+	}
+	if stat.IsDir() {
+		return fmt.Errorf("target %q cannot be overwritten because it is a directory", destination)
+	}
+	if force {
+		return nil
+	}
+
+	if _, err := fmt.Fprintf(os.Stderr, "File %q already exists. Overwrite? [y/N] ", destination); err != nil {
+		return fmt.Errorf("write overwrite prompt: %w", err)
+	}
+	var answer string
+	if _, err := fmt.Fscan(os.Stdin, &answer); err != nil {
+		return fmt.Errorf("read overwrite confirmation: %w", err)
+	}
+	if answer != "y" && answer != "Y" && strings.ToLower(answer) != "yes" {
+		return errSkip
+	}
+	return nil
 }

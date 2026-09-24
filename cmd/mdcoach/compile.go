@@ -20,8 +20,9 @@ func compileMarkdownToHTML(
 	ctx context.Context,
 	output string,
 	sources []string,
+	force bool,
 ) (err error) {
-	if err = confirmOverwrite(output); err != nil {
+	if err = confirmOverwrite(output, force); err != nil {
 		if errors.Is(err, errSkip) {
 			return nil // decided to skip file
 		}
@@ -92,6 +93,7 @@ func compileCmd() *cli.Command {
 					context.TODO(),
 					output,
 					args,
+					c.Bool("force"),
 				); err != nil {
 					return err
 				}
@@ -116,6 +118,7 @@ func compileCmd() *cli.Command {
 						ctx,
 						destination,
 						[]string{p},
+						c.Bool("force"),
 					); err != nil {
 						return err
 					}

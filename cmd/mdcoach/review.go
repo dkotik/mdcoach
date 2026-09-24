@@ -73,6 +73,13 @@ func reviewCmd() *cli.Command {
 				questions = questions[:limit]
 			}
 
+			if err := confirmOverwrite(output, c.Bool("force")); err != nil {
+				if errors.Is(err, errSkip) {
+					return nil
+				}
+				return err
+			}
+
 			w, err := os.Create(output)
 			if err != nil {
 				return fmt.Errorf("create output file: %w", err)
