@@ -40,7 +40,7 @@ func TestFigureRenderer(t *testing.T) {
 	tree := NewParser().Parse(source)
 
 	var rendered bytes.Buffer
-	if err := NewRenderer().Render(&rendered, source, tree); err != nil {
+	if err := NewRenderer(NewImageCache()).Render(&rendered, source, tree); err != nil {
 		t.Fatal(err)
 	}
 

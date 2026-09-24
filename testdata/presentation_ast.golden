@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="6781ecafb014317f"]
+  [id="d2480adc4ca85903"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -78,6 +78,7 @@ Document: MdCoach Demo {
         Paragraph: lists :shark: {
           Text: lists
           Emote: shark {
+            [class="icon"]
             Text: shark
           }
         }
@@ -129,14 +130,17 @@ Document: MdCoach Demo {
     Paragraph: :) :checkbox: \:cat: :salad: \;) \!\[slashes\]\(in brackets\ {
       Text: :)
       Emote: checkbox {
+        [class="icon"]
         Text: checkbox
       }
       Text: :cat:
       Emote: salad {
+        [class="icon"]
         Text: salad
       }
       Text: ;) ![slashes](in brackets) \
       Emote: cat {
+        [class="icon"]
         Text: cat
       }
       Text: \\ hmm:
@@ -436,20 +440,24 @@ Document: MdCoach Demo {
       }
       Text: dfgkj :-)
       Emote: home {
+        [class="icon"]
         Text: home
       }
       Text
       Emote: winkey {
+        [class="icon"]
         Text: winkey
       }
     }
     Paragraph: ok :enterkey: :100: \:100: \:) {
       Text: ok
       Emote: enterkey {
+        [class="icon"]
         Text: enterkey
       }
       Text
       Emote: 100 {
+        [class="icon"]
         Text: 100
       }
       Text: :100:
@@ -458,6 +466,7 @@ Document: MdCoach Demo {
     Paragraph: sdf kjsdkfj sdf :-) dksjfkds ;-) :ok: sddsf :-D %-) {
       Text: sdf kjsdkfj sdf :-) dksjfkds ;-)
       Emote: ok {
+        [class="icon"]
         Text: ok
       }
       Text: sddsf :-D %

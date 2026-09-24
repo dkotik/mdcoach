@@ -11,6 +11,7 @@ import (
 type options struct {
 	Parser           parser.Parser
 	Renderer         html.Renderer
+	ImageCache       *mdcoach.ImageCache
 	ImageHeightLimit int
 	ImageWidthLimit  int
 	ImageQuality     int
@@ -40,6 +41,19 @@ func WithRenderer(r html.Renderer) Option {
 			return errors.New("renderer already set")
 		}
 		o.Renderer = r
+		return nil
+	}
+}
+
+func WithImageCache(cache *mdcoach.ImageCache) Option {
+	return func(o *options) error {
+		if cache == nil {
+			return errors.New("nil image cache")
+		}
+		if o.ImageCache != nil {
+			return errors.New("image cache already set")
+		}
+		o.ImageCache = cache
 		return nil
 	}
 }

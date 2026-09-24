@@ -8,3 +8,10 @@
 	background-size: contain;
 	aspect-ratio: attr(data-aspect-ratio type(<number>));
 }
+
+.icon {
+ 	min-height: 1.5rem;
+	min-width: 1.5rem;
+  padding: 0 1rem 0 1rem;
+	display: inline-block;
+}

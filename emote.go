@@ -70,6 +70,7 @@ func (*emoteParser) Parse(_ ast.Node, reader text.Reader, _ parser.Context) ast.
 	emote := &Emote{Name: name}
 	emote.Init(emote)
 	emote.AppendChild(ast.NewText(name))
+	emote.SetAttribute("class", text.NewMultiLineValueFromString("icon", text.IdentityDecoder))
 	return emote
 }
 
@@ -147,8 +148,11 @@ func (r *emoteRenderer) render(
 	// )
 	_, _ = w.WriteString("<span")
 	renderImageAttributes(w, source, emote)
-	_, _ = w.WriteString(">")
-	_, _ = emote.Name.WriteTo(html.ContextTextWriter(rc), source)
+	// _, _ =
+	// _, _ = emote.Name.WriteTo(html.a(rc), source)
+	_, _ = w.WriteString("title=\"")
+	_ = internal.WriteEscapedHTML(w, emote.Name.Str(source))
+	_, _ = w.WriteString("\">")
 	_, _ = w.WriteString("</span>")
 	return ast.WalkSkipChildren, nil
 }

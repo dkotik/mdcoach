@@ -41,8 +41,11 @@ func New(
 			if o.Parser == nil {
 				o.Parser = mdcoach.NewParser()
 			}
+			if o.ImageCache == nil {
+				o.ImageCache = mdcoach.NewImageCache()
+			}
 			if o.Renderer == nil {
-				o.Renderer = mdcoach.NewRenderer()
+				o.Renderer = mdcoach.NewRenderer(o.ImageCache)
 			}
 			return nil
 		},
@@ -52,7 +55,6 @@ func New(
 		}
 	}
 
-	cache := mdcoach.NewImageCache()
 	mo := mdcoach.MediaOptions{
 		Path:        ".",
 		WidthLimit:  o.ImageWidthLimit,
@@ -75,7 +77,7 @@ func New(
 		}
 		mo.Path = filepath.Dir(sourcePath)
 		tree := o.Parser.Parse(source)
-		if err = mdcoach.NewImageLoader(cache, mo).LoadImages(
+		if err = mdcoach.NewImageLoader(o.ImageCache, mo).LoadImages(
 			ctx,
 			source,
 			tree,
@@ -94,7 +96,7 @@ func New(
 		return fmt.Errorf("failed to write after main: %w", err)
 	}
 
-	if err = cache.WriteImageDataCSS(w); err != nil {
+	if err = o.ImageCache.WriteImageDataCSS(w); err != nil {
 		return fmt.Errorf("failed to write image data CSS: %w", err)
 	}
 

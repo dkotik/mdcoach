@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/dkotik/mdcoach"
 	"github.com/dkotik/mdcoach/presentation"
 	"github.com/skratchdot/open-golang/open"
 
@@ -39,8 +38,6 @@ func compileMarkdownToHTML(
 		ctx,
 		w,
 		sources,
-		presentation.WithParser(mdcoach.NewParser()),
-		presentation.WithRenderer(mdcoach.NewRenderer()),
 	); err != nil {
 		return fmt.Errorf("compile presentation: %w", err)
 	}

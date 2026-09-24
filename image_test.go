@@ -28,7 +28,7 @@ func TestImageRendererRendersOnlyImageNodes(t *testing.T) {
 
 func renderImagesOnly(writer io.Writer, source []byte, tree ast.Node) error {
 	var (
-		renderer  = NewRenderer()
+		renderer  = NewRenderer(NewImageCache())
 		renderErr error
 	)
 	_ = ast.Walk(tree, func(node ast.Node, entering bool) (ast.WalkStatus, error) {

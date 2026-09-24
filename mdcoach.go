@@ -39,13 +39,17 @@ func NewParser() parser.Parser {
 	)
 }
 
-func NewRenderer() html.Renderer {
+// NewRenderer returns a renderer that shares cache with image loading.
+func NewRenderer(cache *ImageCache) html.Renderer {
+	if cache == nil {
+		cache = NewImageCache()
+	}
 	return html.New(
 		html.WithNodeRendererDecorator(
 			ast.KindImage,
 			func(html.NodeRenderer) html.NodeRenderer { return NewImageRenderer() },
 		),
-		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(NewImageCache())),
+		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(cache)),
 		html.WithNodeRenderer(KindAside, NewAsideRenderer()),
 		html.WithNodeRenderer(KindFigure, NewFigureRenderer()),
 		html.WithNodeRenderer(SlideKind, NewSlideRenderer(
