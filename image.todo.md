@@ -1,26 +1,12 @@
-package renderer
+package mdcoach
 
-import (
-	"bytes"
-	"context"
-	"errors"
-	"strconv"
-
-	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/renderer/html"
-	"github.com/yuin/goldmark/util"
-)
-
-func (r *Renderer) renderImage(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
+/*
+func renderImage(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
 	if !entering {
 		return ast.WalkContinue, nil
 	}
 
 	n := node.(*ast.Image)
-	sourceSet, err := r.pictureProvider.GetSourceSet(
-		context.TODO(),
-		string(n.Destination),
-	)
 	if err != nil {
 		return ast.WalkStop, err
 	}
@@ -93,3 +79,4 @@ func nodeToHTMLText(n ast.Node, source []byte) []byte {
 	}
 	return buf.Bytes()
 }
+*/

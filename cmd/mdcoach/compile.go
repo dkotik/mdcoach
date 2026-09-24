@@ -9,13 +9,8 @@ import (
 	"strings"
 
 	"github.com/dkotik/mdcoach"
-	"github.com/dkotik/mdcoach/document"
-	mdcParser "github.com/dkotik/mdcoach/parser"
-	"github.com/dkotik/mdcoach/picture"
-	"github.com/dkotik/mdcoach/renderer"
+	"github.com/dkotik/mdcoach/presentation"
 	"github.com/skratchdot/open-golang/open"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/text"
 
 	"github.com/urfave/cli/v3"
 	"golang.org/x/sync/errgroup"
@@ -24,49 +19,12 @@ import (
 func compileMarkdownToHTML(
 	ctx context.Context,
 	output string,
-	markdownContent []byte,
+	sources []string,
 ) (err error) {
 	if err = confirmOverwrite(output); err != nil {
 		if errors.Is(err, errSkip) {
 			return nil // decided to skip file
 		}
-		return err
-	}
-
-	prsr, err := mdcParser.New()
-	if err != nil {
-		return err
-	}
-	pc := parser.NewContext()
-	tree := prsr.Parse(
-		text.NewReader(markdownContent),
-		parser.WithContext(pc))
-	meta, err := document.NewMetadata(pc)
-	if err != nil {
-		return fmt.Errorf("cannot accept document metadata: %w", err)
-	}
-
-	pictureProvider, err := picture.NewInternetProvider(
-		picture.WithDestinationPath(filepath.Join(
-			filepath.Dir(output),
-			"presentationMedia",
-		)),
-	)
-	if err != nil {
-		return err
-	}
-
-	r, err := renderer.New(
-		renderer.WithPictureProvider(&picture.SourceFilter{
-			Provider: pictureProvider,
-			IsAllowed: func(source *picture.Source) (bool, error) {
-				// trim output path from the source set
-				source.Location = strings.TrimPrefix(source.Location, filepath.Dir(output)+"/")
-				return true, nil
-			},
-		}),
-	)
-	if err != nil {
 		return err
 	}
 
@@ -76,17 +34,15 @@ func compileMarkdownToHTML(
 	}
 	defer w.Close()
 
-	if err = document.WriteHeader(w, meta); err != nil {
-		return err
+	if err := presentation.New(
+		ctx,
+		w,
+		sources,
+		presentation.WithParser(mdcoach.NewParser()),
+		presentation.WithRenderer(mdcoach.NewRenderer()),
+	); err != nil {
+		return fmt.Errorf("compile presentation: %w", err)
 	}
-
-	if err = mdcoach.Compile(w, tree, markdownContent, r); err != nil {
-		return err
-	}
-	if err = document.WriteFooter(w); err != nil {
-		return err
-	}
-	pictureProvider.FinishScaling()
 	return nil
 }
 
@@ -127,10 +83,7 @@ func compileCmd() *cli.Command {
 						args[i] = filepath.Join(cwd, p)
 					}
 				}
-				markdownContent, err := mdcParser.Glue(args...)
-				if err != nil {
-					return err
-				}
+
 				if !strings.HasSuffix(output, ".html") {
 					output = output + ".html"
 				}
@@ -138,7 +91,7 @@ func compileCmd() *cli.Command {
 					// TODO: add notify context to respond to Ctrl+C signal and others.
 					context.TODO(),
 					output,
-					markdownContent,
+					args,
 				); err != nil {
 					return err
 				}
@@ -157,15 +110,12 @@ func compileCmd() *cli.Command {
 					p = filepath.Join(cwd, p)
 				}
 				g.Go(func() (err error) {
-					markdownContent, err := os.ReadFile(p)
-					if err != nil {
-						return fmt.Errorf("cannot read file %q: %w", p, err)
-					}
+
 					destination := filepath.Join(output, strings.TrimSuffix(filepath.Base(p), ".md")+".html")
 					if err = compileMarkdownToHTML(
 						ctx,
 						destination,
-						markdownContent,
+						[]string{p},
 					); err != nil {
 						return err
 					}

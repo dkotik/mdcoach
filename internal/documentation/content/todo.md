@@ -30,7 +30,7 @@ weight: 60
 }
 ```
 
-- [ ] see the contents of todo-v2.html
+- <blockquote><footer> instead of <cite>? https://andybrewer.github.io/mvp/
 - [ ] <https://github.com/tendstofortytwo/goldmark-customtag> for custom aside tag, perhaps based on `>>` 
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] implement aside.go
@@ -45,7 +45,6 @@ weight: 60
 - include documentation into .cache dir for all cache distributions?
 - Utilize Presentation API: https://developer.mozilla.org/en-US/docs/Web/API/Presentation_API
 - double HR as early end of the presentation?
-- <blockquote><footer> instead of <cite>? https://andybrewer.github.io/mvp/
 - https://keleshev.com/my-book-writing-setup/ - pandoc to pdf and to epub
   > to solve above issue, use webpack to bundle in fonts | or packer JS?
   > https://survivejs.com/webpack/loading/fonts/

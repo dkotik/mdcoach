@@ -89,7 +89,7 @@ const getSlideIndexFromLocationHash = () => {
 
   // Check if it is a valid number
   if (isNaN(numericValue)) {
-    return
+    return 0
   }
   numericValue--
   if (numericValue < 0) {

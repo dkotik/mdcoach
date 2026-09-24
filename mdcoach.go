@@ -1,3 +1,6 @@
+/*
+Package mdcoach converts Markdown files to HTML presentations with notes.
+*/
 package mdcoach
 
 import (
