@@ -1,14 +1,6 @@
 package mdcoach
 
-import (
-	"bytes"
-	"fmt"
-	"io"
-	"path/filepath"
-	"strings"
-
-	blackfriday "github.com/russross/blackfriday/v2"
-)
+/*
 
 // RenderNode allows image and youtube caching and rendering.
 func (r *ImageRenderer) RenderNode(w io.Writer, node *blackfriday.Node, entering bool) blackfriday.WalkStatus {
@@ -72,4 +64,5 @@ func GenerateCachedImages(tokenpath, source string, remote bool) error {
 		return err
 	}
 	return WriteImage(tokenpath+`.thumb.jpg`, &m, 360, 240, 40)
-}
+
+*/

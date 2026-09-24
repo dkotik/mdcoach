@@ -81,7 +81,7 @@ func isEmoteCharacter(character byte) bool {
 
 var emojiCodepointPattern = regexp.MustCompile(`'([^']+)'\s*:\s*'([^']+)'`)
 
-//go:embed testdata/todo/sass/emote.sass
+//go:embed internal/assets/sass/emote.sass
 var emoteStyles string
 
 // NewEmoteRenderer returns a Goldmark renderer that resolves emote aliases to
