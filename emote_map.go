@@ -1822,4 +1822,5 @@ var emoteMap = map[string]string{
 	`regional_indicator_d`:            `1f1e9`,
 	`regional_indicator_c`:            `1f1e8`,
 	`regional_indicator_b`:            `1f1e7`,
-	`1f1e6`:                           `regional_indicator_a`}
+	`regional_indicator_a`:            `1f1e6`,
+}

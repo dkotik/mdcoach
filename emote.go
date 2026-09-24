@@ -110,13 +110,13 @@ func (r *emoteRenderer) render(
 	}
 	emote := node.(*Emote)
 	name := emote.Name.Value(source)
-	code, ok := emoteMap[name]
+	_, ok = emoteMap[name]
 	if !ok {
 		_, _ = html.ContextTextWriter(rc).WriteString(":" + name + ":")
 		return ast.WalkSkipChildren, nil
 	}
 
-	assetPath := path.Join("assets", "emojis", code+".png")
+	assetPath := path.Join("assets", "emojis", name+".png")
 	location := path.Join("internal", assetPath)
 	image, ok := r.cache.Get(location)
 	if !ok {
