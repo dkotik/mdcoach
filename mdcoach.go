@@ -39,22 +39,17 @@ func NewParser() parser.Parser {
 	)
 }
 
-type imageRendererExtension struct{}
-
-func (*imageRendererExtension) RendererOptions(*html.Config) []html.Option {
-	return []html.Option{
-		html.WithNodeRenderer(ast.KindImage, NewImageRenderer()),
+func NewRenderer() html.Renderer {
+	return html.New(
+		html.WithNodeRendererDecorator(
+			ast.KindImage,
+			func(html.NodeRenderer) html.NodeRenderer { return NewImageRenderer() },
+		),
 		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(NewImageCache())),
 		html.WithNodeRenderer(KindAside, NewAsideRenderer()),
 		html.WithNodeRenderer(KindFigure, NewFigureRenderer()),
 		html.WithNodeRenderer(SlideKind, NewSlideRenderer(
 			NewFigureRenderer(),
 		)),
-	}
-}
-
-func NewRenderer() html.Renderer {
-	return html.New(
-		html.WithExtensions(&imageRendererExtension{}),
 	)
 }

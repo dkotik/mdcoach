@@ -7,7 +7,8 @@ import (
 
 const escapedChars = "&'<>\"\r"
 
-// code borrowed from `html` standard library package, simplified
+// WriteEscapedHTML writes s to w while escaping HTML-sensitive characters.
+// Its escaping logic is simplified from the standard library's html package.
 func WriteEscapedHTML(w io.Writer, s string) error {
 	i := strings.IndexAny(s, escapedChars)
 	for i != -1 {
