@@ -1,35 +1,6 @@
-/*
-Package parser extends default Goldmark Markdown parser with additional functionality, necessary for building slide presentations.
-*/
-package parser
-
-import (
-	"fmt"
-
-	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/extension"
-	"github.com/yuin/goldmark/parser"
-	"github.com/yuin/goldmark/util"
-	"go.abhg.dev/goldmark/frontmatter"
-)
-
-// New returns a new Parser that is configured by default values.
-func New(withOptions ...Option) (_ parser.Parser, err error) {
-	o := &options{}
-	for _, option := range append(
-		withOptions,
-		withDefaultListItemParser(),
-	) {
-		if err = option(o); err != nil {
-			return nil, fmt.Errorf("cannot create parser: %w", err)
-		}
-	}
-
+```go
 	return parser.NewParser(
 		parser.WithBlockParsers(
-			util.Prioritized(&frontmatter.Parser{
-				Formats: frontmatter.DefaultFormats,
-			}, 0),
 			util.Prioritized(parser.NewSetextHeadingParser(), 100),
 			util.Prioritized(extension.NewDefinitionListParser(), 101),
 			util.Prioritized(extension.NewDefinitionDescriptionParser(), 102),
@@ -69,15 +40,7 @@ func New(withOptions ...Option) (_ parser.Parser, err error) {
 			util.Prioritized(extension.NewTableASTTransformer(), 0),
 			// TODO: Footnote collect footnotes per slide, separately.
 			// util.Prioritized(extension.NewFootnoteASTTransformer(), 999),
-			util.Prioritized(&frontmatter.MetaTransformer{}, 0),
 		),
 	), nil
 }
-
-// TODO: depcrecate in favor of mdextension/figure/HasOnlyOneChildOfKind
-func HasOnlyOneChildOfKind(n ast.Node, k ast.NodeKind) bool {
-	if n.ChildCount() != 1 {
-		return false
-	}
-	return n.FirstChild().Kind() == k
-}
+```

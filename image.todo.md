@@ -1,21 +1,5 @@
-package mdcoach
-
-/*
+```go
 func renderImage(w util.BufWriter, source []byte, node ast.Node, entering bool) (ast.WalkStatus, error) {
-	if !entering {
-		return ast.WalkContinue, nil
-	}
-
-	n := node.(*ast.Image)
-	if err != nil {
-		return ast.WalkStop, err
-	}
-	originalIndex := len(sourceSet) - 1
-	if originalIndex < 0 {
-		return ast.WalkStop, errors.New("picture provider returned an empty source set")
-	}
-	original := sourceSet[originalIndex]
-
 	_, _ = w.WriteString("<picture>")
 	for _, source := range sourceSet[:originalIndex] {
 		_, _ = w.WriteString("<source media=\"(max-width: ")
@@ -65,18 +49,4 @@ func renderImage(w util.BufWriter, source []byte, node ast.Node, entering bool) 
 	}
 	return ast.WalkSkipChildren, nil
 }
-
-func nodeToHTMLText(n ast.Node, source []byte) []byte {
-	var buf bytes.Buffer
-	for c := n.FirstChild(); c != nil; c = c.NextSibling() {
-		if s, ok := c.(*ast.String); ok && s.IsCode() {
-			buf.Write(s.Text(source))
-		} else if !c.HasChildren() {
-			buf.Write(util.EscapeHTML(c.Text(source)))
-		} else {
-			buf.Write(nodeToHTMLText(c, source))
-		}
-	}
-	return buf.Bytes()
-}
-*/
+````
