@@ -57,16 +57,25 @@ func (s *Slide) withChildren(children ...ast.Node) {
 	}
 	var child ast.Node
 	contentElementCount := 0
-	for _, child = range children {
+	lastHeadingIndex := -1
+	lastFigureIndex := -1
+	index := 0
+	for index, child = range children {
 		// s.OwnerDocument().RemoveChild(child)
 		s.AppendChild(child)
 		switch child.Kind() {
 		case ast.KindHeading:
+			lastHeadingIndex = index
 		case KindFigure:
+			lastFigureIndex = contentElementCount
 		case KindAside:
 		default:
 			contentElementCount++
 		}
+	}
+
+	if lastHeadingIndex != 0 {
+		return // normal slide
 	}
 
 	ok := false
@@ -78,39 +87,20 @@ func (s *Slide) withChildren(children ...ast.Node) {
 			fmt.Sprintf("%d", s.HeadingLevel),
 			text.IdentityDecoder,
 		))
-		if s.HeadingLevel == 1 {
-			// && contentElementCount == 0
-			// possible background image in the last element
-			_, ok = s.LastChild().(*Figure)
-			if ok {
-				s.SlideLayout = SlideSplashLayout
-				return
-			}
+		if s.HeadingLevel == 1 && contentElementCount == 0 {
+			s.SlideLayout = SlideSplashLayout
+			return
 		}
 	}
 	if contentElementCount == 0 {
 		return
 	}
-	_, ok = s.LastChild().(*Figure)
-	if ok {
+	if lastFigureIndex == contentElementCount {
 		s.SlideLayout = SlideRightAsideLayout
 		return
 	}
-
-	for _, child = range children {
-		switch child.Kind() {
-		case ast.KindHeading:
-		case KindAside:
-		case KindFigure:
-			_, ok = child.(*Figure)
-			if ok {
-				s.SlideLayout = SlideLeftAsideLayout
-				return
-			}
-			return
-		default:
-			return
-		}
+	if lastFigureIndex == 0 {
+		s.SlideLayout = SlideLeftAsideLayout
 	}
 }
 

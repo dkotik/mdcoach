@@ -1,9 +1,9 @@
 Document: MdCoach Demo {
-  [id="d2480adc4ca85903"]
+  [id="1a6ee9e344ad7520"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
-    [data-layout="normal"]
+    [data-layout="splash"]
     Heading: MdCoach Demo {
       Text: MdCoach
       Text: Demo
@@ -343,7 +343,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: regular paragraph {
-    [data-layout="right-aside"]
+    [data-layout="normal"]
     CodeBlock
     Paragraph: regular paragraph {
       Text: regular
@@ -357,7 +357,6 @@ Document: MdCoach Demo {
     }
   }
   Slide: Luther is the best hackman protestor test {
-    [data-heading-level="1"]
     [data-layout="normal"]
     Heading: Luther is the best hackman protestor test {
       Text: Luther is the best hackman protestor
@@ -663,7 +662,7 @@ Document: MdCoach Demo {
     }
   }
   Slide: image {
-    [data-layout="left-aside"]
+    [data-layout="normal"]
     Figure: image {
       Image: image {
         Text: image

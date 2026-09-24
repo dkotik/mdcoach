@@ -146,6 +146,50 @@ section > .grid > .content {
 
 /* section layout */
 
+section[data-layout="splash"] > .grid > .content {
+  figure {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    left: 0;
+    /*border: 3px dashed red;*/
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: -1;
+
+    .mdcoachImage {
+      /*border: 3px dashed green;*/
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      box-sizing: border-box;
+    }
+
+    figcaption {
+      position: absolute;
+      bottom: 0;
+      color: white;
+      background-color: rgba(0.1, 0.1, 0.1, 0.3);
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.73) 18%,
+        rgba(0, 0, 0, 0.47) 38%,
+        rgba(0, 0, 0, 0.25) 59%,
+        rgba(0, 0, 0, 0.09) 80%,
+        rgba(0, 0, 0, 0) 100%
+      ) no-repeat;
+      padding: 12% 1rem 1rem 1rem;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      /*text-align: right;*/
+    }
+  }
+}
+
 section[data-layout="left-aside"] > .grid > .content {
   padding-left: 40vw;
 
@@ -173,7 +217,15 @@ section[data-layout="left-aside"] > .grid > .content {
       bottom: 0;
       color: white;
       background-color: rgba(0.1, 0.1, 0.1, 0.3);
-      background: linear-gradient(to top, black, rgba(0, 0, 0, 0)) no-repeat;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.73) 18%,
+        rgba(0, 0, 0, 0.47) 38%,
+        rgba(0, 0, 0, 0.25) 59%,
+        rgba(0, 0, 0, 0.09) 80%,
+        rgba(0, 0, 0, 0) 100%
+      ) no-repeat;
       padding: 20% 1rem 1rem 1rem;
       margin: 0;
       width: 100%;
@@ -210,7 +262,15 @@ section[data-layout="right-aside"] > .grid > .content {
       bottom: 0;
       color: white;
       background-color: rgba(0.1, 0.1, 0.1, 0.3);
-      background: linear-gradient(to top, black, rgba(0, 0, 0, 0)) no-repeat;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.73) 18%,
+        rgba(0, 0, 0, 0.47) 38%,
+        rgba(0, 0, 0, 0.25) 59%,
+        rgba(0, 0, 0, 0.09) 80%,
+        rgba(0, 0, 0, 0) 100%
+      ) no-repeat;
       padding: 20% 1rem 1rem 1rem;
       margin: 0;
       width: 100%;
@@ -330,6 +390,7 @@ section > .grid > .content[data-scale="10"] .mdcoachImage {
 	min-width: 1.5rem;
   padding: 0 1rem 0 1rem;
 	display: inline-block;
+	vertical-align: -30%;
 }
 .content > blockquote {
   padding: 1.5rem 2rem;
@@ -365,7 +426,7 @@ section > .grid > .content[data-scale="10"] .mdcoachImage {
   margin: 1rem 1.5rem 1rem 3rem;
 }
 </style><main>
-<section data-heading-level="1" data-heading-level="1" data-layout="normal"><div class="grid"><div class="content"><h1>MdCoach Demo</h1>
+<section data-heading-level="1" data-heading-level="1" data-layout="splash"><div class="grid"><div class="content"><h1>MdCoach Demo</h1>
 <figure><div data-src="media/cat_3.jpg" data-alt="cat image" data-title="some cat" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent78f1aff593c3a790"></div><figcaption>cat image</figcaption></figure><aside><p>notes</p>
 </aside></div></div></section><section data-heading-level="3" data-heading-level="3" data-layout="right-aside"><div class="grid"><div class="content"><h3>Figure To the Right</h3>
 <p>Some text before figure.</p>
@@ -479,7 +540,7 @@ hallelujah,  hallelujah, hallelujah, hallelu-jah,
 Definition Title<p>1 Definition Content @TODO</p>
 <p>2 Definition Content @TODO</p>
 <p>3 Definition Content @TODO</p>
-</div></div></section><section data-heading-level="0" data-layout="right-aside"><div class="grid"><div class="content"><pre><code class="language-bibliography">- one
+</div></div></section><section data-heading-level="0" data-layout="normal"><div class="grid"><div class="content"><pre><code class="language-bibliography">- one
 - two
 - three
 </code></pre>
@@ -488,7 +549,7 @@ Definition Title<p>1 Definition Content @TODO</p>
 
 Should be stripped
 </code></pre>
-<figure><div data-src="media/cat_1.jpg" data-alt="luth" data-title="weee Treisdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent82d5487e06582e8f"></div><figcaption>luth</figcaption></figure></div></div></section><section data-heading-level="1" data-heading-level="1" data-layout="normal"><div class="grid"><div class="content"><h1>Luther is the best hackman protestor test</h1>
+<figure><div data-src="media/cat_1.jpg" data-alt="luth" data-title="weee Treisdf" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent82d5487e06582e8f"></div><figcaption>luth</figcaption></figure></div></div></section><section data-heading-level="0" data-layout="normal"><div class="grid"><div class="content"><h1>Luther is the best hackman protestor test</h1>
 <p>aside left <!-- raw HTML omitted -->On the Freedom of the Will<!-- raw HTML omitted --> by Martin Luther</p>
 <p>hmm</p>
 <!-- raw HTML omitted -->
@@ -553,7 +614,7 @@ dsfsdf dfgdfgfdg</p>
 <li>two</li>
 <li>three</li>
 </ul>
-</div></div></section><section data-heading-level="0" data-layout="left-aside"><div class="grid"><div class="content"><figure><div data-src="media/cat_2.jpg" data-alt="image" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent12107f85005062a5"></div><figcaption>image</figcaption></figure><p>this is image test</p>
+</div></div></section><section data-heading-level="0" data-layout="normal"><div class="grid"><div class="content"><figure><div data-src="media/cat_2.jpg" data-alt="image" data-width="400" data-height="300" data-aspect-ratio="1.3333" class="mdcoachImage mdcoachImageContent12107f85005062a5"></div><figcaption>image</figcaption></figure><p>this is image test</p>
 <p>[?] question1?
 [?] question2</p>
 </div></div></section><section data-heading-level="0" data-layout="normal"><div class="grid"><div class="content"><p>dfgkldf glkj</p>

@@ -67,6 +67,50 @@ section > .grid > .content {
 
 /* section layout */
 
+section[data-layout="splash"] > .grid > .content {
+  figure {
+    position: fixed;
+    margin: 0;
+    top: 0;
+    left: 0;
+    /*border: 3px dashed red;*/
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: -1;
+
+    .mdcoachImage {
+      /*border: 3px dashed green;*/
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      box-sizing: border-box;
+    }
+
+    figcaption {
+      position: absolute;
+      bottom: 0;
+      color: white;
+      background-color: rgba(0.1, 0.1, 0.1, 0.3);
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.73) 18%,
+        rgba(0, 0, 0, 0.47) 38%,
+        rgba(0, 0, 0, 0.25) 59%,
+        rgba(0, 0, 0, 0.09) 80%,
+        rgba(0, 0, 0, 0) 100%
+      ) no-repeat;
+      padding: 12% 1rem 1rem 1rem;
+      margin: 0;
+      width: 100%;
+      box-sizing: border-box;
+      /*text-align: right;*/
+    }
+  }
+}
+
 section[data-layout="left-aside"] > .grid > .content {
   padding-left: 40vw;
 
@@ -94,7 +138,15 @@ section[data-layout="left-aside"] > .grid > .content {
       bottom: 0;
       color: white;
       background-color: rgba(0.1, 0.1, 0.1, 0.3);
-      background: linear-gradient(to top, black, rgba(0, 0, 0, 0)) no-repeat;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.73) 18%,
+        rgba(0, 0, 0, 0.47) 38%,
+        rgba(0, 0, 0, 0.25) 59%,
+        rgba(0, 0, 0, 0.09) 80%,
+        rgba(0, 0, 0, 0) 100%
+      ) no-repeat;
       padding: 20% 1rem 1rem 1rem;
       margin: 0;
       width: 100%;
@@ -131,7 +183,15 @@ section[data-layout="right-aside"] > .grid > .content {
       bottom: 0;
       color: white;
       background-color: rgba(0.1, 0.1, 0.1, 0.3);
-      background: linear-gradient(to top, black, rgba(0, 0, 0, 0)) no-repeat;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 1) 0%,
+        rgba(0, 0, 0, 0.73) 18%,
+        rgba(0, 0, 0, 0.47) 38%,
+        rgba(0, 0, 0, 0.25) 59%,
+        rgba(0, 0, 0, 0.09) 80%,
+        rgba(0, 0, 0, 0) 100%
+      ) no-repeat;
       padding: 20% 1rem 1rem 1rem;
       margin: 0;
       width: 100%;
