@@ -1,9 +1,13 @@
 Document: Try :smile: and :cat-2:; leave :: and :not an emote: as text {
   Paragraph: Try :smile: and :cat-2:; leave :: and :not an emote: as text {
     Text: Try
-    Emote
+    Emote: smile {
+      Text: smile
+    }
     Text: and
-    Emote
+    Emote: cat-2 {
+      Text: cat-2
+    }
     Text: ; leave :: and :not an emote
     Text: : as text.
   }
