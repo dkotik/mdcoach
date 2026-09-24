@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	github.com/OneOfOne/xxhash v1.2.8
 	github.com/davecgh/go-spew v1.1.1
+	github.com/deepteams/webp v1.2.8
 	github.com/gpdf-dev/gpdf v1.0.11
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646

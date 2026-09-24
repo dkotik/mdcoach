@@ -5,6 +5,7 @@ import (
 	"fmt"
 	stdImage "image"
 	_ "image/gif"
+	_ "image/jpeg"
 	_ "image/png"
 	"io"
 	"net/http"
@@ -56,7 +57,7 @@ func NewImageLoader(cache *ImageCache, ic MediaOptions) *ImageLoader {
 	}
 }
 
-func (l *ImageLoader) decodeImage(r io.Reader) (*imageJPG, error) {
+func (l *ImageLoader) decodeImage(r io.Reader) (*imageWebp, error) {
 	decoded, _, err := stdImage.Decode(r)
 	if err != nil {
 		return nil, fmt.Errorf("decode image: %w", err)
@@ -83,7 +84,7 @@ func (l *ImageLoader) localImagePath(location string) string {
 func (l *ImageLoader) loadImage(
 	ctx context.Context,
 	location string,
-) (img *imageJPG, err error) {
+) (img *imageWebp, err error) {
 	url := newURLFromLocation(location)
 	location = url.String()
 	img, ok := l.cache.Get(location)

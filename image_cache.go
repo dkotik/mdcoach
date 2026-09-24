@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"html/template"
 	stdImage "image"
-	"image/jpeg"
 	"io"
 	"sync"
 
 	"github.com/OneOfOne/xxhash"
+	"github.com/deepteams/webp"
 )
 
 var imageDataTemplateCSS = template.Must(template.New("").Funcs(template.FuncMap{
@@ -22,13 +22,13 @@ var imageDataTemplateCSS = template.Must(template.New("").Funcs(template.FuncMap
 	{{ range . }}
 	  {{ safeCSS (printf "/* %s */" .Location) }}
 		.` + ImageContentClassPrefix + `{{ .Hash }} {
-			background-image: url("data:image/jpeg;base64,{{ .DataBase64 }}");
+			background-image: url("data:image/webp;base64,{{ .DataBase64 }}");
 		}
 	{{ end }}
 </style>
 `))
 
-type imageJPG struct {
+type imageWebp struct {
 	Location   string
 	Hash       string
 	DataBase64 string
@@ -36,14 +36,14 @@ type imageJPG struct {
 	Height     int
 }
 
-func newImageFromImage(i stdImage.Image) (*imageJPG, error) {
+func newImageFromImage(i stdImage.Image) (*imageWebp, error) {
 	if i == nil {
-		return nil, fmt.Errorf("encode image as JPEG: nil image")
+		return nil, fmt.Errorf("encode image as WebP: nil image")
 	}
 
 	var encoded bytes.Buffer
-	if err := jpeg.Encode(&encoded, i, nil); err != nil {
-		return nil, fmt.Errorf("encode image as JPEG: %w", err)
+	if err := webp.Encode(&encoded, i, nil); err != nil {
+		return nil, fmt.Errorf("encode image as WebP: %w", err)
 	}
 
 	encodedBytes := encoded.Bytes()
@@ -53,7 +53,7 @@ func newImageFromImage(i stdImage.Image) (*imageJPG, error) {
 	}
 
 	bounds := i.Bounds()
-	return &imageJPG{
+	return &imageWebp{
 		Hash:       fmt.Sprintf("%x", hash.Sum(nil)),
 		DataBase64: base64.StdEncoding.EncodeToString(encodedBytes),
 		Width:      bounds.Dx(),
@@ -64,18 +64,18 @@ func newImageFromImage(i stdImage.Image) (*imageJPG, error) {
 type ImageCache struct {
 	mu     *sync.Mutex
 	hashes map[string]string
-	images map[string]*imageJPG
+	images map[string]*imageWebp
 }
 
 func NewImageCache() *ImageCache {
 	return &ImageCache{
 		mu:     &sync.Mutex{},
 		hashes: make(map[string]string),
-		images: make(map[string]*imageJPG),
+		images: make(map[string]*imageWebp),
 	}
 }
 
-func (c *ImageCache) Get(location string) (*imageJPG, bool) {
+func (c *ImageCache) Get(location string) (*imageWebp, bool) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	hash, ok := c.hashes[location]
@@ -86,7 +86,7 @@ func (c *ImageCache) Get(location string) (*imageJPG, bool) {
 	return img, ok
 }
 
-func (c *ImageCache) Set(img *imageJPG) {
+func (c *ImageCache) Set(img *imageWebp) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.images[img.Hash] = img

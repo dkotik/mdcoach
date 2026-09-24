@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="4f47da9831d79145"]
+  [id="6781ecafb014317f"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -77,7 +77,9 @@ Document: MdCoach Demo {
       ListItem: lists :shark: {
         Paragraph: lists :shark: {
           Text: lists
-          Text: :shark:
+          Emote: shark {
+            Text: shark
+          }
         }
       }
       ListItem: ("lists") {
@@ -125,7 +127,19 @@ Document: MdCoach Demo {
       Text: Title1
     }
     Paragraph: :) :checkbox: \:cat: :salad: \;) \!\[slashes\]\(in brackets\ {
-      Text: :) :checkbox: :cat: :salad: ;) ![slashes](in brackets) \:cat
+      Text: :)
+      Emote: checkbox {
+        Text: checkbox
+      }
+      Text: :cat:
+      Emote: salad {
+        Text: salad
+      }
+      Text: ;) ![slashes](in brackets) \
+      Emote: cat {
+        Text: cat
+      }
+      Text: \\ hmm:
       Text: -)
     }
     List: [x] # first ahem {
@@ -420,15 +434,33 @@ Document: MdCoach Demo {
       Emphasis: fdgkj {
         Text: fdgkj
       }
-      Text: dfgkj :-) :home:
-      Text: :winkey:
+      Text: dfgkj :-)
+      Emote: home {
+        Text: home
+      }
+      Text
+      Emote: winkey {
+        Text: winkey
+      }
     }
     Paragraph: ok :enterkey: :100: \:100: \:) {
-      Text: ok :enterkey: :100: :100:
+      Text: ok
+      Emote: enterkey {
+        Text: enterkey
+      }
+      Text
+      Emote: 100 {
+        Text: 100
+      }
+      Text: :100:
       Text: :)
     }
     Paragraph: sdf kjsdkfj sdf :-) dksjfkds ;-) :ok: sddsf :-D %-) {
-      Text: sdf kjsdkfj sdf :-) dksjfkds ;-) :ok: sddsf :-D %
+      Text: sdf kjsdkfj sdf :-) dksjfkds ;-)
+      Emote: ok {
+        Text: ok
+      }
+      Text: sddsf :-D %
       Text: -)
     }
     List: [x] dfgdfg {
