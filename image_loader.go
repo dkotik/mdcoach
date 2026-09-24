@@ -8,6 +8,7 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"io"
+	"io/fs"
 	"net/http"
 	"net/url"
 	"os"
@@ -21,7 +22,7 @@ import (
 )
 
 type ImageLoader struct {
-	path        string
+	fs          fs.FS
 	widthLimit  int
 	heightLimit int
 	quality     int
@@ -29,6 +30,7 @@ type ImageLoader struct {
 }
 
 type MediaOptions struct {
+	FS          fs.FS
 	Path        string
 	WidthLimit  int
 	HeightLimit int
@@ -48,8 +50,11 @@ func NewImageLoader(cache *ImageCache, ic MediaOptions) *ImageLoader {
 	if ic.Quality == 0 {
 		ic.Quality = 80
 	}
+	if ic.FS == nil {
+		ic.FS = os.DirFS(ic.Path)
+	}
 	return &ImageLoader{
-		path:        ic.Path,
+		fs:          ic.FS,
 		widthLimit:  ic.WidthLimit,
 		heightLimit: ic.HeightLimit,
 		quality:     ic.Quality,
@@ -74,13 +79,6 @@ func (l *ImageLoader) decodeImage(r io.Reader) (*imageWebp, error) {
 	return newImageFromImage(decoded)
 }
 
-func (l *ImageLoader) localImagePath(location string) string {
-	if path.IsAbs(location) {
-		return location
-	}
-	return path.Join(l.path, location)
-}
-
 func (l *ImageLoader) loadImage(
 	ctx context.Context,
 	location string,
@@ -93,7 +91,7 @@ func (l *ImageLoader) loadImage(
 	}
 
 	if url.Host == "" {
-		file, err := os.Open(l.localImagePath(location))
+		file, err := l.fs.Open(path.Clean(location))
 		if err != nil {
 			return nil, fmt.Errorf("open local image %q: %w", location, err)
 		}

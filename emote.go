@@ -1,12 +1,13 @@
 package mdcoach
 
 import (
-	_ "embed"
+	"bytes"
 	"fmt"
+	stdImage "image"
 	"io"
 	"path"
-	"regexp"
 
+	"github.com/dkotik/mdcoach/internal"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/parser"
 	"github.com/yuin/goldmark/v2/renderer"
@@ -79,26 +80,17 @@ func isEmoteCharacter(character byte) bool {
 		character == '_' || character == '+' || character == '-'
 }
 
-var emojiCodepointPattern = regexp.MustCompile(`'([^']+)'\s*:\s*'([^']+)'`)
-
-//go:embed internal/assets/sass/emote.sass
-var emoteStyles string
-
-// NewEmoteRenderer returns a Goldmark renderer that resolves emote aliases to
-// cached images from internal/assets/emojis.
+// NewEmoteRenderer returns a Goldmark renderer that uses cached images for
+// emote names found in internal/assets/emojis.
 func NewEmoteRenderer(cache *ImageCache) html.NodeRenderer {
 	if cache == nil {
 		panic("nil image cache")
 	}
-	return html.NodeRendererFunc((&emoteRenderer{
-		cache:      cache,
-		codepoints: emojiCodepoints(),
-	}).render)
+	return html.NodeRendererFunc((&emoteRenderer{cache: cache}).render)
 }
 
 type emoteRenderer struct {
-	cache      *ImageCache
-	codepoints map[string]string
+	cache *ImageCache
 }
 
 func (r *emoteRenderer) render(
@@ -118,34 +110,45 @@ func (r *emoteRenderer) render(
 	}
 	emote := node.(*Emote)
 	name := emote.Name.Value(source)
-	class := name
-	codepoint, ok := r.codepoints[class]
+	code, ok := emoteMap[name]
 	if !ok {
 		_, _ = html.ContextTextWriter(rc).WriteString(":" + name + ":")
 		return ast.WalkSkipChildren, nil
 	}
 
-	location := path.Join("internal", "assets", "emojis", codepoint+".png")
+	assetPath := path.Join("assets", "emojis", code+".png")
+	location := path.Join("internal", assetPath)
 	image, ok := r.cache.Get(location)
 	if !ok {
-		_, _ = html.ContextTextWriter(rc).WriteString(":" + name + ":")
-		return ast.WalkSkipChildren, nil
+		data, err := internal.Assets.ReadFile(assetPath)
+		if err != nil {
+			return ast.WalkStop, fmt.Errorf("read emote asset %q: %w", assetPath, err)
+		}
+		decoded, _, err := stdImage.Decode(bytes.NewReader(data))
+		if err != nil {
+			return ast.WalkStop, fmt.Errorf("decode emote asset %q: %w", assetPath, err)
+		}
+		image, err = newImageFromImage(decoded)
+		if err != nil {
+			return ast.WalkStop, fmt.Errorf("cache emote asset %q: %w", assetPath, err)
+		}
+		image.Location = location
+		r.cache.Set(image)
 	}
 
 	emote.SetAttribute(
 		"data-hash",
 		text.NewMultiLineValueFromString(image.Hash, text.IdentityDecoder),
 	)
-	_, _ = fmt.Fprintf(w, `<span class="emote emote-%s" data-hash="%s">`, class, image.Hash)
+	// class := name
+	// emote.SetAttribute(
+	// 	"class",
+	// 	text.NewMultiLineValueFromString("emote emote-"+class, text.IdentityDecoder),
+	// )
+	_, _ = w.WriteString("<span")
+	renderImageAttributes(w, source, emote)
+	_, _ = w.WriteString(">")
 	_, _ = emote.Name.WriteTo(html.ContextTextWriter(rc), source)
 	_, _ = w.WriteString("</span>")
 	return ast.WalkSkipChildren, nil
-}
-
-func emojiCodepoints() map[string]string {
-	codepoints := make(map[string]string)
-	for _, match := range emojiCodepointPattern.FindAllStringSubmatch(emoteStyles, -1) {
-		codepoints[match[2]] = match[1]
-	}
-	return codepoints
 }
