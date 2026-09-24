@@ -16,6 +16,7 @@ var styleSheets = []string{
 	"image.css",
 	"blockquote.css",
 	"code.css",
+	"typography.css",
 }
 
 func makeBefore(w io.Writer) error {

@@ -72,6 +72,76 @@ aside.curtain {
 }*/
 /* =================== section.css =================== */
 
+/* section scaling */
+
+section > .grid > .content[data-scale="90"] {
+  font-size: 90%;
+}
+
+section > .grid > .content[data-scale="80"] {
+  font-size: 80%;
+}
+
+section > .grid > .content[data-scale="70"] {
+  font-size: 70%;
+}
+
+section > .grid > .content[data-scale="60"] {
+  font-size: 65%;
+}
+
+section > .grid > .content[data-scale="50"] {
+  font-size: 60%;
+}
+
+section > .grid > .content[data-scale="40"] {
+  font-size: 55%;
+}
+
+section > .grid > .content[data-scale="30"] {
+  font-size: 50%;
+}
+
+section > .grid > .content[data-scale="20"] {
+  font-size: 40%;
+}
+
+section > .grid > .content[data-scale="10"] {
+  font-size: 30%;
+}
+
+section > .grid > .content[data-scale="60"] .mdcoachImage {
+  max-width: 90%;
+}
+
+section > .grid > .content[data-scale="50"] .mdcoachImage {
+  max-width: 80%;
+}
+
+section > .grid > .content[data-scale="40"] .mdcoachImage {
+  max-width: 70%;
+}
+
+section > .grid > .content[data-scale="30"] .mdcoachImage {
+  max-width: 50%;
+  max-height: 20vh;
+}
+
+section > .grid > .content[data-scale="20"] .mdcoachImage {
+  float: right;
+  margin-left: 1rem;
+  max-width: 30%;
+  max-height: 15vh;
+}
+
+section > .grid > .content[data-scale="10"] .mdcoachImage {
+  float: right;
+  margin-left: 1rem;
+  max-width: 15rem;
+  max-height: 15rem;
+}
+
+
 section {
   display: block;
   width: 100%;
@@ -153,9 +223,10 @@ section[data-layout="splash"] > .grid > .content {
     z-index: -1;
 
     .mdcoachImage {
-      /*border: 3px dashed green;*/
       width: 100%;
+      max-width: 100%;
       height: 100%;
+      max-height: 100%;
       background-size: cover;
       box-sizing: border-box;
     }
@@ -198,9 +269,10 @@ section[data-layout="left-aside"] > .grid > .content {
     overflow: hidden;
 
     .mdcoachImage {
-      /*border: 3px dashed green;*/
       width: 100%;
+      max-width: 100%;
       height: 100%;
+      max-height: 100%;
       background-size: cover;
       box-sizing: border-box;
     }
@@ -243,9 +315,10 @@ section[data-layout="right-aside"] > .grid > .content {
     overflow: hidden;
 
     .mdcoachImage {
-      /*border: 3px dashed green;*/
       width: 100%;
+      max-width: 100%;
       height: 100%;
+      max-height: 100%;
       background-size: cover;
       box-sizing: border-box;
     }
@@ -271,75 +344,6 @@ section[data-layout="right-aside"] > .grid > .content {
       text-align: right;
     }
   }
-}
-
-/* section scaling */
-
-section > .grid > .content[data-scale="90"] {
-  font-size: 90%;
-}
-
-section > .grid > .content[data-scale="80"] {
-  font-size: 80%;
-}
-
-section > .grid > .content[data-scale="70"] {
-  font-size: 70%;
-}
-
-section > .grid > .content[data-scale="60"] {
-  font-size: 65%;
-}
-
-section > .grid > .content[data-scale="50"] {
-  font-size: 60%;
-}
-
-section > .grid > .content[data-scale="40"] {
-  font-size: 55%;
-}
-
-section > .grid > .content[data-scale="30"] {
-  font-size: 50%;
-}
-
-section > .grid > .content[data-scale="20"] {
-  font-size: 45%;
-}
-
-section > .grid > .content[data-scale="10"] {
-  font-size: 40%;
-}
-
-section > .grid > .content[data-scale="60"] .mdcoachImage {
-  max-width: 90%;
-}
-
-section > .grid > .content[data-scale="50"] .mdcoachImage {
-  max-width: 80%;
-}
-
-section > .grid > .content[data-scale="40"] .mdcoachImage {
-  max-width: 70%;
-}
-
-section > .grid > .content[data-scale="30"] .mdcoachImage {
-  max-width: 50%;
-  max-height: 20vh;
-}
-
-section > .grid > .content[data-scale="20"] .mdcoachImage {
-  float: right;
-  margin-left: 1rem;
-  max-width: 30%;
-  max-height: 15vh;
-}
-
-section > .grid > .content[data-scale="10"] .mdcoachImage {
-  float: right;
-  margin-left: 1rem;
-  max-width: 5em;
-  max-height: 5em;
 }
 /* =============== list_item.css ================= */
 
@@ -381,18 +385,18 @@ section > .grid > .content[data-scale="10"] .mdcoachImage {
 .icon {
  	min-height: 1.5rem;
 	min-width: 1.5rem;
-  padding: 0 1rem 0 1rem;
+  padding: 0 0.2rem 0 0.2rem;
 	display: inline-block;
 	vertical-align: -30%;
 }
 .content > blockquote {
-  padding: 1.5rem 2rem;
+  /*padding: 1.5rem 2rem;*/
   border-left: 0.5rem solid var(--color-marker-background);
   background-color: var(--color-menu-background);
   /*background-color: var(--color-alt);*/
-  padding: 1rem 1rem 1rem 4rem;
-  margin: 1rem 1.5rem 1rem 3rem;
-  margin: 0;
+  padding: 0.6rem 0.6rem 0.6rem 1rem;
+  /*margin: 1rem 1.5rem 1rem 3rem;
+  margin: 0;*/
 }
 
 .content > blockquote > p+cite {
@@ -417,5 +421,16 @@ section > .grid > .content[data-scale="10"] .mdcoachImage {
   background-color: var(--color-alt);
   padding: 1rem 1rem 1rem 4rem;
   margin: 1rem 1.5rem 1rem 3rem;
+}
+blockquote, p, h1, h2, h3, h4, h5, h6, h7, h8 {
+  max-width: 40rem;
+}
+
+li {
+  max-width: 30rem;
+}
+
+body {
+  font-size: 3.8vh;
 }
 </style><main>
