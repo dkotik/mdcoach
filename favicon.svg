@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>An emerald castle with two towers</title>
+  <circle cx="32" cy="32" r="30" fill="#d9f3e5"/>
+  <path d="M10 52h44" fill="none" stroke="#164a3a" stroke-linecap="round" stroke-width="3"/>
+  <path d="M15 52V22h11v7h12v-7h11v30Z" fill="#15966a" stroke="#164a3a" stroke-linejoin="round" stroke-width="2"/>
+  <path d="M12 22V13h6v4h5v-4h6v9ZM35 22V13h6v4h5v-4h6v9Z" fill="#24b47e" stroke="#164a3a" stroke-linejoin="round" stroke-width="2"/>
+  <path d="M18 29h6v8h-6ZM40 29h6v8h-6Z" fill="#b9f2d0" stroke="#164a3a" stroke-width="1.5"/>
+  <path d="M25 52V42c0-4 3-7 7-7s7 3 7 7v10Z" fill="#164a3a"/>
+  <path d="M28 52v-8c0-2 1.5-3 4-3s4 1 4 3v8Z" fill="#9be8bd"/>
+  <path d="M21 14v-2M43 14v-2" stroke="#164a3a" stroke-linecap="round" stroke-width="2"/>
+  <circle cx="29" cy="29" r="1" fill="#d9f3e5"/>
+  <circle cx="35" cy="29" r="1" fill="#d9f3e5"/>
+</svg>
