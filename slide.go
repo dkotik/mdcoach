@@ -242,15 +242,9 @@ func renderSlideAttributes(writer io.Writer, source []byte, node ast.Node) {
 		w = util.NewErrorBufWriter(w)
 	}
 	tw := &textWriter{w}
-	classes := make([]string, 0, 2)
-	classes = append(classes, ImageCSSClass)
 	for _, attr := range node.Attributes() {
 		if !html.ImageAttributeFilter.ContainsString(attr.Name) {
 			if !strings.HasPrefix(attr.Name, "data-") {
-				continue
-			}
-			if attr.Name == "data-hash" {
-				classes = append(classes, ImageContentClassPrefix+attr.Value.Str(source))
 				continue
 			}
 		}
