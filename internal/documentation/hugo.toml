@@ -1,0 +1,38 @@
+baseURL = 'https://dkotik.github.io/mdcoach/'
+locale = 'en-US'
+title = 'Mdcoach'
+disableKinds = ['taxonomy', 'term']
+author = 'Dmitry Kotik'
+publishDir = '../../docs'
+uglyURLs = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[menu]
+  [[menu.main]]
+    name = 'Overview'
+    pageRef = '/'
+    weight = 10
+  [[menu.main]]
+    name = 'Installation'
+    pageRef = '/intallation'
+    weight = 20
+  [[menu.main]]
+    name = 'Library'
+    pageRef = '/library'
+    weight = 30
+  [[menu.main]]
+    name = 'Command'
+    pageRef = '/command'
+    weight = 40
+  [[menu.main]]
+    name = 'Specification'
+    pageRef = '/specification'
+    weight = 70
+  [[menu.main]]
+    name = 'Roadmap'
+    pageRef = '/todo'
+    weight = 80
