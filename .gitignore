@@ -1,5 +1,5 @@
 .DS_Store
 node_modules
-.go-test-cache
-.gomodcache
-.gocache
+go-test-cache
+gomodcache
+gocache

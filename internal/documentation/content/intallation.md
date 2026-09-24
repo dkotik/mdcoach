@@ -5,7 +5,7 @@ weight: 20
 
 ## Requirements
 
-- Go 1.25 or later.
+- Go 1.27 or later.
 - A browser to view generated HTML presentations.
 
 The compiler can fetch remote image URLs, so network access is needed when a source presentation uses remote images. Local images can be used without network access.

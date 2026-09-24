@@ -16,7 +16,7 @@ MdCoach turns Markdown documents into browser-based slide presentations. It is a
 
 ## Get started
 
-Install the command-line tool with Go 1.25 or later:
+Install the command-line tool with Go 1.27 or later:
 
 ```sh
 go install github.com/dkotik/mdcoach/cmd/mdcoach@latest
