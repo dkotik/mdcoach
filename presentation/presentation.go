@@ -11,7 +11,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"html/template"
-	stdImage "image"
+	"image"
+	"image/color"
 	_ "image/gif"
 	_ "image/jpeg"
 	"image/png"
@@ -133,40 +134,101 @@ func New(
 }
 
 func faviconFromFigure(tree ast.Node, source []byte, sourcePath string) (template.HTML, error) {
-	for child := tree.FirstChild(); child != nil; child = child.NextSibling() {
-		if child.Kind() != mdcoach.KindFigure {
-			continue
-		}
+	for slide := range tree.Children() {
+		for child := range slide.Children() {
+			if child.Kind() != mdcoach.KindFigure {
+				continue
+			}
 
-		imageNode, ok := child.FirstChild().(*ast.Image)
-		if !ok {
-			return "", fmt.Errorf("figure's first child must be *ast.Image, got %T", child.FirstChild())
-		}
+			imageNode, ok := child.FirstChild().(*ast.Image)
+			if !ok {
+				return "", fmt.Errorf("figure's first child must be *ast.Image, got %T", child.FirstChild())
+			}
 
-		destination := imageNode.Destination.Value(source)
-		imagePath := filepath.FromSlash(destination)
-		if !filepath.IsAbs(imagePath) {
-			imagePath = filepath.Join(filepath.Dir(sourcePath), imagePath)
-		}
-		data, err := os.ReadFile(imagePath)
-		if err != nil {
-			return "", fmt.Errorf("read figure image %q: %w", imagePath, err)
-		}
+			destination := imageNode.Destination.Value(source)
+			imagePath := filepath.FromSlash(destination)
+			if !filepath.IsAbs(imagePath) {
+				imagePath = filepath.Join(filepath.Dir(sourcePath), imagePath)
+			}
+			data, err := os.ReadFile(imagePath)
+			if err != nil {
+				return "", fmt.Errorf("read figure image %q: %w", imagePath, err)
+			}
 
-		decoded, _, err := stdImage.Decode(bytes.NewReader(data))
-		if err != nil {
-			return "", fmt.Errorf("decode figure image %q: %w", imagePath, err)
-		}
+			decoded, _, err := image.Decode(bytes.NewReader(data))
+			if err != nil {
+				return "", fmt.Errorf("decode figure image %q: %w", imagePath, err)
+			}
 
-		resized := resize.Thumbnail(64, 64, decoded, resize.Lanczos3)
-		var encoded bytes.Buffer
-		if err := png.Encode(&encoded, resized); err != nil {
-			return "", fmt.Errorf("encode favicon PNG from %q: %w", imagePath, err)
-		}
+			resized := resize.Thumbnail(64, 64, decoded, resize.Lanczos3)
+			resized = roundImageBorders(resized)
 
-		favicon := "<link rel=\"icon\" type=\"image/png\" href=\"data:image/png;base64," +
-			base64.StdEncoding.EncodeToString(encoded.Bytes()) + `">`
-		return template.HTML(favicon), nil
+			var encoded bytes.Buffer
+			if err := png.Encode(&encoded, resized); err != nil {
+				return "", fmt.Errorf("encode favicon PNG from %q: %w", imagePath, err)
+			}
+
+			favicon := "<link rel=\"icon\" type=\"image/png\" href=\"data:image/png;base64," +
+				base64.StdEncoding.EncodeToString(encoded.Bytes()) + `">`
+			return template.HTML(favicon), nil
+		}
 	}
 	return "", nil
+}
+
+func roundImageBorders(img image.Image) image.Image {
+	if img == nil {
+		return nil
+	}
+
+	bounds := img.Bounds()
+	width, height := bounds.Dx(), bounds.Dy()
+	rounded := image.NewNRGBA(bounds)
+	if width == 0 || height == 0 {
+		return rounded
+	}
+
+	radius := float64(min(width, height)) / 6
+	const samplesPerAxis = 4
+	const totalSamples = samplesPerAxis * samplesPerAxis
+
+	for y := bounds.Min.Y; y < bounds.Max.Y; y++ {
+		for x := bounds.Min.X; x < bounds.Max.X; x++ {
+			inside := 0
+			for sampleY := 0; sampleY < samplesPerAxis; sampleY++ {
+				py := float64(y-bounds.Min.Y) + (float64(sampleY)+0.5)/samplesPerAxis
+				for sampleX := 0; sampleX < samplesPerAxis; sampleX++ {
+					px := float64(x-bounds.Min.X) + (float64(sampleX)+0.5)/samplesPerAxis
+					if insideRoundedRectangle(px, py, float64(width), float64(height), radius) {
+						inside++
+					}
+				}
+			}
+			if inside == 0 {
+				continue
+			}
+
+			pixel := color.NRGBAModel.Convert(img.At(x, y)).(color.NRGBA)
+			pixel.A = uint8((uint16(pixel.A)*uint16(inside) + totalSamples/2) / totalSamples)
+			rounded.SetNRGBA(x, y, pixel)
+		}
+	}
+	return rounded
+}
+
+func insideRoundedRectangle(x, y, width, height, radius float64) bool {
+	centerX, centerY := x, y
+	if centerX < radius {
+		centerX = radius
+	} else if centerX > width-radius {
+		centerX = width - radius
+	}
+	if centerY < radius {
+		centerY = radius
+	} else if centerY > height-radius {
+		centerY = height - radius
+	}
+
+	dx, dy := x-centerX, y-centerY
+	return dx*dx+dy*dy <= radius*radius
 }
