@@ -8,6 +8,13 @@ import (
 	"os"
 )
 
+var scripts = []string{
+	"debounce.js",
+	"components/all.js",
+	"components/presentation-clock.js",
+	"components/dark-light-toggle.js",
+}
+
 var styleSheets = []string{
 	"theme.css",
 	"layout.css",
@@ -41,8 +48,25 @@ func makeBefore(w io.Writer) error {
 			}
 		}
 	}
-	if _, err := io.WriteString(w, "</style><main>\n"); err != nil {
-		return fmt.Errorf("write style end tag: %w", err)
+	if _, err := io.WriteString(w, "</style><script>\n"); err != nil {
+		return fmt.Errorf("write style end tag and script start: %w", err)
+	}
+	for _, entry := range scripts {
+		content, err := os.ReadFile("javascript/" + entry)
+		if err != nil {
+			return fmt.Errorf("read javascript file %q: %w", entry, err)
+		}
+		if _, err := w.Write(content); err != nil {
+			return fmt.Errorf("write javascript file %q: %w", entry, err)
+		}
+		if len(content) == 0 || content[len(content)-1] != '\n' {
+			if _, err := io.WriteString(w, "\n"); err != nil {
+				return fmt.Errorf("write newline after javascript file %q: %w", entry, err)
+			}
+		}
+	}
+	if _, err := io.WriteString(w, "</script><main>\n"); err != nil {
+		return fmt.Errorf("write script end and main start: %w", err)
 	}
 	return nil
 }

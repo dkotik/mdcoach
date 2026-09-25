@@ -9,16 +9,13 @@ import (
 )
 
 var scripts = []string{
-	"clock.js",
-	"dark-light-toggle.js",
-	"debounce.js",
 	"input.js",
 	"slides.js",
 	"scale.js",
 	"synchronize.js",
 }
 
-func makeBefore(w io.Writer) error {
+func makeAfter(w io.Writer) error {
 	if _, err := io.WriteString(w, "</main><script>\n"); err != nil {
 		return fmt.Errorf("write script start tag: %w", err)
 	}
@@ -47,7 +44,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("create after.gen.html: %w", err))
 	}
-	if err := makeBefore(file); err != nil {
+	if err := makeAfter(file); err != nil {
 		_ = file.Close()
 		panic(err)
 	}
