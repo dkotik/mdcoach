@@ -130,8 +130,10 @@ const navigate = (targetSlide) => {
   } else {
     currentSlideClassList.add(reverseClass)
   }
+
+  const title = document.title.replace(/^\d+\/\d+\s*/, '')
+  document.title = `${currentSlide + 1}/${finalSlideIndex + 1} ${title}`
   window.history.replaceState(null, null, '#' + (currentSlide + 1))
-  document.title = `${currentSlide+1}/${finalSlideIndex+1}`
 }
 
 const navigationCompleteEventType = "slideNavigationFinished"
@@ -257,7 +259,8 @@ window.addEventListener("resize", debounce(() => {
   window.setTimeout(scaleDown, 150)
 }, 200))
 // ============== synchronize.js =====================
-const documentID = 'sync'
+const documentID = document.querySelector("html").dataset.id ||
+  "random"+Math.random().toString(36) + Date.now().toString(36)
 const channel = new BroadcastChannel(documentID)
 const windowID = documentID + '|' + Math.random().toString(36) + '|' + Date.now()
 

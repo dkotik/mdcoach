@@ -33,8 +33,10 @@ const navigate = (targetSlide) => {
   } else {
     currentSlideClassList.add(reverseClass)
   }
+
+  const title = document.title.replace(/^\d+\/\d+\s*/, '')
+  document.title = `${currentSlide + 1}/${finalSlideIndex + 1} ${title}`
   window.history.replaceState(null, null, '#' + (currentSlide + 1))
-  document.title = `${currentSlide+1}/${finalSlideIndex+1}`
 }
 
 const navigationCompleteEventType = "slideNavigationFinished"

@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html data-theme="dark" data-id="1a6ee9e344ad7520">
-  <head>
-    <title>MdCoach Demo</title>
+  <head><link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsbGVkYnk9InRpdGxlIj4KICA8dGl0bGU+Qmx1ZSBmbG93IGRpYWdyYW08L3RpdGxlPgogIDxyZWN0IHg9IjMiIHk9IjMiIHdpZHRoPSI1OCIgaGVpZ2h0PSI1OCIgcng9IjE2IiBmaWxsPSIjZWFmMmZmIi8+CiAgPHBhdGggZD0iTTMyIDIydjdNMzIgMjlIMTZ2NU0zMiAyOWgxNnY1IiBmaWxsPSJub25lIiBzdHJva2U9IiMyNTYzZWIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPHJlY3QgeD0iMjMiIHk9IjkiIHdpZHRoPSIxOCIgaGVpZ2h0PSIxNCIgcng9IjQiIGZpbGw9IiMyNTYzZWIiLz4KICA8cmVjdCB4PSI4IiB5PSIzNCIgd2lkdGg9IjE3IiBoZWlnaHQ9IjE1IiByeD0iNCIgZmlsbD0iIzNiODJmNiIvPgogIDxyZWN0IHg9IjM5IiB5PSIzNCIgd2lkdGg9IjE3IiBoZWlnaHQ9IjE1IiByeD0iNCIgZmlsbD0iIzNiODJmNiIvPgogIDxwYXRoIGQ9Ik0xMyAzOWg3TTQ0IDM5aDciIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8cGF0aCBkPSJNMTMgNDRoNE00NCA0NGg0IiBzdHJva2U9IiNiZmRiZmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgPGNpcmNsZSBjeD0iMzIiIGN5PSIxNiIgcj0iMiIgZmlsbD0iI2JmZGJmZSIvPgo8L3N2Zz4="><title>MdCoach Demo</title>
     <meta name="description" content="A quick demonstration of the program&#39;s capabilities.">
     <meta name="keywords" content="mdcoach demo">
     <meta name="author" content="Дима Котик">
@@ -405,7 +404,7 @@ section[data-layout="right-aside"] > .grid > .content {
   border-left: 0.5rem solid var(--color-marker-background);
   background-color: var(--color-menu-background);
   /*background-color: var(--color-alt);*/
-  padding: 0.6rem 0.6rem 0.6rem 1rem;
+  padding: 0.6rem 1.3rem 0.6rem 1rem;
   /*margin: 1rem 1.5rem 1rem 3rem;
   margin: 0;*/
 }
@@ -777,8 +776,10 @@ const navigate = (targetSlide) => {
   } else {
     currentSlideClassList.add(reverseClass)
   }
+
+  const title = document.title.replace(/^\d+\/\d+\s*/, '')
+  document.title = `${currentSlide + 1}/${finalSlideIndex + 1} ${title}`
   window.history.replaceState(null, null, '#' + (currentSlide + 1))
-  document.title = `${currentSlide+1}/${finalSlideIndex+1}`
 }
 
 const navigationCompleteEventType = "slideNavigationFinished"
@@ -904,7 +905,8 @@ window.addEventListener("resize", debounce(() => {
   window.setTimeout(scaleDown, 150)
 }, 200))
 // ============== synchronize.js =====================
-const documentID = 'sync'
+const documentID = document.querySelector("html").dataset.id ||
+  "random"+Math.random().toString(36) + Date.now().toString(36)
 const channel = new BroadcastChannel(documentID)
 const windowID = documentID + '|' + Math.random().toString(36) + '|' + Date.now()
 

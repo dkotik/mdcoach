@@ -1,5 +1,6 @@
 // ============== synchronize.js =====================
-const documentID = 'sync'
+const documentID = document.querySelector("html").dataset.id ||
+  "random"+Math.random().toString(36) + Date.now().toString(36)
 const channel = new BroadcastChannel(documentID)
 const windowID = documentID + '|' + Math.random().toString(36) + '|' + Date.now()
 

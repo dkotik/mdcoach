@@ -2,6 +2,7 @@ package presentation
 
 import (
 	"fmt"
+	"html/template"
 	"strings"
 	"time"
 
@@ -15,6 +16,7 @@ type Metadata struct {
 	Keywords    string
 	Author      string
 	Created     time.Time
+	Favicon     template.HTML
 }
 
 func metadataFromTree(tree ast.Node) (Metadata, error) {
