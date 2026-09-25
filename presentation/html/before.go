@@ -11,6 +11,7 @@ import (
 var scripts = []string{
 	"debounce.js",
 	"components/all.js",
+	"components/keystroke-combo.js",
 	"components/presentation-menu.js",
 	"components/presentation-side-button.js",
 	"components/dark-light-toggle.js",

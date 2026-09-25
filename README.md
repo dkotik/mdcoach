@@ -32,13 +32,3 @@ An image element in a root-level paragraph that points to a Markdown file causes
 2. If found after the title of the slide, they float to the left. First image of the `<aside>` block fills the left side.
 3. If found after the title of the slide, but there is nothing else in the slide, they become a splash element.  First image of the `<aside>` block fills the entire screen as a background element.
 4. An empty aside element `> >` confines all the following slide elements to notes.
-
-### Double Horizontal Rule
-``` markdown
-- - -
-- - -
-```
-Two horizontal rule elements are rendered as one horizontal rule `<hr class="double" />`. It will force a page break in books or handout notes.
-
-### PDF Utilities
-Running `mdcoach <path-to-pdf.pdf>` will print the extracted text from each page of the chosen PDF file. Giving multiple PDF files as arguments will result in a single merged PDF file.

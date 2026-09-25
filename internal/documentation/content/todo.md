@@ -35,7 +35,6 @@ weight: 60
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] implement aside.go
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
-- [ ] review should allow a percentage or count of bonus questions as a flag
 - [ ] add header insertion for review
 - parsers and renderers should be paired
   - create new node kind for SlideCut instead of NotesBreak
