@@ -31,4 +31,18 @@ html[data-theme="dark"] {
 
 presentation-menu {
   background-color: red;
+
+  svg {
+    width: 3rem;
+  }
+}
+
+presentation-side-button > svg {
+  height: 12rem;
+}
+
+presentation-menu:hover, presentation-side-button:hover {
+  svg path {
+    stroke: purple;
+  }
 }

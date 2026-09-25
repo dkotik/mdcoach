@@ -19,10 +19,14 @@
     </dark-light-toggle>
   </presentation-menu>
   <presentation-side-button side="left" onclick="previous(event)">
-    left
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
+      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
+    </svg>
   </presentation-side-button>
   <presentation-side-button side="right" onclick="next(event)">
-    right
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
+      <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
+    </svg>
   </presentation-side-button>
   <aside class="curtain">⏸</aside>
 <style>
@@ -59,6 +63,20 @@ html[data-theme="dark"] {
 
 presentation-menu {
   background-color: red;
+
+  svg {
+    width: 3rem;
+  }
+}
+
+presentation-side-button > svg {
+  height: 12rem;
+}
+
+presentation-menu:hover, presentation-side-button:hover {
+  svg path {
+    stroke: purple;
+  }
 }
 /* =============== layout.css ================= */
 
