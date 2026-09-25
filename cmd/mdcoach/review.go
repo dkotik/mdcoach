@@ -28,7 +28,12 @@ func reviewCmd() *cli.Command {
 			&cli.IntFlag{
 				Name:  "limit",
 				Value: 0,
-				Usage: "maximum number of questions to include",
+				Usage: "maximum number of regular questions to include",
+			},
+			&cli.Uint8Flag{
+				Name:  "bonus",
+				Value: 2,
+				Usage: "number of bonus questions to include",
 			},
 		},
 		Action: func(ctx context.Context, c *cli.Command) error {
@@ -69,6 +74,9 @@ func reviewCmd() *cli.Command {
 			rand.Shuffle(len(questions), func(i, j int) {
 				questions[i], questions[j] = questions[j], questions[i]
 			})
+			bonusCount := min(int(c.Uint8("bonus")), len(questions))
+			bonusQuestions := append([]string(nil), questions[:bonusCount]...)
+			questions = questions[bonusCount:]
 			if limit := c.Int("limit"); limit > 0 && limit < len(questions) {
 				questions = questions[:limit]
 			}
@@ -87,9 +95,10 @@ func reviewCmd() *cli.Command {
 			defer w.Close()
 
 			if err := review.Write(w, review.Page{
-				Title:       c.String("title"),
-				Description: c.String("description"),
-				Questions:   questions,
+				Title:          c.String("title"),
+				Description:    c.String("description"),
+				Questions:      questions,
+				BonusQuestions: bonusQuestions,
 			}); err != nil {
 				return err
 			}

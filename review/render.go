@@ -12,9 +12,10 @@ import (
 )
 
 type Page struct {
-	Title       string
-	Description string
-	Questions   []string
+	Title          string
+	Description    string
+	Questions      []string
+	BonusQuestions []string
 }
 
 func New(page Page) ([]byte, error) {
@@ -65,6 +66,7 @@ func New(page Page) ([]byte, error) {
 			})
 		})
 	}
+
 	for _, question := range page.Questions {
 		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
 			row.Col(11, func(column *gpdftemplate.ColBuilder) {
@@ -90,6 +92,33 @@ func New(page Page) ([]byte, error) {
 			})
 		})
 	}
+
+	for _, bonus := range page.BonusQuestions {
+		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
+			row.Col(11, func(column *gpdftemplate.ColBuilder) {
+				column.Text(bonus, gpdftemplate.FontSize(14))
+			})
+		})
+
+		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
+			row.Col(11, func(column *gpdftemplate.ColBuilder) {
+				column.Text(page.Description, gpdftemplate.FontSize(12))
+			})
+			row.Col(1, func(column *gpdftemplate.ColBuilder) {
+				for i := 1; i <= 2; i++ {
+					column.Text(
+						fmt.Sprintf("+%d", i),
+						gpdftemplate.FontSize(7),
+						gpdftemplate.TextColor(pdf.Gray(0.8)),
+						gpdftemplate.AlignRight(),
+					)
+					column.Spacer(gpdfdocument.Mm(2))
+				}
+				column.Spacer(gpdfdocument.Mm(15))
+			})
+		})
+	}
+
 	data, err := document.Generate()
 	if err != nil {
 		return nil, fmt.Errorf("generate questions PDF: %w", err)
