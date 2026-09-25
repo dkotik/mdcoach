@@ -8,11 +8,13 @@ import (
 	"context"
 	_ "embed" // for html/before.gen.html and html/after.gen.html
 	"fmt"
+	"html/template"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/dkotik/mdcoach"
+	"github.com/yuin/goldmark/v2/ast"
 )
 
 //go:generate go run ./html/after.go
@@ -25,6 +27,8 @@ var beforeMain []byte
 
 //go:embed html/header.html
 var header []byte
+
+var headerTemplate = template.Must(template.New("header").Parse(string(header)))
 
 //go:embed html/footer.html
 var footer []byte
@@ -62,21 +66,37 @@ func New(
 		Quality:     o.ImageQuality,
 	}
 
-	if _, err = w.Write(header); err != nil {
-		return fmt.Errorf("failed to write header: %w", err)
+	var firstSource []byte
+	var firstTree ast.Node
+	metadata := Metadata{}
+	if len(sources) > 0 {
+		firstSource, err = os.ReadFile(sources[0])
+		if err != nil {
+			return fmt.Errorf("failed to read source file %s: %w", sources[0], err)
+		}
+		firstTree = o.Parser.Parse(firstSource)
+		metadata, err = metadataFromTree(firstTree)
+		if err != nil {
+			return fmt.Errorf("failed to read metadata from %s: %w", sources[0], err)
+		}
 	}
-	_, err = w.Write(beforeMain)
-	if err != nil {
+	if err = headerTemplate.Execute(w, metadata); err != nil {
+		return fmt.Errorf("failed to render header: %w", err)
+	}
+	if _, err = w.Write(beforeMain); err != nil {
 		return fmt.Errorf("failed to write before main: %w", err)
 	}
 
-	for _, sourcePath := range sources {
-		source, err := os.ReadFile(sourcePath)
-		if err != nil {
-			return fmt.Errorf("failed to read source file %s: %w", sourcePath, err)
+	for i, sourcePath := range sources {
+		source, tree := firstSource, firstTree
+		if i > 0 {
+			source, err = os.ReadFile(sourcePath)
+			if err != nil {
+				return fmt.Errorf("failed to read source file %s: %w", sourcePath, err)
+			}
+			tree = o.Parser.Parse(source)
 		}
 		mo.Path = filepath.Dir(sourcePath)
-		tree := o.Parser.Parse(source)
 		if err = mdcoach.NewImageLoader(o.ImageCache, mo).LoadImages(
 			ctx,
 			source,

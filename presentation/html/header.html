@@ -1,7 +1,15 @@
 <!DOCTYPE html>
-<html data-theme="dark">
+<html data-theme="dark" data-id="{{.ID}}">
   <head>
-    <title>???</title>
+    <title>{{.Title}}</title>
+    <meta name="description" content="{{.Description}}">
+    <meta name="keywords" content="{{.Keywords}}">
+    <meta name="author" content="{{.Author}}">
+    <meta name="created" content="{{
+      if not .Created.IsZero
+    }}{{
+      .Created.Format "2006-01-02T15:04:05Z07:00"
+    }}{{end}}">
   </head>
 <body>
   <aside class="curtain">⏸</aside>
