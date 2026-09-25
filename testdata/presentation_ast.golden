@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="ac5aa1e3915fd16f"]
+  [id="4c7eee90078f8119"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -120,11 +120,12 @@ Document: MdCoach Demo {
       }
     }
   }
-  Slide: hmm tables {
+  Slide: Table Rendering {
+    [data-heading-level="2"]
     [data-layout="normal"]
-    Paragraph: hmm tables {
-      Text: hmm
-      Text: tables
+    Heading: Table Rendering {
+      Text: Table
+      Text: Rendering
     }
     Table: Tables {
       TableHeader: Tables {
@@ -180,10 +181,6 @@ Document: MdCoach Demo {
           }
         }
       }
-    }
-    Paragraph: quite fun {
-      Text: quite
-      Text: fun
     }
   }
   Slide: Presentation Title1 {

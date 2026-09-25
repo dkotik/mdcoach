@@ -9,6 +9,8 @@ import (
 )
 
 var scripts = []string{
+	"clock.js",
+	"dark-light-toggle.js",
 	"debounce.js",
 	"input.js",
 	"slides.js",
