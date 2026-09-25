@@ -53,8 +53,26 @@ const dispatchNavigationCompleteEvent = (concealedListItemCount) => {
   )
 }
 
+let flashTimeout
+const flashBody = () => {
+  const body = document.body
+  if (body.classList.contains('is-flashing')) {
+    window.clearTimeout(flashTimeout)
+    flashTimeout = window.setTimeout(() => {
+      body.classList.remove('is-flashing')
+    }, 300)
+    return
+  }
+
+  body.classList.add('is-flashing')
+  flashTimeout = window.setTimeout(() => {
+    body.classList.remove('is-flashing')
+  }, 300)
+}
+
 window.addEventListener(nextEventType, (event) => {
-  if(currentSlide >= finalSlideIndex) {
+  if (currentSlide >= finalSlideIndex) {
+    flashBody()
     return
   }
   let concealedListItems = getCurrentConcealedListItems()
@@ -74,6 +92,7 @@ window.addEventListener(nextEventType, (event) => {
 
 window.addEventListener(previousEventType, (event) => {
   if (currentSlide === 0) {
+    flashBody()
     return
   }
   navigate(currentSlide - 1)

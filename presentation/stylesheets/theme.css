@@ -29,6 +29,14 @@ html[data-theme="dark"] {
   --color-marker-trail: #003eaf;
 }
 
+body.is-flashing {
+
+  section > .grid {
+    background-color: rgb(from var(--color-marker-trail) r g b / 0.2);
+    border-color: orangered;
+  }
+}
+
 presentation-menu {
   background-color: red;
 

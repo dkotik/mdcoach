@@ -1,9 +1,11 @@
-// use as custom element <dark-light-toggle> anywhere on the page
+// use as custom element <dark-light-toggle> around document-provided content
 
 class DarkLightToggle extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.onClick = this.onClick.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
   }
 
   connectedCallback() {
@@ -12,42 +14,63 @@ class DarkLightToggle extends HTMLElement {
 
     const style = document.createElement('style')
     style.textContent = `
-      button {
+      :host {
         align-items: center;
+        cursor: pointer;
         display: inline-flex;
-        gap: 0.4em;
       }
 
-      svg {
+      ::slotted(svg) {
         fill: currentColor;
         height: 1em;
+        margin-inline-start: 0.4em;
         width: 1em;
+      }
+
+      :host(:focus-visible) {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
       }
     `
 
-    const button = document.createElement('button')
-    button.type = 'button'
-    button.append(this.createIcon(), document.createTextNode(this.label))
-    button.addEventListener('click', () => this.toggle())
-    this.shadowRoot.replaceChildren(style, button)
+    this.shadowRoot.replaceChildren(style, document.createElement('slot'))
+
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'button')
+    }
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', '0')
+    }
+
+    this.addEventListener('click', this.onClick)
+    this.addEventListener('keydown', this.onKeyDown)
+    this.updatePressedState()
   }
 
-  get label() {
-    return this.darkMode ? 'Dark' : 'Light'
-  }
-
-  createIcon() {
-    const icon = document.createElementNS(svgNamespace, 'svg')
-    icon.setAttribute('viewBox', '0 0 24 24')
-    icon.setAttribute('aria-hidden', 'true')
-    const path = document.createElementNS(svgNamespace, 'path')
-    path.setAttribute('d', 'M12 3a9 9 0 1 0 9 9c0-.5-.04-1-.12-1.48A7 7 0 0 1 13.48 3.12C13 3.04 12.5 3 12 3Z')
-    icon.append(path)
-    return icon
+  disconnectedCallback() {
+    this.removeEventListener('click', this.onClick)
+    this.removeEventListener('keydown', this.onKeyDown)
   }
 
   applyTheme() {
     document.documentElement.dataset.theme = this.darkMode ? 'dark' : 'light'
+  }
+
+  updatePressedState() {
+    this.setAttribute('aria-pressed', String(this.darkMode))
+  }
+
+  onClick() {
+    this.toggle()
+  }
+
+  onKeyDown(event) {
+    if (event.code !== 'Enter' && event.code !== 'Space') {
+      return
+    }
+
+    event.preventDefault()
+    this.toggle()
   }
 
   toggle() {
@@ -58,7 +81,7 @@ class DarkLightToggle extends HTMLElement {
       window.localStorage.removeItem('darkMode')
     }
     this.applyTheme()
-    this.shadowRoot.querySelector('button').lastChild.textContent = this.label
+    this.updatePressedState()
   }
 }
 

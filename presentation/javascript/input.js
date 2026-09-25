@@ -2,10 +2,12 @@
 
 let isCurtainVisible = false
 const curtain = document.querySelector("body > aside.curtain")
+
 const showCurtain = () => {
   curtain.style.display = "grid";
   isCurtainVisible = true
 }
+
 const hideCurtain = () => {
   curtain.style.display = "none";
   isCurtainVisible = false

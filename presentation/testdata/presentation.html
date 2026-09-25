@@ -11,7 +11,9 @@
   <presentation-menu>
     <fullscreen-toggle class="icon">
       Fullscreen
-      <svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M883 1056q0 13-10 23l-332 332 144 144q19 19 19 45t-19 45-45 19h-448q-26 0-45-19t-19-45v-448q0-26 19-45t45-19 45 19l144 144 332-332q10-10 23-10t23 10l114 114q10 10 10 23zm781-864v448q0 26-19 45t-45 19-45-19l-144-144-332 332q-10 10-23 10t-23-10l-114-114q-10-10-10-23t10-23l332-332-144-144q-19-19-19-45t19-45 45-19h448q26 0 45 19t19 45z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" aria-hidden="true" focusable="false">
+        <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+      </svg>
     </fullscreen-toggle>
     <dark-light-toggle>
       Dark
@@ -61,6 +63,14 @@ html[data-theme="dark"] {
   --color-marker-trail: #003eaf;
 }
 
+body.is-flashing {
+
+  section > .grid {
+    background-color: rgb(from var(--color-marker-trail) r g b / 0.2);
+    border-color: orangered;
+  }
+}
+
 presentation-menu {
   background-color: red;
 
@@ -83,6 +93,7 @@ presentation-menu:hover, presentation-side-button:hover {
 body {
   color: var(--color-body-text);
   background-color: var(--color-body-background);
+  transition: background-color 250ms ease;
   padding: 0;
   margin: 0;
   /*display: grid;
@@ -112,13 +123,6 @@ aside.curtain {
   transition-duration: 1900ms;
   transition-behavior: allow-discrete; /* animates display */
 }
-
-/*main {
-  margin: 0 auto;
-  width: min(80%, 80rem);
-  max-height: 90%;
-  position: relative;
-}*/
 /* =================== section.css =================== */
 
 /* section scaling */
@@ -195,9 +199,9 @@ section {
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
-  border: 1px solid red;
-  border-radius: 2rem;
   transform-origin: 50% 0%;
+  box-sizing: border-box;
+  padding: 1rem;
 
   /* https://www.youtube.com/watch?v=KD3_l3S_D6M logic */
   position: absolute;
@@ -208,7 +212,7 @@ section {
   visibility: hidden;
   opacity: 0;
   translate: 20vw 0;
-  transition: visibility, opacity, translate, border-color;
+  transition: visibility, opacity, translate;
   transition-duration: 900ms;
   transition-behavior: allow-discrete; /* animates display */
 }
@@ -217,12 +221,15 @@ section.is-focused {
   visibility: visible;
   opacity: 1;
   translate: 0 0;
-  border-color: black;
   z-index: 1;
 
   @starting-style {
     opacity: 0;
     translate: -20vw 0;
+  }
+
+  .grid {
+    border-color: transparent;
   }
 }
 
@@ -246,7 +253,11 @@ section > .grid {
   vertical-align: middle;
   width: 100%;
   height: 100%;
+  border-radius: 2rem;
   padding: 1rem;
+  border: 1px solid red;
+  transition: border-color, background-color;
+  transition-duration: 1900ms;
   box-sizing: border-box;
   /*border: 1px solid green;*/
 }
@@ -917,12 +928,14 @@ class PresentationSideButton extends HTMLElement {
 if (!customElements.get('presentation-side-button')) {
   customElements.define('presentation-side-button', PresentationSideButton)
 }
-// use as custom element <dark-light-toggle> anywhere on the page
+// use as custom element <dark-light-toggle> around document-provided content
 
 class DarkLightToggle extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.onClick = this.onClick.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
   }
 
   connectedCallback() {
@@ -931,42 +944,63 @@ class DarkLightToggle extends HTMLElement {
 
     const style = document.createElement('style')
     style.textContent = `
-      button {
+      :host {
         align-items: center;
+        cursor: pointer;
         display: inline-flex;
-        gap: 0.4em;
       }
 
-      svg {
+      ::slotted(svg) {
         fill: currentColor;
         height: 1em;
+        margin-inline-start: 0.4em;
         width: 1em;
+      }
+
+      :host(:focus-visible) {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
       }
     `
 
-    const button = document.createElement('button')
-    button.type = 'button'
-    button.append(this.createIcon(), document.createTextNode(this.label))
-    button.addEventListener('click', () => this.toggle())
-    this.shadowRoot.replaceChildren(style, button)
+    this.shadowRoot.replaceChildren(style, document.createElement('slot'))
+
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'button')
+    }
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', '0')
+    }
+
+    this.addEventListener('click', this.onClick)
+    this.addEventListener('keydown', this.onKeyDown)
+    this.updatePressedState()
   }
 
-  get label() {
-    return this.darkMode ? 'Dark' : 'Light'
-  }
-
-  createIcon() {
-    const icon = document.createElementNS(svgNamespace, 'svg')
-    icon.setAttribute('viewBox', '0 0 24 24')
-    icon.setAttribute('aria-hidden', 'true')
-    const path = document.createElementNS(svgNamespace, 'path')
-    path.setAttribute('d', 'M12 3a9 9 0 1 0 9 9c0-.5-.04-1-.12-1.48A7 7 0 0 1 13.48 3.12C13 3.04 12.5 3 12 3Z')
-    icon.append(path)
-    return icon
+  disconnectedCallback() {
+    this.removeEventListener('click', this.onClick)
+    this.removeEventListener('keydown', this.onKeyDown)
   }
 
   applyTheme() {
     document.documentElement.dataset.theme = this.darkMode ? 'dark' : 'light'
+  }
+
+  updatePressedState() {
+    this.setAttribute('aria-pressed', String(this.darkMode))
+  }
+
+  onClick() {
+    this.toggle()
+  }
+
+  onKeyDown(event) {
+    if (event.code !== 'Enter' && event.code !== 'Space') {
+      return
+    }
+
+    event.preventDefault()
+    this.toggle()
   }
 
   toggle() {
@@ -977,7 +1011,7 @@ class DarkLightToggle extends HTMLElement {
       window.localStorage.removeItem('darkMode')
     }
     this.applyTheme()
-    this.shadowRoot.querySelector('button').lastChild.textContent = this.label
+    this.updatePressedState()
   }
 }
 
@@ -1463,10 +1497,12 @@ function debounce(callback, delay = 0) {
 
 let isCurtainVisible = false
 const curtain = document.querySelector("body > aside.curtain")
+
 const showCurtain = () => {
   curtain.style.display = "grid";
   isCurtainVisible = true
 }
+
 const hideCurtain = () => {
   curtain.style.display = "none";
   isCurtainVisible = false
@@ -1597,8 +1633,26 @@ const dispatchNavigationCompleteEvent = (concealedListItemCount) => {
   )
 }
 
+let flashTimeout
+const flashBody = () => {
+  const body = document.body
+  if (body.classList.contains('is-flashing')) {
+    window.clearTimeout(flashTimeout)
+    flashTimeout = window.setTimeout(() => {
+      body.classList.remove('is-flashing')
+    }, 300)
+    return
+  }
+
+  body.classList.add('is-flashing')
+  flashTimeout = window.setTimeout(() => {
+    body.classList.remove('is-flashing')
+  }, 300)
+}
+
 window.addEventListener(nextEventType, (event) => {
-  if(currentSlide >= finalSlideIndex) {
+  if (currentSlide >= finalSlideIndex) {
+    flashBody()
     return
   }
   let concealedListItems = getCurrentConcealedListItems()
@@ -1618,6 +1672,7 @@ window.addEventListener(nextEventType, (event) => {
 
 window.addEventListener(previousEventType, (event) => {
   if (currentSlide === 0) {
+    flashBody()
     return
   }
   navigate(currentSlide - 1)
