@@ -15,13 +15,13 @@ import (
 // NewParser returns a Goldmark v2 parser configured for presentations.
 func NewParser() parser.Parser {
 	return parser.New(
+		parser.WithDefaultParsers(true),
 		parser.WithExtensions(
 			meta.Parser,
 			extension.NewGFMParser(),
 			extension.NewDefinitionListParser(),
 			extension.NewFootnoteParser(),
 			extension.NewTypographerParser(),
-			extension.NewTableParser(),
 		),
 		parser.WithInlineParsers(
 			util.Prioritized(NewEmoteParser(), 500),
@@ -45,6 +45,11 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 		cache = NewImageCache()
 	}
 	return html.New(
+		html.WithExtensions(
+			extension.NewStrikethroughHTMLRenderer(),
+			extension.NewTableHTMLRenderer(),
+			extension.NewTaskListItemHTMLRenderer(),
+		),
 		html.WithNodeRendererDecorator(
 			ast.KindImage,
 			func(html.NodeRenderer) html.NodeRenderer { return NewImageRenderer() },
