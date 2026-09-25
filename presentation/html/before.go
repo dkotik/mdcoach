@@ -30,6 +30,7 @@ var styleSheets = []string{
 	"table.css",
 	"image.css",
 	"links.css",
+	"pygments.css",
 }
 
 func makeBefore(w io.Writer) error {

@@ -1,41 +1,73 @@
-// use as custom element <fullscreen-toggle> anywhere on the page
+// use as custom element <fullscreen-toggle> with its label as text content
 
 class FullscreenToggle extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
     this.onKeyDown = this.onKeyDown.bind(this)
-    this.updateButton = this.updateButton.bind(this)
+    this.onActivateKeyDown = this.onActivateKeyDown.bind(this)
+    this.updateState = this.updateState.bind(this)
+    this.onClick = this.onClick.bind(this)
   }
 
   connectedCallback() {
     const style = document.createElement('style')
     style.textContent = `
       :host {
+        cursor: pointer;
         display: inline-block;
       }
 
-      button {
-        align-items: center;
-        display: inline-flex;
+      :host([fullscreen]) {
+        color: red;
+      }
+
+      :host(:focus-visible) {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
       }
     `
 
-    this.button = document.createElement('button')
-    this.button.type = 'button'
-    this.button.addEventListener('click', () => this.toggleFullscreen())
-    this.shadowRoot.replaceChildren(style, this.button)
+    const slot = document.createElement('slot')
+    this.shadowRoot.replaceChildren(style, slot)
 
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'button')
+    }
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', '0')
+    }
+
+    this.addEventListener('click', this.onClick)
+    this.addEventListener('keydown', this.onActivateKeyDown)
     document.addEventListener('keydown', this.onKeyDown)
-    document.addEventListener('fullscreenchange', this.updateButton)
-    document.addEventListener('webkitfullscreenchange', this.updateButton)
-    this.updateButton()
+    document.addEventListener('fullscreenchange', this.updateState)
+    document.addEventListener('webkitfullscreenchange', this.updateState)
+    this.updateState()
   }
 
   disconnectedCallback() {
+    this.removeEventListener('click', this.onClick)
+    this.removeEventListener('keydown', this.onActivateKeyDown)
     document.removeEventListener('keydown', this.onKeyDown)
-    document.removeEventListener('fullscreenchange', this.updateButton)
-    document.removeEventListener('webkitfullscreenchange', this.updateButton)
+    document.removeEventListener('fullscreenchange', this.updateState)
+    document.removeEventListener('webkitfullscreenchange', this.updateState)
+  }
+
+  onClick() {
+    this.toggleFullscreen()
+  }
+
+  onActivateKeyDown(event) {
+    if (
+      (event.code !== 'Enter' && event.code !== 'Space') ||
+      this.isEditableTarget(event.target)
+    ) {
+      return
+    }
+
+    event.preventDefault()
+    this.toggleFullscreen()
   }
 
   onKeyDown(event) {
@@ -101,15 +133,10 @@ class FullscreenToggle extends HTMLElement {
     }
   }
 
-  updateButton() {
-    if (!this.button) {
-      return
-    }
-
+  updateState() {
     const fullscreen = this.isFullscreen()
-    this.button.textContent = fullscreen ? 'Exit fullscreen' : 'Fullscreen'
-    this.button.setAttribute('aria-label', this.button.textContent)
-    this.button.setAttribute('aria-pressed', String(fullscreen))
+    this.toggleAttribute('fullscreen', fullscreen)
+    this.setAttribute('aria-pressed', String(fullscreen))
   }
 }
 

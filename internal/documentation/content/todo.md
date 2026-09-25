@@ -30,8 +30,8 @@ weight: 60
 }
 ```
 
+- add "g11" key stroke combination jumper to any slide number
 - <blockquote><footer> instead of <cite>? https://andybrewer.github.io/mvp/
-- [ ] <https://github.com/tendstofortytwo/goldmark-customtag> for custom aside tag, perhaps based on `>>` 
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] implement aside.go
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images

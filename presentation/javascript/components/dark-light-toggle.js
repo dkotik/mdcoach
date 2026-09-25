@@ -8,7 +8,7 @@ class DarkLightToggle extends HTMLElement {
 
   connectedCallback() {
     this.darkMode = window.localStorage.getItem('darkMode') === 'true'
-    document.body.classList.toggle('dark', this.darkMode)
+    this.applyTheme()
 
     const style = document.createElement('style')
     style.textContent = `
@@ -46,6 +46,10 @@ class DarkLightToggle extends HTMLElement {
     return icon
   }
 
+  applyTheme() {
+    document.documentElement.dataset.theme = this.darkMode ? 'dark' : 'light'
+  }
+
   toggle() {
     this.darkMode = !this.darkMode
     if (this.darkMode) {
@@ -53,7 +57,7 @@ class DarkLightToggle extends HTMLElement {
     } else {
       window.localStorage.removeItem('darkMode')
     }
-    document.body.classList.toggle('dark', this.darkMode)
+    this.applyTheme()
     this.shadowRoot.querySelector('button').lastChild.textContent = this.label
   }
 }

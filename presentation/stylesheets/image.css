@@ -12,7 +12,13 @@
 .icon {
  	min-height: 1.5rem;
 	min-width: 1.5rem;
+	max-height: 5rem;
+	max-width: 5rem;
   padding: 0 0.2rem 0 0.2rem;
 	display: inline-block;
 	vertical-align: -12%;
+}
+
+.icon > svg {
+  width: 100%;
 }
