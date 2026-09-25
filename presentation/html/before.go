@@ -11,8 +11,10 @@ import (
 var scripts = []string{
 	"debounce.js",
 	"components/all.js",
-	"components/presentation-clock.js",
+	"components/presentation-menu.js",
 	"components/dark-light-toggle.js",
+	"components/fullscreen-toggle.js",
+	"components/presentation-clock.js",
 }
 
 var styleSheets = []string{

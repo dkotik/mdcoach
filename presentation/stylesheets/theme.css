@@ -28,3 +28,7 @@ html[data-theme="dark"] {
   --color-marker-background: #006eff;
   --color-marker-trail: #003eaf;
 }
+
+presentation-menu {
+  background-color: red;
+}

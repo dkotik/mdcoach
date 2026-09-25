@@ -29,6 +29,10 @@ html[data-theme="dark"] {
   --color-marker-background: #006eff;
   --color-marker-trail: #003eaf;
 }
+
+presentation-menu {
+  background-color: red;
+}
 /* =============== layout.css ================= */
 
 body {
@@ -607,6 +611,267 @@ const element = (name, attributes = {}) => {
   }
   return node
 }
+// use as custom element <presentation-menu> around presentation controls
+
+class PresentationMenu extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.onMouseMove = this.onMouseMove.bind(this)
+  }
+
+  connectedCallback() {
+    const style = document.createElement('style')
+    style.textContent = `
+      :host {
+        display: block;
+        left: 50%;
+        position: fixed;
+        top: 0;
+        transform: translate(-50%, -100%);
+        transition: transform 220ms ease;
+        z-index: 1000;
+      }
+
+      :host([open]) {
+        transform: translate(-50%, 0);
+      }
+
+      nav {
+        align-items: center;
+        background: var(--color-menu-background, #eee);
+        border-radius: 0 0 0.5rem 0.5rem;
+        box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 20%);
+        box-sizing: border-box;
+        color: var(--color-menu-text, #666);
+        display: flex;
+        gap: 0.5rem;
+        max-width: calc(100vw - 1rem);
+        padding: 0.5rem;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        :host {
+          transition: none;
+        }
+      }
+    `
+
+    this.navigation = document.createElement('nav')
+    this.navigation.setAttribute('aria-label', this.getAttribute('label') || 'Presentation menu')
+    const slot = document.createElement('slot')
+    this.navigation.append(slot)
+    this.shadowRoot.replaceChildren(style, this.navigation)
+
+    this.updateVisibility(this.hasAttribute('open'))
+    window.addEventListener('mousemove', this.onMouseMove, { passive: true })
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('mousemove', this.onMouseMove)
+  }
+
+  onMouseMove(event) {
+    const revealBoundary = window.innerHeight * 0.15
+    const shouldOpen = event.clientY <= revealBoundary || this.matches(':hover')
+    this.updateVisibility(shouldOpen)
+  }
+
+  updateVisibility(isVisible) {
+    this.toggleAttribute('open', isVisible)
+    if (!this.navigation) {
+      return
+    }
+
+    this.navigation.inert = !isVisible
+    this.navigation.setAttribute('aria-hidden', String(!isVisible))
+  }
+}
+
+if (!customElements.get('presentation-menu')) {
+  customElements.define('presentation-menu', PresentationMenu)
+}
+// use as custom element <dark-light-toggle> anywhere on the page
+
+class DarkLightToggle extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+  }
+
+  connectedCallback() {
+    this.darkMode = window.localStorage.getItem('darkMode') === 'true'
+    document.body.classList.toggle('dark', this.darkMode)
+
+    const style = document.createElement('style')
+    style.textContent = `
+      button {
+        align-items: center;
+        display: inline-flex;
+        gap: 0.4em;
+      }
+
+      svg {
+        fill: currentColor;
+        height: 1em;
+        width: 1em;
+      }
+    `
+
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.append(this.createIcon(), document.createTextNode(this.label))
+    button.addEventListener('click', () => this.toggle())
+    this.shadowRoot.replaceChildren(style, button)
+  }
+
+  get label() {
+    return this.darkMode ? 'Dark' : 'Light'
+  }
+
+  createIcon() {
+    const icon = document.createElementNS(svgNamespace, 'svg')
+    icon.setAttribute('viewBox', '0 0 24 24')
+    icon.setAttribute('aria-hidden', 'true')
+    const path = document.createElementNS(svgNamespace, 'path')
+    path.setAttribute('d', 'M12 3a9 9 0 1 0 9 9c0-.5-.04-1-.12-1.48A7 7 0 0 1 13.48 3.12C13 3.04 12.5 3 12 3Z')
+    icon.append(path)
+    return icon
+  }
+
+  toggle() {
+    this.darkMode = !this.darkMode
+    if (this.darkMode) {
+      window.localStorage.setItem('darkMode', 'true')
+    } else {
+      window.localStorage.removeItem('darkMode')
+    }
+    document.body.classList.toggle('dark', this.darkMode)
+    this.shadowRoot.querySelector('button').lastChild.textContent = this.label
+  }
+}
+
+if (!customElements.get('dark-light-toggle')) {
+  customElements.define('dark-light-toggle', DarkLightToggle)
+}
+// use as custom element <fullscreen-toggle> anywhere on the page
+
+class FullscreenToggle extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.onKeyDown = this.onKeyDown.bind(this)
+    this.updateButton = this.updateButton.bind(this)
+  }
+
+  connectedCallback() {
+    const style = document.createElement('style')
+    style.textContent = `
+      :host {
+        display: inline-block;
+      }
+
+      button {
+        align-items: center;
+        display: inline-flex;
+      }
+    `
+
+    this.button = document.createElement('button')
+    this.button.type = 'button'
+    this.button.addEventListener('click', () => this.toggleFullscreen())
+    this.shadowRoot.replaceChildren(style, this.button)
+
+    document.addEventListener('keydown', this.onKeyDown)
+    document.addEventListener('fullscreenchange', this.updateButton)
+    document.addEventListener('webkitfullscreenchange', this.updateButton)
+    this.updateButton()
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('keydown', this.onKeyDown)
+    document.removeEventListener('fullscreenchange', this.updateButton)
+    document.removeEventListener('webkitfullscreenchange', this.updateButton)
+  }
+
+  onKeyDown(event) {
+    if (
+      event.code !== 'KeyF' ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      this.isEditableTarget(event.target)
+    ) {
+      return
+    }
+
+    event.preventDefault()
+    this.toggleFullscreen()
+  }
+
+  isEditableTarget(target) {
+    return target instanceof Element && (
+      target.isContentEditable ||
+      target.matches('input, textarea, select')
+    )
+  }
+
+  isFullscreen() {
+    return Boolean(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.fullScreenElement ||
+      document.webkitIsFullScreen
+    )
+  }
+
+  async toggleFullscreen() {
+    try {
+      if (this.isFullscreen()) {
+        const exit =
+          document.exitFullscreen ||
+          document.exitFullScreen ||
+          document.cancelFullScreen ||
+          document.webkitCancelFullScreen
+        if (exit) {
+          await exit.call(document)
+        }
+        return
+      }
+
+      const root = document.documentElement
+      const request =
+        root.requestFullscreen ||
+        root.requestFullScreen ||
+        root.webkitRequestFullScreen
+      if (request) {
+        await request.call(root)
+      }
+    } catch (error) {
+      this.dispatchEvent(new CustomEvent('fullscreenerror', {
+        bubbles: true,
+        composed: true,
+        detail: error,
+      }))
+    }
+  }
+
+  updateButton() {
+    if (!this.button) {
+      return
+    }
+
+    const fullscreen = this.isFullscreen()
+    this.button.textContent = fullscreen ? 'Exit fullscreen' : 'Fullscreen'
+    this.button.setAttribute('aria-label', this.button.textContent)
+    this.button.setAttribute('aria-pressed', String(fullscreen))
+  }
+}
+
+if (!customElements.get('fullscreen-toggle')) {
+  customElements.define('fullscreen-toggle', FullscreenToggle)
+}
 // use as custom element <clock> anywhere on the page
 
 class PresentationClock extends HTMLElement {
@@ -694,68 +959,5 @@ class PresentationClock extends HTMLElement {
 
 if (!customElements.get('presentation-clock')) {
   customElements.define('presentation-clock', PresentationClock)
-}
-// use as custom element <dark-light-toggle> anywhere on the page
-
-class DarkLightToggle extends HTMLElement {
-  constructor() {
-    super()
-    this.attachShadow({ mode: 'open' })
-  }
-
-  connectedCallback() {
-    this.darkMode = window.localStorage.getItem('darkMode') === 'true'
-    document.body.classList.toggle('dark', this.darkMode)
-
-    const style = document.createElement('style')
-    style.textContent = `
-      button {
-        align-items: center;
-        display: inline-flex;
-        gap: 0.4em;
-      }
-
-      svg {
-        fill: currentColor;
-        height: 1em;
-        width: 1em;
-      }
-    `
-
-    const button = document.createElement('button')
-    button.type = 'button'
-    button.append(this.createIcon(), document.createTextNode(this.label))
-    button.addEventListener('click', () => this.toggle())
-    this.shadowRoot.replaceChildren(style, button)
-  }
-
-  get label() {
-    return this.darkMode ? 'Dark' : 'Light'
-  }
-
-  createIcon() {
-    const icon = document.createElementNS(svgNamespace, 'svg')
-    icon.setAttribute('viewBox', '0 0 24 24')
-    icon.setAttribute('aria-hidden', 'true')
-    const path = document.createElementNS(svgNamespace, 'path')
-    path.setAttribute('d', 'M12 3a9 9 0 1 0 9 9c0-.5-.04-1-.12-1.48A7 7 0 0 1 13.48 3.12C13 3.04 12.5 3 12 3Z')
-    icon.append(path)
-    return icon
-  }
-
-  toggle() {
-    this.darkMode = !this.darkMode
-    if (this.darkMode) {
-      window.localStorage.setItem('darkMode', 'true')
-    } else {
-      window.localStorage.removeItem('darkMode')
-    }
-    document.body.classList.toggle('dark', this.darkMode)
-    this.shadowRoot.querySelector('button').lastChild.textContent = this.label
-  }
-}
-
-if (!customElements.get('dark-light-toggle')) {
-  customElements.define('dark-light-toggle', DarkLightToggle)
 }
 </script><main>
