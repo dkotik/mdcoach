@@ -13,6 +13,7 @@ import (
 	"html/template"
 	"image"
 	"image/color"
+	"image/draw"
 	_ "image/gif"
 	_ "image/jpeg"
 	"image/png"
@@ -152,20 +153,20 @@ func faviconFromFigure(tree ast.Node, source []byte, sourcePath string) (templat
 			}
 			data, err := os.ReadFile(imagePath)
 			if err != nil {
-				return "", fmt.Errorf("read figure image %q: %w", imagePath, err)
+				return "", fmt.Errorf("unable to read figure image %q: %w", imagePath, err)
 			}
 
 			decoded, _, err := image.Decode(bytes.NewReader(data))
 			if err != nil {
-				return "", fmt.Errorf("decode figure image %q: %w", imagePath, err)
+				return "", fmt.Errorf("unable to decode figure image %q: %w", imagePath, err)
 			}
 
-			resized := resize.Thumbnail(64, 64, decoded, resize.Lanczos3)
+			resized := resizeCover64(decoded)
 			resized = roundImageBorders(resized)
 
 			var encoded bytes.Buffer
 			if err := png.Encode(&encoded, resized); err != nil {
-				return "", fmt.Errorf("encode favicon PNG from %q: %w", imagePath, err)
+				return "", fmt.Errorf("unable to encode favicon PNG from %q: %w", imagePath, err)
 			}
 
 			favicon := "<link rel=\"icon\" type=\"image/png\" href=\"data:image/png;base64," +
@@ -174,6 +175,24 @@ func faviconFromFigure(tree ast.Node, source []byte, sourcePath string) (templat
 		}
 	}
 	return "", nil
+}
+
+func resizeCover64(img image.Image) image.Image {
+	bounds := img.Bounds()
+	if bounds.Dx() >= bounds.Dy() {
+		img = resize.Resize(0, 64, img, resize.Lanczos3)
+	} else {
+		img = resize.Resize(64, 0, img, resize.Lanczos3)
+	}
+
+	bounds = img.Bounds()
+	cropMin := image.Pt(
+		bounds.Min.X+(bounds.Dx()-64)/2,
+		bounds.Min.Y+(bounds.Dy()-64)/2,
+	)
+	cropped := image.NewNRGBA(image.Rect(0, 0, 64, 64))
+	draw.Draw(cropped, cropped.Bounds(), img, cropMin, draw.Src)
+	return cropped
 }
 
 func roundImageBorders(img image.Image) image.Image {
