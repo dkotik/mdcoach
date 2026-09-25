@@ -12,6 +12,7 @@ var scripts = []string{
 	"debounce.js",
 	"components/all.js",
 	"components/presentation-menu.js",
+	"components/presentation-side-button.js",
 	"components/dark-light-toggle.js",
 	"components/fullscreen-toggle.js",
 	"components/presentation-clock.js",

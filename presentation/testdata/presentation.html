@@ -18,6 +18,12 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
     </dark-light-toggle>
   </presentation-menu>
+  <presentation-side-button side="left" onclick="previous(event)">
+    left
+  </presentation-side-button>
+  <presentation-side-button side="right" onclick="next(event)">
+    right
+  </presentation-side-button>
   <aside class="curtain">⏸</aside>
 <style>
 html {
@@ -784,6 +790,114 @@ class PresentationMenu extends HTMLElement {
 
 if (!customElements.get('presentation-menu')) {
   customElements.define('presentation-menu', PresentationMenu)
+}
+// use as <presentation-side-button side="left|right"> around side controls
+
+class PresentationSideButton extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.onMouseMove = this.onMouseMove.bind(this)
+  }
+
+  connectedCallback() {
+    if (this.getAttribute('side') !== 'right') {
+      this.setAttribute('side', 'left')
+    }
+
+    const style = document.createElement('style')
+    style.textContent = `
+      :host {
+        display: block;
+        position: fixed;
+        top: 50%;
+        transition: transform 220ms ease;
+        z-index: 1000;
+        cursor: pointer;
+      }
+
+      :host([side="left"]) {
+        left: 0;
+        transform: translate(-100%, -50%);
+      }
+
+      :host([side="left"][open]) {
+        transform: translate(0, -50%);
+      }
+
+      :host([side="right"]) {
+        right: 0;
+        transform: translate(100%, -50%);
+      }
+
+      :host([side="right"][open]) {
+        transform: translate(0, -50%);
+      }
+
+      aside {
+        align-items: center;
+        background: var(--color-menu-background, #eee);
+        box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 20%);
+        box-sizing: border-box;
+        color: var(--color-menu-text, #666);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        max-height: calc(100vh - 2rem);
+        overflow: auto;
+        padding: 0.5rem;
+      }
+
+      :host([side="left"]) aside {
+        border-radius: 0 0.5rem 0.5rem 0;
+      }
+
+      :host([side="right"]) aside {
+        border-radius: 0.5rem 0 0 0.5rem;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        :host {
+          transition: none;
+        }
+      }
+    `
+
+    this.panel = document.createElement('aside')
+    this.panel.setAttribute('aria-label', this.getAttribute('label') || 'Presentation side controls')
+    this.panel.append(document.createElement('slot'))
+    this.shadowRoot.replaceChildren(style, this.panel)
+
+    this.updateVisibility(this.hasAttribute('open'))
+    window.addEventListener('mousemove', this.onMouseMove, { passive: true })
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('mousemove', this.onMouseMove)
+  }
+
+  onMouseMove(event) {
+    const edgeDistance = window.innerWidth * 0.15
+    const nearDock = this.getAttribute('side') === 'right'
+      ? event.clientX >= window.innerWidth - edgeDistance
+      : event.clientX <= edgeDistance
+    const shouldOpen = nearDock || this.matches(':hover') || this.matches(':focus-within')
+    this.updateVisibility(shouldOpen)
+  }
+
+  updateVisibility(isVisible) {
+    this.toggleAttribute('open', isVisible)
+    if (!this.panel) {
+      return
+    }
+
+    this.panel.inert = !isVisible
+    this.panel.setAttribute('aria-hidden', String(!isVisible))
+  }
+}
+
+if (!customElements.get('presentation-side-button')) {
+  customElements.define('presentation-side-button', PresentationSideButton)
 }
 // use as custom element <dark-light-toggle> anywhere on the page
 
