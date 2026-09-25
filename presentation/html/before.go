@@ -12,11 +12,15 @@ var styleSheets = []string{
 	"theme.css",
 	"layout.css",
 	"section.css",
-	"list_item.css",
-	"image.css",
+	"typography.css",
+	"heading.css",
 	"blockquote.css",
 	"code.css",
-	"typography.css",
+	"list_item.css",
+	"definition.css",
+	"table.css",
+	"image.css",
+	"links.css",
 }
 
 func makeBefore(w io.Writer) error {

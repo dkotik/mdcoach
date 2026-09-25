@@ -345,49 +345,71 @@ section[data-layout="right-aside"] > .grid > .content {
     }
   }
 }
-/* =============== list_item.css ================= */
 
-.content li {
-  margin: 0.4rem;
+hr {
+  border-width: 1pt 0 0 0;
+  border-color: var(--color-body-subtext);
+  border-style: solid;
+  margin: 2rem auto 1rem auto;
+  max-width: 66%;
+  min-width: 10em;
+}
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
 }
 
-.content > ul > li {
-  position: relative; /* Establishes a bounding box for the overlay */
-  overflow: hidden;    /* Optional: Prevents the color from bleeding past rounded corners */
+blockquote, p, h1, h2, h3, h4, h5, h6, h7, h8 {
+  max-width: 36rem;
 }
 
-.content > ul > li::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-left: 0.7rem solid var(--color-marker-background);
-  background-color: var(--color-marker-trail); /* Change to your desired covering color */
-  z-index: 10;               /* Ensures the color sits on top of the content */
+li {
+  max-width: 36rem;
 }
 
-.content > ul > li.is-revealed::after {
-  display: none;
+body {
+  font-size: 3.8vh;
 }
-/* =============== image.css ================= */
-
-.mdcoachImage {
-	min-height: 1.5rem;
-	min-width: 1.5rem;
-	background-repeat: no-repeat;
-	background-position: center center;
-	background-size: contain;
-	aspect-ratio: attr(data-aspect-ratio type(<number>));
+h1 {
+  font-size: 220%;
+  text-align: center;
+  max-width: 20em;
+  margin: 0 auto;
 }
 
-.icon {
- 	min-height: 1.5rem;
-	min-width: 1.5rem;
-  padding: 0 0.2rem 0 0.2rem;
-	display: inline-block;
-	vertical-align: -30%;
+h2 {
+  text-align: left;
+  font-size: 180%;
+  /* margin: 1em auto; */
+  /* max-height: 1em; */
+  max-width: 40em;
+  margin: 0;
+}
+
+h3 {
+  text-align: left;
+  /* font-size: 180%; */
+  /* margin: 1em auto; */
+  /* max-height: 1em; */
+  max-width: 40em;
+  margin: 0;
+}
+
+h4 {
+  text-align: left;
+  /* font-size: 180%; */
+  /* margin: 1em auto; */
+  /* max-height: 1em; */
+  max-width: 40em;
+  margin: 0;
 }
 .content > blockquote {
   /*padding: 1.5rem 2rem;*/
@@ -397,6 +419,14 @@ section[data-layout="right-aside"] > .grid > .content {
   padding: 0.6rem 1.3rem 0.6rem 1rem;
   /*margin: 1rem 1.5rem 1rem 3rem;
   margin: 0;*/
+
+  & > *:first-child {
+    margin-top: 0;
+  }
+
+  & > *:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .content > blockquote > p+cite {
@@ -422,15 +452,136 @@ section[data-layout="right-aside"] > .grid > .content {
   padding: 1rem 1rem 1rem 4rem;
   margin: 1rem 1.5rem 1rem 3rem;
 }
-blockquote, p, h1, h2, h3, h4, h5, h6, h7, h8 {
-  max-width: 40rem;
+/* =============== list_item.css ================= */
+
+.content > ul > li {
+  position: relative; /* Establishes a bounding box for the overlay */
+  overflow: hidden;    /* Optional: Prevents the color from bleeding past rounded corners */
 }
 
-li {
-  max-width: 30rem;
+.content > ul > li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-left: 0.7rem solid var(--color-marker-background);
+  background-color: var(--color-marker-trail); /* Change to your desired covering color */
+  z-index: 10;               /* Ensures the color sits on top of the content */
 }
 
-body {
-  font-size: 3.8vh;
+.content > ul > li.is-revealed::after {
+  display: none;
+}
+
+.content > ul > li + li {
+  /* add gap between items */
+  margin-top: 0.6em;
+}
+dl {
+  /* // padding: 1rem 1rem 1rem 4rem */
+  /* // margin: 1rem 1.5rem 1rem 3rem */
+}
+
+dl > dt {
+  font-weight: bold;
+}
+
+dl > dd {
+  margin-top: 1em;
+  margin-left: 1em;
+}
+
+dl > dd:before {
+  content: "\2013\00A0";
+}
+table {
+  border: 0;
+  border-spacing: 0;
+  font-family: sans-serif;
+  width: 100%;
+  font-size: 60%;
+}
+
+table tr:last-child td {
+  border-bottom-width: 0.2rem;
+  border-color: var(--color-menu-background);
+  border-bottom-style: solid;
+}
+
+table td, th {
+  padding: 1rem 2rem;
+}
+
+table thead th {
+  text-align: center;
+  background-color: var(--color-menu-background);
+  border-width: 0 0 1px 0;
+  border-color: var(--color-marker-background);
+  border-bottom-style: dashed;
+  padding-bottom: 0.8rem;
+}
+
+table tr:nth-child(even) {
+  background-color: var(--color-menu-background);
+}
+
+td:first-child {
+  border-left-width: 0.2rem;
+  border-color: var(--color-menu-background);
+  border-left-style: solid;
+}
+
+td:last-child {
+  border-right-width: 0.2rem;
+  border-color: var(--color-menu-background);
+  border-right-style: solid;
+}
+/* =============== image.css ================= */
+
+.mdcoachImage {
+	min-height: 1.5rem;
+	min-width: 1.5rem;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: contain;
+	aspect-ratio: attr(data-aspect-ratio type(<number>));
+}
+
+.icon {
+ 	min-height: 1.5rem;
+	min-width: 1.5rem;
+  padding: 0 0.2rem 0 0.2rem;
+	display: inline-block;
+	vertical-align: -12%;
+}
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+
+a:hover {
+  color: #535bf2;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 </style><main>

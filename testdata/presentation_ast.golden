@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="1a6ee9e344ad7520"]
+  [id="ac5aa1e3915fd16f"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -118,6 +118,72 @@ Document: MdCoach Demo {
         Text: Aside element here
         Text: .
       }
+    }
+  }
+  Slide: hmm tables {
+    [data-layout="normal"]
+    Paragraph: hmm tables {
+      Text: hmm
+      Text: tables
+    }
+    Table: Tables {
+      TableHeader: Tables {
+        TableCell: Tables {
+          Text: Tables
+        }
+        TableCell: Are {
+          Text: Are
+        }
+        TableCell: Cool {
+          Text: Cool
+        }
+      }
+      TableBody: col 3 is {
+        TableRow: col 3 is {
+          TableCell: col 3 is {
+            Text: col 3
+            Text: is
+          }
+          TableCell: right-aligned {
+            Text: right
+            Text: -aligned
+          }
+          TableCell: $1600 {
+            Text: $1600
+          }
+        }
+        TableRow: col 2 is {
+          TableCell: col 2 is {
+            Text: col 2
+            Text: is
+          }
+          TableCell: ~~centered~~ {
+            Strikethrough: centered {
+              Text: centered
+            }
+          }
+          TableCell: $12 {
+            Text: $12
+          }
+        }
+        TableRow: zebra stripes {
+          TableCell: zebra stripes {
+            Text: zebra
+            Text: stripes
+          }
+          TableCell: are neat {
+            Text: are
+            Text: neat
+          }
+          TableCell: $1 {
+            Text: $1
+          }
+        }
+      }
+    }
+    Paragraph: quite fun {
+      Text: quite
+      Text: fun
     }
   }
   Slide: Presentation Title1 {

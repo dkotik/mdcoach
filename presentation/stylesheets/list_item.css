@@ -1,9 +1,5 @@
 /* =============== list_item.css ================= */
 
-.content li {
-  margin: 0.4rem;
-}
-
 .content > ul > li {
   position: relative; /* Establishes a bounding box for the overlay */
   overflow: hidden;    /* Optional: Prevents the color from bleeding past rounded corners */
@@ -23,4 +19,9 @@
 
 .content > ul > li.is-revealed::after {
   display: none;
+}
+
+.content > ul > li + li {
+  /* add gap between items */
+  margin-top: 0.6em;
 }
