@@ -37,14 +37,19 @@ class PresentationTimer extends HTMLElement {
         fill: none;
         stroke: var(--color-body-subtext, #aaa);
         stroke-opacity: 0.35;
-        stroke-width: 8;
+        stroke-width: 16;
       }
 
       .progress {
         fill: none;
         stroke: var(--color-marker-background, #006eff);
         stroke-linecap: round;
-        stroke-width: 8;
+        stroke-width: 16;
+        transition: stroke-opacity 150ms ease;
+      }
+
+      :host([paused]) .progress {
+        stroke-opacity: 0.3;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -61,13 +66,13 @@ class PresentationTimer extends HTMLElement {
       class: 'track',
       cx: '50',
       cy: '50',
-      r: '42',
+      r: '36',
     })
     this.progressCircle = element('circle', {
       class: 'progress',
       cx: '50',
       cy: '50',
-      r: '42',
+      r: '36',
       transform: 'rotate(-90 50 50)',
       'stroke-dasharray': String(this.circumference),
       'stroke-dashoffset': String(this.circumference),
@@ -173,6 +178,7 @@ class PresentationTimer extends HTMLElement {
   }
 
   updateState() {
+    this.toggleAttribute('paused', !this.running)
     this.setAttribute('aria-pressed', String(this.running))
     this.setAttribute(
       'aria-label',

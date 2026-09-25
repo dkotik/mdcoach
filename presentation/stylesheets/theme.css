@@ -33,7 +33,8 @@ body.is-flashing {
 
   section > .grid {
     background-color: rgb(from var(--color-marker-trail) r g b / 0.2);
-    border-color: orangered;
+    border-color: deeppink;
+    transition-duration: 240ms;
   }
 }
 
