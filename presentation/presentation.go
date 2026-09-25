@@ -8,7 +8,6 @@ import (
 	"context"
 	_ "embed" // for html/before.gen.html and html/after.gen.html
 	"fmt"
-	"html/template"
 	"io"
 	"os"
 	"path/filepath"
@@ -24,14 +23,6 @@ var afterMain []byte
 //go:generate go run ./html/before.go
 //go:embed html/before.gen.html
 var beforeMain []byte
-
-//go:embed html/header.html
-var header []byte
-
-var headerTemplate = template.Must(template.New("header").Parse(string(header)))
-
-//go:embed html/footer.html
-var footer []byte
 
 func New(
 	ctx context.Context,
@@ -53,6 +44,7 @@ func New(
 			}
 			return nil
 		},
+		withDefaultTemplates,
 	) {
 		if err := opt(o); err != nil {
 			return err
@@ -80,7 +72,7 @@ func New(
 			return fmt.Errorf("failed to read metadata from %s: %w", sources[0], err)
 		}
 	}
-	if err = headerTemplate.Execute(w, metadata); err != nil {
+	if err = o.HeaderTemplate.Execute(w, metadata); err != nil {
 		return fmt.Errorf("failed to render header: %w", err)
 	}
 	if _, err = w.Write(beforeMain); err != nil {
@@ -120,9 +112,8 @@ func New(
 		return fmt.Errorf("failed to write image data CSS: %w", err)
 	}
 
-	_, err = w.Write(footer)
-	if err != nil {
-		return fmt.Errorf("failed to write footer: %w", err)
+	if err = o.FooterTemplate.Execute(w, metadata); err != nil {
+		return fmt.Errorf("failed to render footer: %w", err)
 	}
 
 	return nil
