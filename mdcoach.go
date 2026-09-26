@@ -33,6 +33,7 @@ func NewParser() parser.Parser {
 			// Run after extension AST transformers so slides contain their
 			// final block structure.
 			util.Prioritized(NewFigureTransformer(), 4),
+			util.Prioritized(NewBlockquoteTransformer(), 5),
 			util.Prioritized(NewSlideTransformer(2), 900),
 			util.Prioritized(NewDocumentIDInjector(), 1400),
 		),
@@ -57,6 +58,12 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(cache)),
 		html.WithNodeRenderer(KindAside, NewAsideRenderer()),
 		html.WithNodeRenderer(KindFigure, NewFigureRenderer()),
+		html.WithNodeRendererDecorator(
+			ast.KindRawHTML,
+			func(next html.NodeRenderer) html.NodeRenderer {
+				return &blockquoteFooterRenderer{next: next}
+			},
+		),
 		html.WithNodeRenderer(SlideKind, NewSlideRenderer(
 			NewFigureRenderer(),
 		)),
