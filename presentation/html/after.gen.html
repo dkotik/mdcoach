@@ -84,18 +84,34 @@ document.addEventListener(
   }
 )
 
-document.addEventListener(
-  'wheel',
-  debounce((event) => {
-    if (isCurtainVisible) {
+// document.addEventListener(
+//   'wheel',
+//   debounce((event) => {
+//     if (isCurtainVisible) {
+//       return
+//     }
+//     if (event.deltaY >= 0) {
+//       next(event)
+//     } else {
+//       previous(event)
+//     }
+//   }, 4)
+// )
+
+document.getElementById("slideJump").addEventListener(
+  keyStrokeCompleteEventType,
+  (event) => {
+    const requestedSlide = Number.parseInt(event.detail.replace(/\s+/g, ''), 10)
+    if (!Number.isInteger(requestedSlide)) {
       return
     }
-    if (event.deltaY >= 0) {
-      next(event)
-    } else {
-      previous(event)
-    }
-  }, 4)
+
+    const slideNumber = Math.min(
+      Math.max(requestedSlide, 1),
+      finalSlideIndex + 1,
+    )
+    navigate(slideNumber - 1)
+  }
 )
 // ============== slides.js =====================
 

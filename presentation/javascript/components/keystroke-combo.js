@@ -1,5 +1,6 @@
-// use as <keystroke-combo>; focus it and press keys to record a sequence
-// emits 'keystroke-complete' with the sequence string as event.detail
+// use as <keystroke-combo timeout="1000">; timeout is in milliseconds
+
+const keyStrokeCompleteEventType = "keystroke-combo-complete"
 
 class KeystrokeCombo extends HTMLElement {
   constructor() {
@@ -59,6 +60,14 @@ class KeystrokeCombo extends HTMLElement {
       }
     `
 
+    const pattern = this.getAttribute('filter')
+    if (pattern === null) {
+      this.matchesFilter = (key) => true
+    } else {
+      const filter = new RegExp(pattern)
+      this.matchesFilter = (key) => filter.test(key)
+    }
+
     this.output = document.createElement('output')
     this.output.setAttribute('aria-live', 'polite')
     this.shadowRoot.replaceChildren(style, this.output)
@@ -74,7 +83,7 @@ class KeystrokeCombo extends HTMLElement {
     }
 
     this.addEventListener('click', this.onClick)
-    this.addEventListener('keydown', this.onKeyDown)
+    window.addEventListener('keydown', this.onKeyDown)
     this.renderKeys()
   }
 
@@ -84,7 +93,7 @@ class KeystrokeCombo extends HTMLElement {
     this.recording = false
     this.removeAttribute('recording')
     this.removeEventListener('click', this.onClick)
-    this.removeEventListener('keydown', this.onKeyDown)
+    window.removeEventListener('keydown', this.onKeyDown)
   }
 
   onClick() {
@@ -92,7 +101,7 @@ class KeystrokeCombo extends HTMLElement {
   }
 
   onKeyDown(event) {
-    if (event.repeat || event.isComposing) {
+    if (event.repeat || event.isComposing || !this.matchesFilter(event.key)) {
       return
     }
 
@@ -113,7 +122,20 @@ class KeystrokeCombo extends HTMLElement {
     this.keys.push(key)
     this.renderKeys()
     window.clearTimeout(this.timeout)
-    this.timeout = window.setTimeout(this.finishRecording, 400)
+    this.timeout = window.setTimeout(
+      this.finishRecording,
+      this.getTimeoutDuration(),
+    )
+  }
+
+  getTimeoutDuration() {
+    const value = this.getAttribute('timeout')
+    if (value === null) {
+      return 1000
+    }
+
+    const duration = Number(value)
+    return Number.isFinite(duration) && duration >= 0 ? duration : 1000
   }
 
   renderKeys() {
@@ -127,12 +149,12 @@ class KeystrokeCombo extends HTMLElement {
 
     const contents = []
     for (const [index, key] of this.keys.entries()) {
-      if (index > 0) {
-        const separator = document.createElement('span')
-        separator.className = 'separator'
-        separator.textContent = '→'
-        contents.push(separator)
-      }
+      // if (index > 0) {
+      //   const separator = document.createElement('span')
+      //   separator.className = 'separator'
+      //   separator.textContent = '→'
+      //   contents.push(separator)
+      // }
       const keycap = document.createElement('kbd')
       keycap.textContent = key
       contents.push(keycap)
@@ -148,7 +170,8 @@ class KeystrokeCombo extends HTMLElement {
     this.recording = false
     this.timeout = undefined
     this.removeAttribute('recording')
-    this.dispatchEvent(new CustomEvent('keystroke-complete', {
+    this.dispatchEvent(new CustomEvent(
+      keyStrokeCompleteEventType, {
       bubbles: true,
       composed: true,
       detail: this.keys.join(' '),

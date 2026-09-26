@@ -11,6 +11,10 @@ h1 {
      1px -1px 0 var(--color-body-background),
     -1px  1px 0 var(--color-body-background),
      1px  1px 0 var(--color-body-background);
+  padding: 4rem;
+}
+
+section[data-layout="splash"] .content h1 {
   background: linear-gradient(
     to bottom,
   rgba(0, 0, 0, 0.0),
@@ -18,7 +22,6 @@ h1 {
   rgba(0, 0, 0, 0.0)
   );
   width: 100vw;
-  padding: 4rem;
 }
 
 h2 {
