@@ -7,7 +7,7 @@ package presentation
 import (
 	"bytes"
 	"context"
-	_ "embed" // for html/before.gen.html and html/after.gen.html
+	_ "embed" // for generated HTML and CSS assets
 	"encoding/base64"
 	"fmt"
 	"html/template"
@@ -25,6 +25,10 @@ import (
 	"github.com/nfnt/resize"
 	"github.com/yuin/goldmark/v2/ast"
 )
+
+//go:generate go run ./stylesheets/style.go
+//go:embed stylesheets/style.gen.css
+var defaultStylesheet []byte
 
 //go:generate go run ./html/after.go
 //go:embed html/after.gen.html
@@ -87,6 +91,7 @@ func New(
 			return fmt.Errorf("failed to create favicon from %s: %w", sources[0], err)
 		}
 	}
+	frontmatter.Stylesheet = template.CSS(string(defaultStylesheet) + string(frontmatter.Stylesheet))
 	if err = o.HeaderTemplate.Execute(w, frontmatter); err != nil {
 		return fmt.Errorf("failed to render header: %w", err)
 	}

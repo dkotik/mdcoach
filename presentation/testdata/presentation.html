@@ -6,37 +6,7 @@
     <meta name="keywords" content="mdcoach demo">
     <meta name="author" content="Дима Котик">
     <meta name="created" content="2017-01-01T00:00:00Z">
-  </head>
-<body>
-  <presentation-menu>
-    <fullscreen-toggle class="icon">
-      Fullscreen
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" aria-hidden="true" focusable="false">
-        <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
-      </svg>
-    </fullscreen-toggle>
-    <dark-light-toggle>
-      Dark
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
-    </dark-light-toggle>
-  </presentation-menu>
-  <presentation-side-button side="left" onclick="previous(event)">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
-      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
-    </svg>
-  </presentation-side-button>
-  <presentation-side-button side="right" onclick="next(event)">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
-      <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
-    </svg>
-  </presentation-side-button>
-  <aside class="curtain">⏸</aside>
-
-<presentation-timer style="max-width: 2rem; max-height: 2rem; position: fixed; top: 1rem; left: 1rem;z-index: 777;"></presentation-timer>
-<keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>
-<presentation-progress></presentation-progress>
-<style>
-html {
+      <style>html {
   overscroll-behavior: none;
 }
 
@@ -478,6 +448,7 @@ h1 {
 }
 
 section[data-layout="splash"] .content h1 {
+  color: white;
   background: linear-gradient(
     to bottom,
   rgba(0, 0, 0, 0.0),
@@ -540,7 +511,7 @@ h4 {
 .content > blockquote > p+footer {
   display: block;
   font-family: sans-serif;
-  margin-right: 2rem;
+  margin-right: 0.4rem;
   margin-bottom: -1rem;
   margin-top: 0.8rem;
   text-align: right;
@@ -765,7 +736,37 @@ button:focus-visible {
 .highlight .vg { color: #c82829 } /* Name.Variable.Global */
 .highlight .vi { color: #c82829 } /* Name.Variable.Instance */
 .highlight .il { color: #f5871f } /* Literal.Number.Integer.Long */
-</style><script>
+</style>
+  </head>
+<body>
+  <presentation-menu>
+    <fullscreen-toggle class="icon">
+      Fullscreen
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" aria-hidden="true" focusable="false">
+        <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+      </svg>
+    </fullscreen-toggle>
+    <dark-light-toggle>
+      Dark
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
+    </dark-light-toggle>
+  </presentation-menu>
+  <presentation-side-button side="left" onclick="previous(event)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
+      <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
+    </svg>
+  </presentation-side-button>
+  <presentation-side-button side="right" onclick="next(event)">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
+      <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
+    </svg>
+  </presentation-side-button>
+  <aside class="curtain">⏸</aside>
+
+<presentation-timer style="max-width: 2rem; max-height: 2rem; position: fixed; top: 1rem; left: 1rem;z-index: 777;"></presentation-timer>
+<keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>
+<presentation-progress></presentation-progress>
+<script>
 // ============== debounce.js =====================
 
 function debounce(callback, delay = 0) {

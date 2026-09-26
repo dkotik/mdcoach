@@ -19,7 +19,7 @@
 .content > blockquote > p+footer {
   display: block;
   font-family: sans-serif;
-  margin-right: 2rem;
+  margin-right: 0.4rem;
   margin-bottom: -1rem;
   margin-top: 0.8rem;
   text-align: right;
