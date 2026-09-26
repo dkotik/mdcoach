@@ -13,11 +13,22 @@ window.addEventListener(navigationCompleteEventType, (event) => {
   });
 })
 
+let isWindowFocused = true
 channel.addEventListener('message', (event) => {
   const broadcast = event.data
   if (broadcast.window === windowID) {
+    if (!isWindowFocused) {
+      isWindowFocused = true
+      document.documentElement.querySelector("body").classList.add("is-focused")
+    }
     return
   }
+
+  if (isWindowFocused) {
+    isWindowFocused = false
+    document.documentElement.querySelector("body").classList.remove("is-focused")
+  }
+
   if (broadcast.slideIndex !== currentSlide) {
     navigate(broadcast.slideIndex)
   }

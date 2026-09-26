@@ -7,7 +7,8 @@ weight: 60
 - [ ] return regular emotes
 - [ ] add notes component that responds to mouse proximity, it should take in footnotes
 - [ ] blockquote <footer> renders twice
-- [ ] add body[class="is-focused"] that toggles based on logic in synchronize.js
+- [x] add body[class="is-focused"] that toggles based on logic in synchronize.js
+- [ ] fix curtain
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
 - [ ] add header insertion for review

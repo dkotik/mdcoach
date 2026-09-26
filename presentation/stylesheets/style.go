@@ -3,9 +3,13 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/tdewolff/minify/v2"
+	"github.com/tdewolff/minify/v2/css"
 )
 
 var styleSheets = []string{
@@ -25,19 +29,26 @@ var styleSheets = []string{
 }
 
 func makeStylesheet(w io.Writer) error {
+	var source bytes.Buffer
 	for _, name := range styleSheets {
 		content, err := os.ReadFile("stylesheets/" + name)
 		if err != nil {
 			return fmt.Errorf("read stylesheet %q: %w", name, err)
 		}
-		if _, err := w.Write(content); err != nil {
-			return fmt.Errorf("write stylesheet %q: %w", name, err)
+		if _, err := source.Write(content); err != nil {
+			return fmt.Errorf("combine stylesheet %q: %w", name, err)
 		}
 		if len(content) == 0 || content[len(content)-1] != '\n' {
-			if _, err := io.WriteString(w, "\n"); err != nil {
-				return fmt.Errorf("write newline after stylesheet %q: %w", name, err)
+			if err := source.WriteByte('\n'); err != nil {
+				return fmt.Errorf("add newline after stylesheet %q: %w", name, err)
 			}
 		}
+	}
+
+	minifier := minify.New()
+	minifier.AddFunc("text/css", css.Minify)
+	if err := minifier.Minify("text/css", w, &source); err != nil {
+		return fmt.Errorf("minify stylesheet: %w", err)
 	}
 	return nil
 }

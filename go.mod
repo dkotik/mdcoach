@@ -21,6 +21,8 @@ require (
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
+	github.com/tdewolff/minify/v2 v2.24.17 // indirect
+	github.com/tdewolff/parse/v2 v2.8.16 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
 	golang.org/x/net v0.59.0 // indirect
 )
