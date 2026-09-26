@@ -26,7 +26,7 @@ func LoadQuestions(sources ...string) ([]string, error) {
 		if !ok {
 			return nil, fmt.Errorf("parser returned a non-document AST for %q", sourcePath)
 		}
-		fileQuestions, err := questionsFromMetadata(document.Metadata())
+		fileQuestions, err := questionsFromFrontmatter(document.Metadata())
 		if err != nil {
 			return nil, fmt.Errorf("read questions from %q: %w", sourcePath, err)
 		}
@@ -56,9 +56,9 @@ func Write(w io.Writer, p Page) error {
 	return nil
 }
 
-func questionsFromMetadata(metadata map[string]any) ([]string, error) {
+func questionsFromFrontmatter(frontmatter map[string]any) ([]string, error) {
 	var value any
-	for key, candidate := range metadata {
+	for key, candidate := range frontmatter {
 		if strings.EqualFold(key, "questions") {
 			value = candidate
 			break

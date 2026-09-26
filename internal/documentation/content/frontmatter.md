@@ -3,7 +3,7 @@ title: "Front matter"
 weight: 40
 ---
 
-Presentation metadata is read from YAML front matter at the start of a Markdown file. Keys are matched without regard to letter case. The fields below correspond to the `presentation.Metadata` values used when rendering a presentation.
+Presentation metadata is read from YAML front matter at the start of a Markdown file. Keys are matched without regard to letter case. The fields below correspond to the `presentation.Frontmatter` values used when rendering a presentation.
 
 ## ID
 

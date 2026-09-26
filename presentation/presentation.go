@@ -70,24 +70,24 @@ func New(
 
 	var firstSource []byte
 	var firstTree ast.Node
-	metadata := Metadata{}
+	frontmatter := Frontmatter{}
 	if len(sources) > 0 {
 		firstSource, err = os.ReadFile(sources[0])
 		if err != nil {
 			return fmt.Errorf("failed to read source file %s: %w", sources[0], err)
 		}
 		firstTree = o.Parser.Parse(firstSource)
-		metadata, err = metadataFromTree(firstTree, sources[0])
+		frontmatter, err = frontmatterFromTree(firstTree, sources[0])
 		if err != nil {
-			return fmt.Errorf("failed to read metadata from %s: %w", sources[0], err)
+			return fmt.Errorf("failed to read frontmatter from %s: %w", sources[0], err)
 		}
 
-		metadata.Favicon, err = faviconFromFigure(firstTree, firstSource, sources[0])
+		frontmatter.Favicon, err = faviconFromFigure(firstTree, firstSource, sources[0])
 		if err != nil {
 			return fmt.Errorf("failed to create favicon from %s: %w", sources[0], err)
 		}
 	}
-	if err = o.HeaderTemplate.Execute(w, metadata); err != nil {
+	if err = o.HeaderTemplate.Execute(w, frontmatter); err != nil {
 		return fmt.Errorf("failed to render header: %w", err)
 	}
 	if _, err = w.Write(beforeMain); err != nil {
@@ -127,7 +127,7 @@ func New(
 		return fmt.Errorf("failed to write image data CSS: %w", err)
 	}
 
-	if err = o.FooterTemplate.Execute(w, metadata); err != nil {
+	if err = o.FooterTemplate.Execute(w, frontmatter); err != nil {
 		return fmt.Errorf("failed to render footer: %w", err)
 	}
 

@@ -3,7 +3,7 @@ title: "Roadmap to v1.0.0"
 weight: 60
 ---
 
-- generate style sheet separately and inject it into Metadata instead of before.gen.html.
+- generate style sheet separately and inject it into Frontmatter instead of before.gen.html.
 - before.gen.html should be scripts.gen.js
 - <blockquote><footer> instead of <cite>? https://andybrewer.github.io/mvp/
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?

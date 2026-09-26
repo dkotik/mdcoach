@@ -12,7 +12,7 @@ import (
 	"github.com/sebdah/goldie/v2"
 )
 
-func TestMetadataDuration(t *testing.T) {
+func TestFrontmatterDuration(t *testing.T) {
 	testCases := []struct {
 		name      string
 		value     string
@@ -27,18 +27,18 @@ func TestMetadataDuration(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			source := []byte("---\nduration: " + testCase.value + "\n---\n# Slide\n")
 			tree := mdcoach.NewParser().Parse(source)
-			metadata, err := metadataFromTree(tree, "")
+			frontmatter, err := frontmatterFromTree(tree, "")
 			if testCase.wantError {
 				if err == nil {
-					t.Fatal("metadataFromTree() error = nil, want error")
+					t.Fatal("frontmatterFromTree() error = nil, want error")
 				}
 				return
 			}
 			if err != nil {
 				t.Fatal(err)
 			}
-			if metadata.Duration != testCase.want {
-				t.Errorf("metadata duration = %s, want %s", metadata.Duration, testCase.want)
+			if frontmatter.Duration != testCase.want {
+				t.Errorf("frontmatter duration = %s, want %s", frontmatter.Duration, testCase.want)
 			}
 		})
 	}

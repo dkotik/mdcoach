@@ -11,7 +11,7 @@ import (
 	"github.com/yuin/goldmark/v2/ast"
 )
 
-type Metadata struct {
+type Frontmatter struct {
 	ID          string
 	Title       string
 	Description string
@@ -23,26 +23,26 @@ type Metadata struct {
 	Stylesheet  template.CSS
 }
 
-func metadataFromTree(tree ast.Node, sourcePath string) (Metadata, error) {
+func frontmatterFromTree(tree ast.Node, sourcePath string) (Frontmatter, error) {
 	document, ok := tree.(*ast.Document)
 	if !ok {
-		return Metadata{}, fmt.Errorf("expected Goldmark document, got %T", tree)
+		return Frontmatter{}, fmt.Errorf("expected Goldmark document, got %T", tree)
 	}
 
 	frontmatter := document.Metadata()
-	metadata := Metadata{
+	frontmatterValues := Frontmatter{
 		ID:          frontmatterString(frontmatter, "id"),
 		Title:       frontmatterString(frontmatter, "title"),
 		Description: frontmatterString(frontmatter, "description"),
 		Keywords:    frontmatterString(frontmatter, "keywords"),
 		Author:      frontmatterString(frontmatter, "author"),
 	}
-	if metadata.Author == "" {
-		metadata.Author = frontmatterString(frontmatter, "автор")
+	if frontmatterValues.Author == "" {
+		frontmatterValues.Author = frontmatterString(frontmatter, "автор")
 	}
-	if metadata.ID == "" {
+	if frontmatterValues.ID == "" {
 		if id, exists := document.Attribute("id"); exists {
-			metadata.ID = string(id.Value(nil))
+			frontmatterValues.ID = string(id.Value(nil))
 		}
 	}
 
@@ -52,18 +52,18 @@ func metadataFromTree(tree ast.Node, sourcePath string) (Metadata, error) {
 	}
 	if exists {
 		var err error
-		metadata.Created, err = parseCreated(created)
+		frontmatterValues.Created, err = parseCreated(created)
 		if err != nil {
-			return Metadata{}, fmt.Errorf("parse frontmatter created date: %w", err)
+			return Frontmatter{}, fmt.Errorf("parse frontmatter created date: %w", err)
 		}
 	}
 
 	if duration, exists := frontmatterValue(frontmatter, "duration"); exists {
 		parsedDuration, err := time.ParseDuration(fmt.Sprint(duration))
 		if err != nil {
-			return Metadata{}, fmt.Errorf("parse frontmatter duration: %w", err)
+			return Frontmatter{}, fmt.Errorf("parse frontmatter duration: %w", err)
 		}
-		metadata.Duration = parsedDuration
+		frontmatterValues.Duration = parsedDuration
 	}
 
 	if stylesheetPath := frontmatterString(frontmatter, "stylesheet"); stylesheetPath != "" {
@@ -73,11 +73,11 @@ func metadataFromTree(tree ast.Node, sourcePath string) (Metadata, error) {
 		}
 		stylesheet, err := os.ReadFile(stylesheetPath)
 		if err != nil {
-			return Metadata{}, fmt.Errorf("read frontmatter stylesheet %q: %w", stylesheetPath, err)
+			return Frontmatter{}, fmt.Errorf("read frontmatter stylesheet %q: %w", stylesheetPath, err)
 		}
-		metadata.Stylesheet = template.CSS(stylesheet)
+		frontmatterValues.Stylesheet = template.CSS(stylesheet)
 	}
-	return metadata, nil
+	return frontmatterValues, nil
 }
 
 func frontmatterValue(frontmatter map[string]interface{}, name string) (interface{}, bool) {
