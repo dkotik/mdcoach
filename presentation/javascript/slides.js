@@ -129,6 +129,10 @@ const navigateToWindowHashLocation = () => {
     return
   }
   navigate(slideIndex)
+  const concealedListItems = getCurrentConcealedListItems()
+  debounce(dispatchNavigationCompleteEvent, 100)(
+    concealedListItems.length
+  )
 }
 window.addEventListener(
   "hashchange",

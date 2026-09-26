@@ -500,7 +500,7 @@ h4 {
   }
 }
 
-.content > blockquote > p+cite {
+.content > blockquote > p+footer {
   display: block;
   font-family: sans-serif;
   margin-right: 2rem;
@@ -511,7 +511,7 @@ h4 {
   color: var(--color-body-subtext);
 }
 
-.content > blockquote > p+cite:before {
+.content > blockquote > p+footer:before {
   color: var(--color-body-subtext);
   content: "\2013\00A0";
 }
@@ -1666,7 +1666,7 @@ class PresentationProgress extends HTMLElement {
       .fill {
         background: var(--color-marker-background, #006eff);
         height: 100%;
-        transition: width 180ms ease;
+        transition: width 600ms ease;
         width: 0;
       }
 

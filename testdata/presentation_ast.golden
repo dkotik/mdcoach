@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="b7133a7f18d71ee8"]
+  [id="58a6ebefc423b140"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -75,8 +75,8 @@ Document: MdCoach Demo {
       }
       Paragraph: ahem (citation) {
         Text: ahem
-        Text: (citation)
       }
+      RawHTML
     }
     List: lists :shark: {
       ListItem: lists :shark: {
@@ -285,8 +285,8 @@ Document: MdCoach Demo {
       }
       Paragraph: лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыо {
         Text: лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыо
-        Text: 3)
       }
+      RawHTML
     }
     CodeBlock
     CodeBlock

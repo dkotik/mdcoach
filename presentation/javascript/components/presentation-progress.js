@@ -26,7 +26,7 @@ class PresentationProgress extends HTMLElement {
       .fill {
         background: var(--color-marker-background, #006eff);
         height: 100%;
-        transition: width 180ms ease;
+        transition: width 600ms ease;
         width: 0;
       }
 

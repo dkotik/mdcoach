@@ -3,9 +3,9 @@ title: "Roadmap to v1.0.0"
 weight: 60
 ---
 
-- generate style sheet separately and inject it into Frontmatter instead of before.gen.html.
-- before.gen.html should be scripts.gen.js
-- <blockquote><footer> instead of <cite>? https://andybrewer.github.io/mvp/
+- [ ] blockquote renders twice
+- [ ] generate style sheet separately and inject it into Frontmatter instead of before.gen.html.
+- [ ] before.gen.html should be scripts.gen.js
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
 - [ ] add header insertion for review
@@ -33,6 +33,7 @@ weight: 60
 - Tufte renderer? https://edwardtufte.github.io/tufte-css/
 - A well-designed presentation rendered: http://bencane.com/stories/2020/07/06/how-i-structure-go-packages/#/eof-bio
 - https://markodenic.com/html-tips/
+- https://andybrewer.github.io/mvp/
 
 ## Ideas in the project notes
 

@@ -16,7 +16,7 @@
   }
 }
 
-.content > blockquote > p+cite {
+.content > blockquote > p+footer {
   display: block;
   font-family: sans-serif;
   margin-right: 2rem;
@@ -27,7 +27,7 @@
   color: var(--color-body-subtext);
 }
 
-.content > blockquote > p+cite:before {
+.content > blockquote > p+footer:before {
   color: var(--color-body-subtext);
   content: "\2013\00A0";
 }
