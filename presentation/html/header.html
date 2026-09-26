@@ -15,6 +15,9 @@
     }}{{
       .Created.Format "2006-01-02T15:04:05Z07:00"
     }}{{end}}">
+    {{- with .Stylesheet}}
+      <style>{{.}}</style>
+    {{- end}}
   </head>
 <body>
   <presentation-menu>

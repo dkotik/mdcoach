@@ -29,6 +29,10 @@ uglyURLs = true
     pageRef = '/command'
     weight = 40
   [[menu.main]]
+    name = 'Frontmatter'
+    pageRef = '/frontmatter'
+    weight = 50
+  [[menu.main]]
     name = 'Specification'
     pageRef = '/specification'
     weight = 70

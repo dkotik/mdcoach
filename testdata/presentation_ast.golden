@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="4c7eee90078f8119"]
+  [id="b7133a7f18d71ee8"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -29,6 +29,11 @@ Document: MdCoach Demo {
     Paragraph: Some text before figure. {
       Text: Some text before figure
       Text: .
+    }
+    Paragraph: **Emphasis centered.** {
+      Strong: Emphasis centered. {
+        Text: Emphasis centered.
+      }
     }
     Figure: cat image {
       Image: cat image {

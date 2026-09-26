@@ -42,6 +42,8 @@ notes
 
 Some text before figure.
 
+**Emphasis centered.**
+
 ![cat image](media/cat_3.jpg "some cat")
 
 ## Figure To the Left

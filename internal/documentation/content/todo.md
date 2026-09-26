@@ -3,34 +3,8 @@ title: "Roadmap to v1.0.0"
 weight: 60
 ---
 
-- **Что общего между дарами? Золотой цвет.** in paragraphy by itself - center text?
-
-```css
-/*
-  Stack children vertically on each other and center
-  them into the middle of the grid:
-
-  https://www.youtube.com/watch?v=CU8Plk-53RU
-*/
-.pile {
-  display: grid;
-  grid-template-areas: "pile";
-  place-items: "center";
-
-  > * {
-    grid-area: "pile";
-  }
-}
-
-.featured-card-content {
-  align-self: start end; /* hug top right corner */
-  align-self: start; /* hug top */
-  align-self: end; /* hug bottom */
-  background-image: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.0));
-}
-```
-
-- add "g11" key stroke combination jumper to any slide number
+- generate style sheet separately and inject it into Metadata instead of before.gen.html.
+- before.gen.html should be scripts.gen.js
 - <blockquote><footer> instead of <cite>? https://andybrewer.github.io/mvp/
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] implement aside.go
@@ -39,11 +13,8 @@ weight: 60
 - parsers and renderers should be paired
   - create new node kind for SlideCut instead of NotesBreak
 - [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)
-- Toggleable progress line at the bottom of the screen
-- support figure with a footnote! syntax
 - include documentation into .cache dir for all cache distributions?
 - Utilize Presentation API: https://developer.mozilla.org/en-US/docs/Web/API/Presentation_API
-- double HR as early end of the presentation?
 - https://keleshev.com/my-book-writing-setup/ - pandoc to pdf and to epub
   > to solve above issue, use webpack to bundle in fonts | or packer JS?
   > https://survivejs.com/webpack/loading/fonts/
@@ -52,13 +23,11 @@ weight: 60
 
 - Markdown javascript mind map
 - <https://voussoir.net/writing/css_for_printing>
-- scalp for features?
-  - <https://github.com/quail-ink/goldmark-enclave> - more embeds
-  - https://www.deckset.com/features/
-  - https://godoc.org/golang.org/x/tools/present
-  - https://casual-effects.com/markdeep/
-  - https://github.com/maaslalani/slides - another presenter
-- use `...` for front-matter termination?
+- <https://github.com/quail-ink/goldmark-enclave> - more embeds
+- https://www.deckset.com/features/
+- https://godoc.org/golang.org/x/tools/present
+- https://casual-effects.com/markdeep/
+- https://github.com/maaslalani/slides - another presenter
 - release templating engine as open source sanetemplate: emoji, markdown, templating
 - http://criticmarkup.com/spec.php - add criticmark support? including comments?
 - document compressor: https://github.com/mzucker/noteshrink/blob/master/README.md

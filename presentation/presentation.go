@@ -77,7 +77,7 @@ func New(
 			return fmt.Errorf("failed to read source file %s: %w", sources[0], err)
 		}
 		firstTree = o.Parser.Parse(firstSource)
-		metadata, err = metadataFromTree(firstTree)
+		metadata, err = metadataFromTree(firstTree, sources[0])
 		if err != nil {
 			return fmt.Errorf("failed to read metadata from %s: %w", sources[0], err)
 		}

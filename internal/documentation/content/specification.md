@@ -48,6 +48,19 @@ Use standard Markdown image syntax:
 
 Relative image paths are resolved from the source file's directory. HTTP and HTTPS image URLs are also supported; those images are fetched while generating the presentation. Images are resized to configured limits and included in the generated output/cache.
 
+## Center Emphasis
+
+The text of any paragraph containing only emphasized text by itself is centered. In the example below, the text in second paragraph will be centered.
+
+```markdown
+paragraph1
+
+**paragraph2**
+
+paragraph3
+```
+
+
 ## Review questions
 
 The `review` command reads a case-insensitive `questions` key from front matter. Its value must be a YAML list of strings. Questions from all provided files are combined, shuffled, and optionally shortened with `--limit` before a PDF worksheet is written.

@@ -3,6 +3,8 @@ package presentation
 import (
 	"fmt"
 	"html/template"
+	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -16,10 +18,12 @@ type Metadata struct {
 	Keywords    string
 	Author      string
 	Created     time.Time
+	Duration    time.Duration
 	Favicon     template.HTML
+	Stylesheet  template.CSS
 }
 
-func metadataFromTree(tree ast.Node) (Metadata, error) {
+func metadataFromTree(tree ast.Node, sourcePath string) (Metadata, error) {
 	document, ok := tree.(*ast.Document)
 	if !ok {
 		return Metadata{}, fmt.Errorf("expected Goldmark document, got %T", tree)
@@ -52,6 +56,26 @@ func metadataFromTree(tree ast.Node) (Metadata, error) {
 		if err != nil {
 			return Metadata{}, fmt.Errorf("parse frontmatter created date: %w", err)
 		}
+	}
+
+	if duration, exists := frontmatterValue(frontmatter, "duration"); exists {
+		parsedDuration, err := time.ParseDuration(fmt.Sprint(duration))
+		if err != nil {
+			return Metadata{}, fmt.Errorf("parse frontmatter duration: %w", err)
+		}
+		metadata.Duration = parsedDuration
+	}
+
+	if stylesheetPath := frontmatterString(frontmatter, "stylesheet"); stylesheetPath != "" {
+		stylesheetPath = filepath.FromSlash(stylesheetPath)
+		if !filepath.IsAbs(stylesheetPath) {
+			stylesheetPath = filepath.Join(filepath.Dir(sourcePath), stylesheetPath)
+		}
+		stylesheet, err := os.ReadFile(stylesheetPath)
+		if err != nil {
+			return Metadata{}, fmt.Errorf("read frontmatter stylesheet %q: %w", stylesheetPath, err)
+		}
+		metadata.Stylesheet = template.CSS(stylesheet)
 	}
 	return metadata, nil
 }
