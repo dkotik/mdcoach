@@ -47,6 +47,7 @@ const dispatchNavigationCompleteEvent = (concealedListItemCount) => {
       {
         detail: {
           slideIndex: currentSlide,
+          finalSlideIndex: finalSlideIndex,
           concealedListItemCount: concealedListItemCount
         }
     })

@@ -18,6 +18,7 @@ var scripts = []string{
 	"components/fullscreen-toggle.js",
 	"components/presentation-clock.js",
 	"components/presentation-timer.js",
+	"components/presentation-progress.js",
 }
 
 var styleSheets = []string{
