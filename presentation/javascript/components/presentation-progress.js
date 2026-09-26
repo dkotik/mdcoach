@@ -22,10 +22,6 @@ class PresentationProgress extends HTMLElement {
         background: var(--color-body-subtext, #aaa);
       }
 
-      .track {
-        height: 100%;
-        width: 100%;
-      }
 
       .fill {
         background: var(--color-marker-background, #006eff);
@@ -41,28 +37,25 @@ class PresentationProgress extends HTMLElement {
       }
     `
 
-    this.track = document.createElement('div')
-    this.track.className = 'track'
-    this.track.setAttribute('role', 'progressbar')
-    this.track.setAttribute('aria-label', 'Presentation progress')
-    this.track.setAttribute('aria-valuemin', '0')
-    this.track.setAttribute('aria-valuemax', '100')
+    this.setAttribute('role', 'progressbar')
+    this.setAttribute('aria-label', 'Presentation progress')
+    this.setAttribute('aria-valuemin', '0')
+    this.setAttribute('aria-valuemax', '100')
 
     this.fill = document.createElement('div')
     this.fill.className = 'fill'
-    this.track.append(this.fill)
-    this.shadowRoot.replaceChildren(style, this.track)
+    this.shadowRoot.replaceChildren(style, this.fill)
 
     this.updateProgress(0)
-    window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    window.addEventListener('slideNavigationFinished', this.onNavigationComplete)
   }
 
   disconnectedCallback() {
-    window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    window.removeEventListener('slideNavigationFinished', this.onNavigationComplete)
   }
 
   onNavigationComplete(event) {
-    const { slideIndex, lastSlideIndex: finalSlideIndex } = event.detail
+    const { slideIndex, finalSlideIndex: finalSlideIndex } = event.detail
     if (!Number.isInteger(slideIndex) || !Number.isInteger(finalSlideIndex)) {
       return
     }
@@ -70,14 +63,14 @@ class PresentationProgress extends HTMLElement {
     const progress = finalSlideIndex > 0
       ? (slideIndex / finalSlideIndex) * 100
       : 100
-    console.log("got event", event.detail)
+    // console.log("got event", event.detail)
     this.updateProgress(Math.min(100, Math.max(0, progress)))
   }
 
   updateProgress(percentage) {
     this.fill.style.width = `${percentage}%`
-    this.track.setAttribute('aria-valuenow', String(Math.round(percentage)))
-    console.log("progress:", percentage)
+    this.setAttribute('aria-valuenow', String(Math.round(percentage)))
+    // console.log("progress:", percentage)
   }
 }
 

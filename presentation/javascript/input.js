@@ -97,5 +97,7 @@ document.getElementById("slideJump").addEventListener(
       finalSlideIndex + 1,
     )
     navigate(slideNumber - 1)
+    concealedListItems = getCurrentConcealedListItems()
+    dispatchNavigationCompleteEvent(concealedListItems.length)
   }
 )
