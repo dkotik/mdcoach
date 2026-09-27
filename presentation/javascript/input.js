@@ -1,18 +1,4 @@
 // ============== input.js =====================
-
-let isCurtainVisible = false
-const curtain = document.querySelector("body > aside.curtain")
-
-const showCurtain = () => {
-  curtain.style.display = "grid";
-  isCurtainVisible = true
-}
-
-const hideCurtain = () => {
-  curtain.style.display = "none";
-  isCurtainVisible = false
-}
-
 const nextEventType = "nextListItemOrSlide"
 const next = (event) => {
   event.preventDefault()
@@ -36,14 +22,10 @@ const previous = (event) => {
 document.addEventListener(
   'keydown',
   (event) => {
-    if (isCurtainVisible) {
-      switch (event.code) {
-        case 'Escape':
-        case 'Period':
-          hideCurtain()
-      }
+    if (document.querySelector('presentation-curtain[open]')) {
       return
     }
+
     switch (event.code) {
       case 'ArrowRight':
       case 'ArrowDown':
@@ -62,27 +44,11 @@ document.addEventListener(
       case 'KeyC':
         window.open(window.location.href, '_blank')
         return
-      case 'Period':
-        showCurtain()
       case 'KeyR':
         window.location.reload()
     }
   }
 )
-
-// document.addEventListener(
-//   'wheel',
-//   debounce((event) => {
-//     if (isCurtainVisible) {
-//       return
-//     }
-//     if (event.deltaY >= 0) {
-//       next(event)
-//     } else {
-//       previous(event)
-//     }
-//   }, 4)
-// )
 
 document.getElementById("slideJump").addEventListener(
   keyStrokeCompleteEventType,
