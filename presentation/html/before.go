@@ -20,6 +20,7 @@ var scripts = []string{
 	"components/presentation-timer.js",
 	"components/presentation-progress.js",
 	"components/presentation-curtain.js",
+	"components/presentation-notes.js",
 }
 
 func makeBefore(w io.Writer) error {

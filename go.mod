@@ -10,6 +10,8 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/sebdah/goldie/v2 v2.8.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
+	github.com/tdewolff/minify/v2 v2.24.17
+	github.com/tdewolff/parse/v2 v2.8.16
 	github.com/urfave/cli/v3 v3.13.0
 	github.com/yuin/goldmark-meta/v2 v2.0.2
 	github.com/yuin/goldmark/v2 v2.1.5
@@ -21,8 +23,6 @@ require (
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
-	github.com/tdewolff/minify/v2 v2.24.17 // indirect
-	github.com/tdewolff/parse/v2 v2.8.16 // indirect
 	go.yaml.in/yaml/v4 v4.0.0-rc.6 // indirect
 	golang.org/x/net v0.59.0 // indirect
 )
