@@ -164,6 +164,9 @@ func (r *blockquoteFooterRenderer) Render(
 	if rawHTML, ok := node.(*ast.RawHTML); ok {
 		value := rawHTML.Value.Value(source)
 		if rawHTML.Value.IsOwned() && strings.HasPrefix(value, "<footer>") && strings.HasSuffix(value, "</footer>") {
+			if !entering {
+				return ast.WalkSkipChildren, nil
+			}
 			w, ok := writer.(util.BufWriter)
 			if !ok {
 				w = util.NewErrorBufWriter(writer)

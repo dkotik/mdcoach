@@ -63,6 +63,20 @@ func TestBlockquoteTransformer(t *testing.T) {
 	}
 }
 
+func TestBlockquoteFooterRendersOnce(t *testing.T) {
+	source := []byte("> Quote text (Citation)\n")
+	tree := NewParser().Parse(source)
+
+	var rendered bytes.Buffer
+	if err := NewRenderer(nil).Render(&rendered, source, tree); err != nil {
+		t.Fatal(err)
+	}
+
+	if count := strings.Count(rendered.String(), "<footer>Citation</footer>"); count != 1 {
+		t.Fatalf("rendered footer %d times, want once: %s", count, rendered.String())
+	}
+}
+
 func TestBlockquoteFooterRendererOmitsSourceRawHTML(t *testing.T) {
 	source := []byte("> <footer onclick=\"alert(1)\">unsafe</footer>\n")
 	tree := NewParser().Parse(source)

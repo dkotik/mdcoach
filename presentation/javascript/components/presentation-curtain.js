@@ -1,5 +1,7 @@
 // use as custom element <presentation-curtain> for a full-screen pause cover
 
+const curtainOpenStorageKey = 'presentationCurtainOpen'
+
 class PresentationCurtain extends HTMLElement {
   constructor() {
     super()
@@ -12,6 +14,7 @@ class PresentationCurtain extends HTMLElement {
   }
 
   connectedCallback() {
+    const storedOpenState = this.readOpenState()
     const style = document.createElement('style')
     style.textContent = `
       :host {
@@ -28,7 +31,13 @@ class PresentationCurtain extends HTMLElement {
 
       .cover {
         align-items: center;
-        background: var(--color-body-background);
+        background: linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 8%, var(--color-body-background, white)) 0%,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 12%, var(--color-body-background, white)) 33%,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 16%, var(--color-body-background, white)) 66%,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 20%, var(--color-body-background, white)) 100%
+        );
         border-bottom: 0.2rem solid var(--color-body-subtext, #aaa);
         box-sizing: border-box;
         color: var(--color-body-subtext, #aaa);
@@ -68,6 +77,11 @@ class PresentationCurtain extends HTMLElement {
       this.setAttribute('aria-label', 'Presentation paused')
     }
 
+    if (storedOpenState === null) {
+      this.storeOpenState(this.hasAttribute('open'))
+    } else {
+      this.toggleAttribute('open', storedOpenState)
+    }
     this.updateState()
     window.addEventListener('keyup', this.onKeyUp)
   }
@@ -76,8 +90,15 @@ class PresentationCurtain extends HTMLElement {
     window.removeEventListener('keyup', this.onKeyUp)
   }
 
-  attributeChangedCallback() {
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return
+    }
+
     this.updateState()
+    if (this.isConnected) {
+      this.storeOpenState(newValue !== null)
+    }
   }
 
   onKeyUp(event) {
@@ -87,6 +108,29 @@ class PresentationCurtain extends HTMLElement {
 
     event.preventDefault()
     this.toggleAttribute('open')
+  }
+
+  readOpenState() {
+    try {
+      const storedState = window.localStorage.getItem(curtainOpenStorageKey)
+      if (storedState === 'true') {
+        return true
+      }
+      if (storedState === 'false') {
+        return false
+      }
+    } catch {
+      return null
+    }
+    return null
+  }
+
+  storeOpenState(isOpen) {
+    try {
+      window.localStorage.setItem(curtainOpenStorageKey, String(isOpen))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
   }
 
   updateState() {
