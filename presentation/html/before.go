@@ -18,6 +18,7 @@ var scripts = []string{
 	"components/fullscreen-toggle.js",
 	"components/presentation-clock.js",
 	"components/presentation-timer.js",
+	"components/timer-set.js",
 	"components/presentation-progress.js",
 	"components/presentation-curtain.js",
 	"components/presentation-notes.js",
