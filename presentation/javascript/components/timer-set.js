@@ -13,10 +13,11 @@ class TimerSet extends HTMLElement {
     this.onTimerTick = this.onTimerTick.bind(this)
     this.defaultDuration = 60
     this.duration = this.defaultDuration
-    this.isListeningForTimerTicks = false
+    this.timerElement = null
   }
 
   connectedCallback() {
+    this.updateTimerTickSubscription()
     this.defaultDuration = this.getDurationAttribute()
     this.duration = this.defaultDuration
 
@@ -141,9 +142,7 @@ class TimerSet extends HTMLElement {
     controls.append(addButtons, this.output, otherButtons)
     this.shadowRoot.replaceChildren(style, controls)
     this.shadowRoot.addEventListener('click', this.onClick)
-    this.updateTimerTickSubscription()
     this.renderDuration()
-    this.dispatchDurationChange()
   }
 
   disconnectedCallback() {
@@ -158,28 +157,24 @@ class TimerSet extends HTMLElement {
   }
 
   updateTimerTickSubscription() {
-    if (this.getAttribute('data-timer-id')) {
-      if (!this.isListeningForTimerTicks) {
-        window.addEventListener(presentationTimerTickEventType, this.onTimerTick)
-        this.isListeningForTimerTicks = true
-      }
+    this.removeTimerTickSubscription()
+
+    const timerId = this.getAttribute('data-timer-id')
+    if (!timerId) {
       return
     }
 
-    this.removeTimerTickSubscription()
+    this.timerElement = document.getElementById(timerId)
+    this.timerElement?.addEventListener(presentationTimerTickEventType, this.onTimerTick)
   }
 
   removeTimerTickSubscription() {
-    if (!this.isListeningForTimerTicks) {
-      return
-    }
-
-    window.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
-    this.isListeningForTimerTicks = false
+    this.timerElement?.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.timerElement = null
   }
 
   onTimerTick(event) {
-    if (event.target?.id !== this.getAttribute('data-timer-id')) {
+    if (event.currentTarget !== this.timerElement) {
       return
     }
 
@@ -193,6 +188,13 @@ class TimerSet extends HTMLElement {
   }
 
   getDurationAttribute() {
+    if (this.timerElement) {
+      const timerDuration = Number(this.timerElement.duration)
+      if (Number.isFinite(timerDuration) && timerDuration >= 0) {
+        return Math.floor(timerDuration / 1000)
+      }
+    }
+
     const value = Number(this.getAttribute('duration'))
     return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 60
   }
@@ -219,15 +221,9 @@ class TimerSet extends HTMLElement {
       this.duration = Math.max(0, this.duration + Number(adjustment))
     }
     this.renderDuration()
-    this.dispatchDurationChange()
-  }
-
-  dispatchDurationChange() {
-    this.dispatchEvent(new CustomEvent('presentation-timer-change', {
-      bubbles: true,
-      composed: true,
-      detail: this.duration,
-    }))
+    if (this.timerElement) {
+      this.timerElement.duration = this.duration * 1000
+    }
   }
 
   renderDuration() {
