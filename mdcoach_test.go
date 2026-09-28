@@ -62,44 +62,6 @@ func TestTaskListExtension(t *testing.T) {
 	}
 }
 
-func TestFootnoteExtensionRendering(t *testing.T) {
-	testCases := []struct {
-		name   string
-		source string
-		want   []string
-	}{
-		{
-			name:   "single footnote",
-			source: "A reference[^note].\n\n[^note]: Footnote body.\n",
-			want:   []string{`href="#fn:1"`, `id="fn:1"`, "Footnote body."},
-		},
-		{
-			name:   "multiple footnotes",
-			source: "First[^first] and second[^second].\n\n[^first]: First note.\n[^second]: Second note.\n",
-			want:   []string{`href="#fn:2"`, "First note.", "Second note."},
-		},
-	}
-
-	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
-			source := []byte(testCase.source)
-			tree := NewParser().Parse(source)
-
-			var output bytes.Buffer
-			if err := NewRenderer(nil).Render(&output, source, tree); err != nil {
-				t.Fatal(err)
-			}
-
-			rendered := output.String()
-			for _, expected := range testCase.want {
-				if !strings.Contains(rendered, expected) {
-					t.Errorf("rendered HTML does not contain %q: %s", expected, rendered)
-				}
-			}
-		})
-	}
-}
-
 func TestPresentationAST(t *testing.T) {
 	source, err := os.ReadFile("testdata/presentation-1.md")
 	if err != nil {

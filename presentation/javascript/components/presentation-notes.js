@@ -141,7 +141,7 @@ class PresentationNotes extends HTMLElement {
     this.dock = document.createElement('aside')
     this.dock.className = 'dock'
     this.dock.setAttribute('aria-label', 'Speaker notes')
-    this.content = document.createElement('div')
+    this.content = document.createElement('resizable-text')
     this.content.className = 'content'
     this.content.append(document.createElement('slot'))
     this.dock.append(this.content)

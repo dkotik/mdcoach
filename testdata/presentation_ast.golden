@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="01ccbed1abf49f6a"]
+  [id="d743e93ddc36119c"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -106,30 +106,30 @@ Document: MdCoach Demo {
         }
       }
     }
-    FootnoteDefinition: first footnote {
-      Paragraph: first footnote {
-        Text: first
-        Text: footnote
-      }
-    }
-    FootnoteDefinition: notes des noteshrink {
-      Paragraph: notes des noteshrink {
-        Text: notes des
-        Text: noteshrink
-        Text: slkfj sadlk fjsldkfj
-        Text: slkdjf
-      }
-      Paragraph: ft paragraph ![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd {
-        Text: ft paragraph
-        Image: luth {
-          Text: luth
-        }
-      }
-    }
     Aside: Notes and footnotes to go the side into a collapsible notes {
       Paragraph: Notes and footnotes to go the side into a collapsible notes  {
         Text: Notes and footnotes to go the side into a collapsible notes 
         Text: .
+      }
+      FootnoteDefinition: first footnote {
+        Paragraph: first footnote {
+          Text: first
+          Text: footnote
+        }
+      }
+      FootnoteDefinition: notes des noteshrink {
+        Paragraph: notes des noteshrink {
+          Text: notes des
+          Text: noteshrink
+          Text: slkfj sadlk fjsldkfj
+          Text: slkdjf
+        }
+        Paragraph: ft paragraph ![luth](media/cat_1.jpg "weee sdf sd fsdfsd fsd {
+          Text: ft paragraph
+          Image: luth {
+            Text: luth
+          }
+        }
       }
     }
   }

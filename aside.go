@@ -56,9 +56,9 @@ func (*asideRenderer) Render(
 		w = util.NewErrorBufWriter(writer)
 	}
 	if entering {
-		_, _ = w.WriteString("<aside>")
+		_, _ = w.WriteString("<presentation-notes>")
 	} else {
-		_, _ = w.WriteString("</aside>")
+		_, _ = w.WriteString("</presentation-notes>")
 	}
 	return ast.WalkContinue, nil
 }

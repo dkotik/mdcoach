@@ -35,6 +35,7 @@ func NewParser() parser.Parser {
 			util.Prioritized(NewFigureTransformer(), 4),
 			util.Prioritized(NewBlockquoteTransformer(), 5),
 			util.Prioritized(NewSlideTransformer(2), 900),
+			util.Prioritized(NewFootnoteAsideTransformer(), 1000),
 			util.Prioritized(NewDocumentIDInjector(), 1400),
 		),
 	)
