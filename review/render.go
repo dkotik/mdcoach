@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gpdf-dev/gpdf"
 	gpdfdocument "github.com/gpdf-dev/gpdf/document"
@@ -16,6 +17,7 @@ type Page struct {
 	Description    string
 	Questions      []string
 	BonusQuestions []string
+	CreatedAt      time.Time
 }
 
 func New(page Page) ([]byte, error) {
@@ -48,14 +50,19 @@ func New(page Page) ([]byte, error) {
 		row.Col(6, func(column *gpdftemplate.ColBuilder) {
 			column.Text("Class number: __________", gpdftemplate.FontSize(12))
 		})
-		row.Col(12, func(c *gpdftemplate.ColBuilder) {
-			c.Spacer(gpdfdocument.Mm(12))
-		})
 	})
+	if !page.CreatedAt.IsZero() {
+		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
+			row.Col(12, func(column *gpdftemplate.ColBuilder) {
+				column.Text(page.CreatedAt.Format(time.DateOnly), gpdftemplate.FontSize(10))
+				column.Spacer(gpdfdocument.Mm(12))
+			})
+		})
+	}
 	if page.Title != "" {
 		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
 			row.Col(12, func(column *gpdftemplate.ColBuilder) {
-				column.Text(page.Title, gpdftemplate.FontSize(18))
+				column.Text(page.Title, gpdftemplate.FontSize(18), gpdftemplate.Bold())
 			})
 		})
 	}
@@ -63,6 +70,7 @@ func New(page Page) ([]byte, error) {
 		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
 			row.Col(12, func(column *gpdftemplate.ColBuilder) {
 				column.Text(page.Description, gpdftemplate.FontSize(12))
+				column.Spacer(gpdfdocument.Mm(12))
 			})
 		})
 	}

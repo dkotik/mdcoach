@@ -25,6 +25,11 @@ func reviewCmd() *cli.Command {
 			overwriteFlag,
 			silentFlag,
 			titleFlag,
+			&cli.StringFlag{
+				Name:    "description",
+				Aliases: []string{"d"},
+				Usage:   "description of the generated review document",
+			},
 			&cli.IntFlag{
 				Name:  "limit",
 				Value: 0,
@@ -99,6 +104,7 @@ func reviewCmd() *cli.Command {
 				Description:    c.String("description"),
 				Questions:      questions,
 				BonusQuestions: bonusQuestions,
+				CreatedAt:      time.Now(),
 			}); err != nil {
 				return err
 			}
