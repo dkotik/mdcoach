@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="302d2724f54b6a6e"]
+  [id="ad549fc2e4931130"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -583,16 +583,18 @@ Document: MdCoach Demo {
       Text: Despite fitting its entire logic in under 10 megabytes of da
       Text: .
     }
-    FootnoteDefinition: this is a great test question `code in it` {
-      Paragraph: this is a great test question `code in it` {
-        Text: this is a great test question
-        CodeSpan
-      }
-    }
     Blockquote: and a block quote {
       Paragraph: and a block quote {
         Text: and a block
         Text: quote
+      }
+    }
+    SlideNotes: this is a great test question `code in it` {
+      FootnoteDefinition: this is a great test question `code in it` {
+        Paragraph: this is a great test question `code in it` {
+          Text: this is a great test question
+          CodeSpan
+        }
       }
     }
   }

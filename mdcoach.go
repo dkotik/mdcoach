@@ -35,7 +35,7 @@ func NewParser() parser.Parser {
 			util.Prioritized(NewFigureTransformer(), 4),
 			util.Prioritized(NewBlockquoteTransformer(), 5),
 			util.Prioritized(NewSlideTransformer(2), 900),
-			util.Prioritized(NewFootnoteSlideNotesTransformer(), 1000),
+			// util.Prioritized(NewFootnoteSlideNotesTransformer(), 1000),
 			util.Prioritized(NewDocumentIDInjector(), 1400),
 		),
 	)
@@ -51,7 +51,7 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 			extension.NewStrikethroughHTMLRenderer(),
 			extension.NewTableHTMLRenderer(),
 			extension.NewTaskListItemHTMLRenderer(),
-			extension.NewFootnoteHTMLRenderer(),
+			// extension.NewFootnoteHTMLRenderer(),
 		),
 		html.WithNodeRendererDecorator(
 			ast.KindImage,

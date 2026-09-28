@@ -7,6 +7,7 @@ import (
 
 	meta "github.com/yuin/goldmark-meta/v2"
 	"github.com/yuin/goldmark/v2/ast"
+	footnoteast "github.com/yuin/goldmark/v2/extension/ast"
 	"github.com/yuin/goldmark/v2/parser"
 	"github.com/yuin/goldmark/v2/renderer"
 	"github.com/yuin/goldmark/v2/renderer/html"
@@ -55,22 +56,49 @@ func (s *Slide) withChildren(children ...ast.Node) {
 	if len(children) == 0 {
 		return
 	}
-	var child ast.Node
-	contentElementCount := 0
-	lastHeadingIndex := -1
-	lastFigureIndex := -1
-	index := 0
+	var (
+		child               ast.Node
+		notes               *slideNotes
+		footnote            *footnoteast.FootnoteDefinition
+		footnotes           []*footnoteast.FootnoteDefinition
+		lastHeadingIndex    = -1
+		lastFigureIndex     = -1
+		contentElementCount int
+		index               int
+	)
+
 	for index, child = range children {
-		// s.OwnerDocument().RemoveChild(child)
-		s.AppendChild(child)
+		// s.RemoveChild(child)
+		// s.AppendChild(child)
 		switch child.Kind() {
 		case ast.KindHeading:
+			s.AppendChild(child)
 			lastHeadingIndex = index
 		case KindFigure:
+			s.AppendChild(child)
 			lastFigureIndex = contentElementCount
+		case footnoteast.KindFootnoteDefinition:
+			footnote, _ = child.(*footnoteast.FootnoteDefinition)
+			if footnote != nil {
+				footnotes = append(footnotes, footnote)
+			}
 		case KindSlideNotes:
+			s.AppendChild(child)
+			notes, _ = child.(*slideNotes)
 		default:
+			s.AppendChild(child)
 			contentElementCount++
+		}
+	}
+
+	if len(footnotes) > 0 {
+		if notes == nil {
+			notes = &slideNotes{}
+			s.AppendChild(notes)
+		}
+		for _, footnote := range footnotes {
+			s.RemoveChild(footnote)
+			notes.AppendChild(footnote)
 		}
 	}
 

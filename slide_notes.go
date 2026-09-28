@@ -15,26 +15,26 @@ var KindSlideNotes = ast.NewNodeKind("SlideNotes")
 
 var _ html.NodeRenderer = (*slideNotesRenderer)(nil)
 
-// SlideNotes represents notes associated with a slide.
-type SlideNotes struct {
+type slideNotes struct {
 	ast.BaseBlock
+	// Footnotes []*footnoteast.FootnoteDefinition
+}
+
+// NewSlideNotes returns a new [slideNotes] node.
+func NewSlideNotes() ast.Node {
+	n := &slideNotes{}
+	n.Init(n)
+	return n
 }
 
 // Dump implements Node.Dump .
-func (n *SlideNotes) Dump(_ []byte) *ast.NodeDump {
+func (n *slideNotes) Dump(_ []byte) *ast.NodeDump {
 	return ast.NewNodeDump(n, nil)
 }
 
 // Kind implements Node.Kind.
-func (n *SlideNotes) Kind() ast.NodeKind {
+func (n *slideNotes) Kind() ast.NodeKind {
 	return KindSlideNotes
-}
-
-// NewSlideNotes returns a new [SlideNotes] node.
-func NewSlideNotes() *SlideNotes {
-	n := &SlideNotes{}
-	n.Init(n)
-	return n
 }
 
 type slideNotesRenderer struct{}
