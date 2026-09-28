@@ -50,6 +50,7 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 			extension.NewStrikethroughHTMLRenderer(),
 			extension.NewTableHTMLRenderer(),
 			extension.NewTaskListItemHTMLRenderer(),
+			extension.NewFootnoteHTMLRenderer(),
 		),
 		html.WithNodeRendererDecorator(
 			ast.KindImage,

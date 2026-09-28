@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="58a6ebefc423b140"]
+  [id="01ccbed1abf49f6a"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -57,14 +57,6 @@ Document: MdCoach Demo {
       Text: Some text after figure
       Text: .
     }
-  }
-  Slide: BLockquote Tests {
-    [data-heading-level="1"]
-    [data-layout="normal"]
-    Heading: BLockquote Tests {
-      Text: BLockquote
-      Text: Tests
-    }
     Blockquote: three\ {
       Blockquote: three\ {
         Paragraph: three\ {
@@ -72,11 +64,20 @@ Document: MdCoach Demo {
           Text: continue teh
           Text: quote
         }
+        RawHTML
       }
       Paragraph: ahem (citation) {
         Text: ahem
       }
       RawHTML
+    }
+  }
+  Slide: Notes and Footnotes {
+    [data-heading-level="2"]
+    [data-layout="normal"]
+    Heading: Notes and Footnotes {
+      Text: Notes and
+      Text: Footnotes
     }
     List: lists :shark: {
       ListItem: lists :shark: {
@@ -88,13 +89,14 @@ Document: MdCoach Demo {
           }
         }
       }
-      ListItem: ("lists") {
-        Paragraph: ("lists") {
+      ListItem: ("lists")[^1] {
+        Paragraph: ("lists")[^1] {
           Text: (
           Text: “
           Text: lists
           Text: ”
           Text: )
+          FootnoteReference
         }
       }
       ListItem: lists[^ft] {
@@ -102,6 +104,12 @@ Document: MdCoach Demo {
           Text: lists
           FootnoteReference
         }
+      }
+    }
+    FootnoteDefinition: first footnote {
+      Paragraph: first footnote {
+        Text: first
+        Text: footnote
       }
     }
     FootnoteDefinition: notes des noteshrink {
@@ -118,9 +126,9 @@ Document: MdCoach Demo {
         }
       }
     }
-    Aside: Aside element here. {
-      Paragraph: Aside element here. {
-        Text: Aside element here
+    Aside: Notes and footnotes to go the side into a collapsible notes {
+      Paragraph: Notes and footnotes to go the side into a collapsible notes  {
+        Text: Notes and footnotes to go the side into a collapsible notes 
         Text: .
       }
     }

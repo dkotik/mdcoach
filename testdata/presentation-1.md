@@ -52,17 +52,21 @@ Some text before figure.
 
 Some text after figure.
 
----
-
-# BLockquote Tests
 > > three\
 > > continue teh quote
+> > (sub-citation)
 >
 > ahem (citation)
 
+---
+
+## Notes and Footnotes
+
 - lists :shark:
-- ("lists")
+- ("lists")[^1]
 - lists[^ft]
+
+[^1]: first footnote
 
 [^ft]: notes des noteshrink
     slkfj sadlk fjsldkfj slkdjf
@@ -71,7 +75,7 @@ Some text after figure.
 
 ***
 
-Aside element here.
+Notes and footnotes to go the side into a collapsible notes container.
 
 ## Table Rendering
 

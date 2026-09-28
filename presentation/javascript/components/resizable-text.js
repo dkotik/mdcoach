@@ -132,13 +132,12 @@ class ResizableText extends HTMLElement {
     this.saveSize()
   }
 
-  loadSize() {
-    const key = this.getAttribute('data-key')
-    if (!key) {
-      this.size = resizableTextDefault
-      return
-    }
+  getStorageKey() {
+    return this.getAttribute('data-key') || 'mdcoachResizableTextGlobalSize'
+  }
 
+  loadSize() {
+    const key = this.getStorageKey()
     try {
       const storedSize = Number(window.localStorage.getItem(key))
       this.size = Number.isFinite(storedSize) && storedSize >= resizableTextMinimum
@@ -150,11 +149,7 @@ class ResizableText extends HTMLElement {
   }
 
   saveSize() {
-    const key = this.getAttribute('data-key')
-    if (!key) {
-      return
-    }
-
+    const key = this.getStorageKey()
     try {
       window.localStorage.setItem(key, String(this.size))
     } catch {
