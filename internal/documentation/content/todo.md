@@ -13,6 +13,7 @@ weight: 60
 - https://keleshev.com/my-book-writing-setup/ - pandoc to pdf and to epub
   > to solve above issue, use webpack to bundle in fonts | or packer JS?
   > https://survivejs.com/webpack/loading/fonts/
+- [ ] Safari sizing is off.
 
 ## Considerations
 

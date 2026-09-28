@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="ad549fc2e4931130"]
+  [id="13a4dd917ab24223"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -11,11 +11,6 @@ Document: MdCoach Demo {
     Figure: cat image {
       Image: cat image {
         Text: cat image
-      }
-    }
-    SlideNotes: notes {
-      Paragraph: notes {
-        Text: notes
       }
     }
   }
