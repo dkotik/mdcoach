@@ -16,28 +16,28 @@ class PresentationNotes extends HTMLElement {
         color: var(--color-menu-text, #666);
         display: block;
         height: 100vh;
-        max-width: calc(100vw - 3rem);
+        max-width: calc(100vw - 2.5rem);
         position: fixed;
         right: 0;
         top: 0;
-        transform: translateX(calc(100% - 3rem));
+        transform: translateX(calc(100% - 2.5rem));
         transition: transform 250ms ease;
-        width: 24rem;
+        width: calc(36vw + 2.5rem);
         z-index: 9999;
+
+        aside {
+          background: var(--color-menu-background, #eee);
+          box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
+          box-sizing: border-box;
+          height: 100%;
+          overflow: auto;
+          padding: 1rem 1.25rem;
+          margin-left: 2.5rem;
+        }
       }
 
       :host([open]) {
         transform: translateX(0);
-      }
-
-      .dock {
-        background: var(--color-menu-background, #eee);
-        box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
-        box-sizing: border-box;
-        height: 100%;
-        overflow: auto;
-        padding: 1rem 1.25rem;
-        padding-left: 4rem;
       }
 
       button {
@@ -52,8 +52,10 @@ class PresentationNotes extends HTMLElement {
         left: 0;
         padding: 0.75rem 0.5rem;
         position: absolute;
-        top: 1rem;
+        top: 10vh;
         writing-mode: vertical-rl;
+        max-width: 4rem;
+        overflow: hidden;
       }
 
       button:focus-visible {
@@ -83,16 +85,8 @@ class PresentationNotes extends HTMLElement {
     this.button.textContent = 'Notes'
     this.button.addEventListener('click', this.onToggle)
 
-    this.dock = document.createElement('section')
-    this.dock.className = 'dock'
+    this.dock = document.createElement('aside')
     this.dock.setAttribute('aria-label', 'Speaker notes')
-
-    const heading = document.createElement('h2')
-    heading.textContent = 'Notes'
-    this.content = document.createElement('div')
-    this.content.className = 'content'
-    this.content.setAttribute('aria-live', 'polite')
-    this.dock.append(heading, this.content)
 
     this.shadowRoot.replaceChildren(style, this.button, this.dock)
     this.updateState()
@@ -139,7 +133,7 @@ class PresentationNotes extends HTMLElement {
       return
     }
 
-    const slide = document.querySelector('main > section.is-focused')
+    const slide = document.querySelector('main > aside.is-focused')
     const notes = slide?.querySelectorAll(':scope > .grid > .content > aside') || []
     const copies = Array.from(notes, (note) => {
       const copy = note.cloneNode(true)
