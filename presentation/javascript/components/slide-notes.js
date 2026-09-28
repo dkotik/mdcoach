@@ -1,10 +1,10 @@
-// use as custom element <presentation-notes> to show notes from the focused slide
+// use as custom element <slide-notes> to show notes from the focused slide
 
 const notesPanelWidthStorageKey = 'presentationNotesWidth'
 const notesPanelOpenStorageKey = 'presentationNotesOpen'
 const notesPanelTabWidth = 40
 
-class PresentationNotes extends HTMLElement {
+class SlideNotes extends HTMLElement {
   static get observedAttributes() {
     return ['open']
   }
@@ -345,6 +345,6 @@ class PresentationNotes extends HTMLElement {
 //   }
 }
 
-if (!customElements.get('presentation-notes')) {
-  customElements.define('presentation-notes', PresentationNotes)
+if (!customElements.get('slide-notes')) {
+  customElements.define('slide-notes', SlideNotes)
 }

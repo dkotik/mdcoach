@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="d743e93ddc36119c"]
+  [id="302d2724f54b6a6e"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -13,7 +13,7 @@ Document: MdCoach Demo {
         Text: cat image
       }
     }
-    Aside: notes {
+    SlideNotes: notes {
       Paragraph: notes {
         Text: notes
       }
@@ -106,7 +106,7 @@ Document: MdCoach Demo {
         }
       }
     }
-    Aside: Notes and footnotes to go the side into a collapsible notes {
+    SlideNotes: Notes and footnotes to go the side into a collapsible notes {
       Paragraph: Notes and footnotes to go the side into a collapsible notes  {
         Text: Notes and footnotes to go the side into a collapsible notes 
         Text: .

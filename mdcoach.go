@@ -27,7 +27,7 @@ func NewParser() parser.Parser {
 			util.Prioritized(NewEmoteParser(), 500),
 		),
 		parser.WithBlockParsers(
-			util.Prioritized(NewAsideParser(), 10),
+			util.Prioritized(NewSlideNotesParser(), 10),
 		),
 		parser.WithASTTransformers(
 			// Run after extension AST transformers so slides contain their
@@ -35,7 +35,7 @@ func NewParser() parser.Parser {
 			util.Prioritized(NewFigureTransformer(), 4),
 			util.Prioritized(NewBlockquoteTransformer(), 5),
 			util.Prioritized(NewSlideTransformer(2), 900),
-			util.Prioritized(NewFootnoteAsideTransformer(), 1000),
+			util.Prioritized(NewFootnoteSlideNotesTransformer(), 1000),
 			util.Prioritized(NewDocumentIDInjector(), 1400),
 		),
 	)
@@ -58,7 +58,7 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 			func(html.NodeRenderer) html.NodeRenderer { return NewImageRenderer() },
 		),
 		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(cache)),
-		html.WithNodeRenderer(KindAside, NewAsideRenderer()),
+		html.WithNodeRenderer(KindSlideNotes, NewSlideNotesRenderer()),
 		html.WithNodeRenderer(KindFigure, NewFigureRenderer()),
 		html.WithNodeRendererDecorator(
 			ast.KindRawHTML,

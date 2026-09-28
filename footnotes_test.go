@@ -9,27 +9,27 @@ import (
 	footnoteast "github.com/yuin/goldmark/v2/extension/ast"
 )
 
-func TestFootnoteAsideTransformer(t *testing.T) {
+func TestFootnoteSlideNotesTransformer(t *testing.T) {
 	testCases := []struct {
-		name                string
-		source              string
-		wantAsideLabels     map[string]bool
-		wantRemainingLabels map[string]bool
+		name                 string
+		source               string
+		wantSlideNotesLabels map[string]bool
+		wantRemainingLabels  map[string]bool
 	}{
 		{
 			name: "move definitions to their referring slides",
 			source: "# First slide\n\nReference[^first].\n\n***\nFirst slide notes.\n---\n" +
 				"# Second slide\n\nReference[^second].\n\n***\nSecond slide notes.\n---\n" +
 				"[^first]: First footnote.\n[^second]: Second footnote.\n[^unused]: Unreferenced footnote.\n",
-			wantAsideLabels:     map[string]bool{"first": true, "second": true},
-			wantRemainingLabels: map[string]bool{"unused": true},
+			wantSlideNotesLabels: map[string]bool{"first": true, "second": true},
+			wantRemainingLabels:  map[string]bool{"unused": true},
 		},
 		{
-			name: "leave definition when slide has no aside",
-			source: "# Slide without aside\n\nReference[^note].\n\n---\n" +
+			name: "leave definition when slide has no slide notes",
+			source: "# Slide without slide notes\n\nReference[^note].\n\n---\n" +
 				"[^note]: Footnote body.\n",
-			wantAsideLabels:     map[string]bool{},
-			wantRemainingLabels: map[string]bool{"note": true},
+			wantSlideNotesLabels: map[string]bool{},
+			wantRemainingLabels:  map[string]bool{"note": true},
 		},
 	}
 
@@ -38,7 +38,7 @@ func TestFootnoteAsideTransformer(t *testing.T) {
 			source := []byte(testCase.source)
 			document := NewParser().Parse(source).(*ast.Document)
 
-			foundAsideLabels := make(map[string]bool)
+			foundSlideNotesLabels := make(map[string]bool)
 			foundRemainingLabels := make(map[string]bool)
 			for slide := document.FirstChild(); slide != nil; slide = slide.NextSibling() {
 				if slide.Kind() != SlideKind {
@@ -46,13 +46,13 @@ func TestFootnoteAsideTransformer(t *testing.T) {
 				}
 
 				references := make(map[string]bool)
-				var aside ast.Node
+				var slideNotes ast.Node
 				_ = ast.Walk(slide, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
 					if !entering {
 						return ast.WalkContinue, nil
 					}
-					if node.Kind() == KindAside && aside == nil {
-						aside = node
+					if node.Kind() == KindSlideNotes && slideNotes == nil {
+						slideNotes = node
 					}
 					if node.Kind() == footnoteast.KindFootnoteDefinition {
 						return ast.WalkSkipChildren, nil
@@ -63,17 +63,17 @@ func TestFootnoteAsideTransformer(t *testing.T) {
 					return ast.WalkContinue, nil
 				})
 
-				if aside != nil {
-					for child := aside.FirstChild(); child != nil; child = child.NextSibling() {
+				if slideNotes != nil {
+					for child := slideNotes.FirstChild(); child != nil; child = child.NextSibling() {
 						definition, ok := child.(*footnoteast.FootnoteDefinition)
 						if !ok {
 							continue
 						}
 						label := definition.Label.Str(source)
 						if !references[label] {
-							t.Errorf("aside contains footnote %q without a reference in its slide (references: %v)", label, references)
+							t.Errorf("slide notes contain footnote %q without a reference in their slide (references: %v)", label, references)
 						}
-						foundAsideLabels[label] = true
+						foundSlideNotesLabels[label] = true
 					}
 				}
 			}
@@ -86,18 +86,18 @@ func TestFootnoteAsideTransformer(t *testing.T) {
 				if !ok {
 					return ast.WalkContinue, nil
 				}
-				if definition.Parent() == nil || definition.Parent().Kind() != KindAside {
+				if definition.Parent() == nil || definition.Parent().Kind() != KindSlideNotes {
 					foundRemainingLabels[definition.Label.Str(source)] = true
 				}
 				return ast.WalkSkipChildren, nil
 			})
 
-			if len(foundAsideLabels) != len(testCase.wantAsideLabels) {
-				t.Errorf("footnotes in slide asides = %v, want %v", foundAsideLabels, testCase.wantAsideLabels)
+			if len(foundSlideNotesLabels) != len(testCase.wantSlideNotesLabels) {
+				t.Errorf("footnotes in slide notes = %v, want %v", foundSlideNotesLabels, testCase.wantSlideNotesLabels)
 			}
-			for label := range testCase.wantAsideLabels {
-				if !foundAsideLabels[label] {
-					t.Errorf("footnote %q was not moved into its slide aside", label)
+			for label := range testCase.wantSlideNotesLabels {
+				if !foundSlideNotesLabels[label] {
+					t.Errorf("footnote %q was not moved into its slide notes", label)
 				}
 			}
 			if len(foundRemainingLabels) != len(testCase.wantRemainingLabels) {
@@ -105,7 +105,7 @@ func TestFootnoteAsideTransformer(t *testing.T) {
 			}
 			for label := range testCase.wantRemainingLabels {
 				if !foundRemainingLabels[label] {
-					t.Errorf("footnote %q should remain outside an aside", label)
+					t.Errorf("footnote %q should remain outside slide notes", label)
 				}
 			}
 		})

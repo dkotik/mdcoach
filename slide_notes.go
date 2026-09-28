@@ -11,40 +11,40 @@ import (
 	"github.com/yuin/goldmark/v2/util"
 )
 
-var KindAside = ast.NewNodeKind("Aside")
+var KindSlideNotes = ast.NewNodeKind("SlideNotes")
 
-var _ html.NodeRenderer = (*asideRenderer)(nil)
+var _ html.NodeRenderer = (*slideNotesRenderer)(nil)
 
-// A Aside struct represents a marginal note.
-type Aside struct {
+// SlideNotes represents notes associated with a slide.
+type SlideNotes struct {
 	ast.BaseBlock
 }
 
 // Dump implements Node.Dump .
-func (n *Aside) Dump(_ []byte) *ast.NodeDump {
+func (n *SlideNotes) Dump(_ []byte) *ast.NodeDump {
 	return ast.NewNodeDump(n, nil)
 }
 
 // Kind implements Node.Kind.
-func (n *Aside) Kind() ast.NodeKind {
-	return KindAside
+func (n *SlideNotes) Kind() ast.NodeKind {
+	return KindSlideNotes
 }
 
-// NewAside returns a new [Aside] node.
-func NewAside() *Aside {
-	n := &Aside{}
+// NewSlideNotes returns a new [SlideNotes] node.
+func NewSlideNotes() *SlideNotes {
+	n := &SlideNotes{}
 	n.Init(n)
 	return n
 }
 
-type asideRenderer struct{}
+type slideNotesRenderer struct{}
 
-// NewAsideRenderer returns a Goldmark v2 HTML renderer for Aside nodes.
-func NewAsideRenderer() html.NodeRenderer {
-	return &asideRenderer{}
+// NewSlideNotesRenderer returns a Goldmark v2 HTML renderer for SlideNotes nodes.
+func NewSlideNotesRenderer() html.NodeRenderer {
+	return &slideNotesRenderer{}
 }
 
-func (*asideRenderer) Render(
+func (*slideNotesRenderer) Render(
 	writer io.Writer,
 	_ []byte,
 	node ast.Node,
@@ -56,38 +56,36 @@ func (*asideRenderer) Render(
 		w = util.NewErrorBufWriter(writer)
 	}
 	if entering {
-		_, _ = w.WriteString("<presentation-notes>")
+		_, _ = w.WriteString("<slide-notes>")
 	} else {
-		_, _ = w.WriteString("</presentation-notes>")
+		_, _ = w.WriteString("</slide-notes>")
 	}
 	return ast.WalkContinue, nil
 }
 
-type asideParser struct {
+type slideNotesParser struct{}
+
+var defaultSlideNotesParser = &slideNotesParser{}
+
+// NewSlideNotesParser returns a BlockParser for slide notes.
+func NewSlideNotesParser() parser.BlockParser {
+	return defaultSlideNotesParser
 }
 
-var defaultAsideParser = &asideParser{}
-
-// NewAsideParser returns a new BlockParser that
-// parses marginal notes.
-func NewAsideParser() parser.BlockParser {
-	return defaultAsideParser
-}
-
-func (a *asideParser) Trigger() []byte {
+func (p *slideNotesParser) Trigger() []byte {
 	return []byte{'*'}
 }
 
-func (a *asideParser) Open(_ ast.Node, reader text.Reader, _ parser.Context) (ast.Node, parser.State) {
+func (p *slideNotesParser) Open(_ ast.Node, reader text.Reader, _ parser.Context) (ast.Node, parser.State) {
 	line, _ := reader.PeekLine()
-	if isAsideBreak(line, reader.LineOffset()) {
+	if isSlideNotesBreak(line, reader.LineOffset()) {
 		reader.AdvanceToEOL()
-		return NewAside(), parser.HasChildren
+		return NewSlideNotes(), parser.HasChildren
 	}
 	return nil, parser.NoChildren
 }
 
-func (a *asideParser) Continue(_ ast.Node, reader text.Reader, _ parser.Context) parser.State {
+func (p *slideNotesParser) Continue(_ ast.Node, reader text.Reader, _ parser.Context) parser.State {
 	line, _ := reader.PeekLine()
 	offset := reader.LineOffset()
 	_, pos := util.IndentWidth(line, offset)
@@ -102,19 +100,19 @@ func (a *asideParser) Continue(_ ast.Node, reader text.Reader, _ parser.Context)
 	return parser.Continue | parser.HasChildren
 }
 
-func (a *asideParser) Close(_ ast.Node, _ text.Reader, _ parser.Context) {
+func (p *slideNotesParser) Close(_ ast.Node, _ text.Reader, _ parser.Context) {
 	// nothing to do
 }
 
-func (a *asideParser) CanInterruptParagraph() bool {
+func (p *slideNotesParser) CanInterruptParagraph() bool {
 	return true
 }
 
-func (a *asideParser) CanAcceptIndentedLine() bool {
+func (p *slideNotesParser) CanAcceptIndentedLine() bool {
 	return true
 }
 
-func isAsideBreak(line []byte, offset int) bool {
+func isSlideNotesBreak(line []byte, offset int) bool {
 	w, pos := util.IndentWidth(line, offset)
 	if w > 3 {
 		return false

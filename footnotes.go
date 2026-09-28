@@ -7,18 +7,18 @@ import (
 	"github.com/yuin/goldmark/v2/text"
 )
 
-var _ parser.ASTTransformer = (*footnoteAsideTransformer)(nil)
+var _ parser.ASTTransformer = (*footnoteSlideNotesTransformer)(nil)
 
-// NewFootnoteAsideTransformer moves referenced footnote definitions into the
-// first aside in the slide containing each reference.
-func NewFootnoteAsideTransformer() parser.ASTTransformer {
-	return &footnoteAsideTransformer{}
+// NewFootnoteSlideNotesTransformer moves referenced footnote definitions into
+// the first slide-notes node in the slide containing each reference.
+func NewFootnoteSlideNotesTransformer() parser.ASTTransformer {
+	return &footnoteSlideNotesTransformer{}
 }
 
-type footnoteAsideTransformer struct{}
+type footnoteSlideNotesTransformer struct{}
 
 type footnoteSlide struct {
-	aside      ast.Node
+	slideNotes ast.Node
 	references map[string]struct{}
 }
 
@@ -39,7 +39,7 @@ func findASTParent(root, target ast.Node) ast.Node {
 	return parent
 }
 
-func (*footnoteAsideTransformer) Transform(
+func (*footnoteSlideNotesTransformer) Transform(
 	document *ast.Document,
 	reader text.Reader,
 	_ parser.Context,
@@ -72,8 +72,8 @@ func (*footnoteAsideTransformer) Transform(
 			if !entering {
 				return ast.WalkContinue, nil
 			}
-			if node.Kind() == KindAside && current.aside == nil {
-				current.aside = node
+			if node.Kind() == KindSlideNotes && current.slideNotes == nil {
+				current.slideNotes = node
 			}
 			if node.Kind() == footnoteast.KindFootnoteDefinition {
 				return ast.WalkSkipChildren, nil
@@ -89,13 +89,13 @@ func (*footnoteAsideTransformer) Transform(
 	for _, definition := range definitions {
 		label := definition.Label.Str(source)
 		for _, slide := range slides {
-			if slide.aside == nil {
+			if slide.slideNotes == nil {
 				continue
 			}
 			if _, referenced := slide.references[label]; !referenced {
 				continue
 			}
-			if definition.Parent() != slide.aside {
+			if definition.Parent() != slide.slideNotes {
 				parent := definition.Parent()
 				if parent == nil {
 					parent = findASTParent(document, definition)
@@ -106,7 +106,7 @@ func (*footnoteAsideTransformer) Transform(
 					definition.SetPreviousSibling(nil)
 					definition.SetNextSibling(nil)
 				}
-				slide.aside.AppendChild(definition)
+				slide.slideNotes.AppendChild(definition)
 			}
 			break
 		}

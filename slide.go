@@ -68,7 +68,7 @@ func (s *Slide) withChildren(children ...ast.Node) {
 			lastHeadingIndex = index
 		case KindFigure:
 			lastFigureIndex = contentElementCount
-		case KindAside:
+		case KindSlideNotes:
 		default:
 			contentElementCount++
 		}
