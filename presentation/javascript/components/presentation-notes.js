@@ -1,15 +1,20 @@
 // use as custom element <presentation-notes> to show notes from the focused slide
 
 const notesPanelWidthStorageKey = 'presentationNotesWidth'
+const notesPanelOpenStorageKey = 'presentationNotesOpen'
 const notesPanelTabWidth = 40
 
 class PresentationNotes extends HTMLElement {
+  static get observedAttributes() {
+    return ['open']
+  }
+
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
     this.onToggle = this.onToggle.bind(this)
-    this.onDOMReady = this.onDOMReady.bind(this)
-    this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    // this.onDOMReady = this.onDOMReady.bind(this)
+    // this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
     this.onResizeStart = this.onResizeStart.bind(this)
     this.onResizeMove = this.onResizeMove.bind(this)
@@ -138,6 +143,7 @@ class PresentationNotes extends HTMLElement {
     this.dock.setAttribute('aria-label', 'Speaker notes')
     this.content = document.createElement('div')
     this.content.className = 'content'
+    this.content.append(document.createElement('slot'))
     this.dock.append(this.content)
 
     this.resizeHandle = document.createElement('div')
@@ -156,11 +162,15 @@ class PresentationNotes extends HTMLElement {
     const defaultWidth = window.innerWidth * 0.36 + notesPanelTabWidth
     this.setPanelWidth(this.getStoredPanelWidth() ?? defaultWidth)
     window.addEventListener('resize', this.onWindowResize)
+    const storedOpenState = this.readOpenState()
+    if (storedOpenState === null) {
+      this.storeOpenState(this.hasAttribute('open'))
+    } else {
+      this.toggleAttribute('open', storedOpenState)
+    }
     this.updateState()
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
-    } else {
-      this.updateNotes()
     }
     window.addEventListener('slideNavigationFinished', this.onNavigationComplete)
   }
@@ -182,13 +192,47 @@ class PresentationNotes extends HTMLElement {
     this.updateState()
   }
 
-  onDOMReady() {
-    this.updateNotes()
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name !== 'open' || oldValue === newValue) {
+      return
+    }
+
+    this.updateState()
+    if (this.isConnected) {
+      this.storeOpenState(newValue !== null)
+    }
   }
 
-  onNavigationComplete() {
-    this.updateNotes()
+  readOpenState() {
+    try {
+      const storedState = window.localStorage.getItem(notesPanelOpenStorageKey)
+      if (storedState === 'true') {
+        return true
+      }
+      if (storedState === 'false') {
+        return false
+      }
+    } catch {
+      return null
+    }
+    return null
   }
+
+  storeOpenState(isOpen) {
+    try {
+      window.localStorage.setItem(notesPanelOpenStorageKey, String(isOpen))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
+  }
+
+//   onDOMReady() {
+//     this.updateNotes()
+//   }
+//
+//   onNavigationComplete() {
+//     this.updateNotes()
+//   }
 
   updateState() {
     const isOpen = this.hasAttribute('open')
@@ -282,23 +326,23 @@ class PresentationNotes extends HTMLElement {
     }
   }
 
-  updateNotes() {
-    if (!this.content) {
-      return
-    }
-
-    const slide = document.querySelector('main > aside.is-focused')
-    const notes = slide?.querySelectorAll(':scope > .grid > .content > aside') || []
-    const copies = Array.from(notes, (note) => {
-      const copy = note.cloneNode(true)
-      copy.removeAttribute('id')
-      for (const element of copy.querySelectorAll('[id]')) {
-        element.removeAttribute('id')
-      }
-      return copy
-    })
-    this.content.replaceChildren(...copies)
-  }
+//   updateNotes() {
+//     if (!this.content) {
+//       return
+//     }
+//
+//     const slide = document.querySelector('main > aside.is-focused')
+//     const notes = slide?.querySelectorAll(':scope > .grid > .content > aside') || []
+//     const copies = Array.from(notes, (note) => {
+//       const copy = note.cloneNode(true)
+//       copy.removeAttribute('id')
+//       for (const element of copy.querySelectorAll('[id]')) {
+//         element.removeAttribute('id')
+//       }
+//       return copy
+//     })
+//     this.content.replaceChildren(...copies)
+//   }
 }
 
 if (!customElements.get('presentation-notes')) {

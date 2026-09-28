@@ -36,8 +36,10 @@
   </presentation-side-button>
   <presentation-curtain></presentation-curtain>
   <presentation-notes>
-    <h1>Notes</h1>
-    <p>some notes</p>
+    <resizable-text>
+      <h1>Notes</h1>
+      <p>some notes</p>
+    </resizable-text>
   </presentation-notes>
 
 <presentation-timer style="max-width: 2rem; max-height: 2rem; position: fixed; top: 1rem; left: 1rem;z-index: 777;"></presentation-timer>
@@ -1380,15 +1382,20 @@ if (!customElements.get('presentation-curtain')) {
 // use as custom element <presentation-notes> to show notes from the focused slide
 
 const notesPanelWidthStorageKey = 'presentationNotesWidth'
+const notesPanelOpenStorageKey = 'presentationNotesOpen'
 const notesPanelTabWidth = 40
 
 class PresentationNotes extends HTMLElement {
+  static get observedAttributes() {
+    return ['open']
+  }
+
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
     this.onToggle = this.onToggle.bind(this)
-    this.onDOMReady = this.onDOMReady.bind(this)
-    this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    // this.onDOMReady = this.onDOMReady.bind(this)
+    // this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
     this.onResizeStart = this.onResizeStart.bind(this)
     this.onResizeMove = this.onResizeMove.bind(this)
@@ -1444,7 +1451,7 @@ class PresentationNotes extends HTMLElement {
         writing-mode: vertical-rl;
         max-width: 4rem;
         overflow: hidden;
-        z-index: 1;
+        z-index: 10;
       }
 
       button:focus-visible,
@@ -1517,6 +1524,7 @@ class PresentationNotes extends HTMLElement {
     this.dock.setAttribute('aria-label', 'Speaker notes')
     this.content = document.createElement('div')
     this.content.className = 'content'
+    this.content.append(document.createElement('slot'))
     this.dock.append(this.content)
 
     this.resizeHandle = document.createElement('div')
@@ -1535,11 +1543,15 @@ class PresentationNotes extends HTMLElement {
     const defaultWidth = window.innerWidth * 0.36 + notesPanelTabWidth
     this.setPanelWidth(this.getStoredPanelWidth() ?? defaultWidth)
     window.addEventListener('resize', this.onWindowResize)
+    const storedOpenState = this.readOpenState()
+    if (storedOpenState === null) {
+      this.storeOpenState(this.hasAttribute('open'))
+    } else {
+      this.toggleAttribute('open', storedOpenState)
+    }
     this.updateState()
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
-    } else {
-      this.updateNotes()
     }
     window.addEventListener('slideNavigationFinished', this.onNavigationComplete)
   }
@@ -1561,13 +1573,47 @@ class PresentationNotes extends HTMLElement {
     this.updateState()
   }
 
-  onDOMReady() {
-    this.updateNotes()
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name !== 'open' || oldValue === newValue) {
+      return
+    }
+
+    this.updateState()
+    if (this.isConnected) {
+      this.storeOpenState(newValue !== null)
+    }
   }
 
-  onNavigationComplete() {
-    this.updateNotes()
+  readOpenState() {
+    try {
+      const storedState = window.localStorage.getItem(notesPanelOpenStorageKey)
+      if (storedState === 'true') {
+        return true
+      }
+      if (storedState === 'false') {
+        return false
+      }
+    } catch {
+      return null
+    }
+    return null
   }
+
+  storeOpenState(isOpen) {
+    try {
+      window.localStorage.setItem(notesPanelOpenStorageKey, String(isOpen))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
+  }
+
+//   onDOMReady() {
+//     this.updateNotes()
+//   }
+//
+//   onNavigationComplete() {
+//     this.updateNotes()
+//   }
 
   updateState() {
     const isOpen = this.hasAttribute('open')
@@ -1661,27 +1707,207 @@ class PresentationNotes extends HTMLElement {
     }
   }
 
-  updateNotes() {
-    if (!this.content) {
-      return
-    }
-
-    const slide = document.querySelector('main > aside.is-focused')
-    const notes = slide?.querySelectorAll(':scope > .grid > .content > aside') || []
-    const copies = Array.from(notes, (note) => {
-      const copy = note.cloneNode(true)
-      copy.removeAttribute('id')
-      for (const element of copy.querySelectorAll('[id]')) {
-        element.removeAttribute('id')
-      }
-      return copy
-    })
-    this.content.replaceChildren(...copies)
-  }
+//   updateNotes() {
+//     if (!this.content) {
+//       return
+//     }
+//
+//     const slide = document.querySelector('main > aside.is-focused')
+//     const notes = slide?.querySelectorAll(':scope > .grid > .content > aside') || []
+//     const copies = Array.from(notes, (note) => {
+//       const copy = note.cloneNode(true)
+//       copy.removeAttribute('id')
+//       for (const element of copy.querySelectorAll('[id]')) {
+//         element.removeAttribute('id')
+//       }
+//       return copy
+//     })
+//     this.content.replaceChildren(...copies)
+//   }
 }
 
 if (!customElements.get('presentation-notes')) {
   customElements.define('presentation-notes', PresentationNotes)
+}
+// use as <resizable-text data-key="slide-text-size">; size persists as a percentage
+
+const resizableTextMinimum = 20
+const resizableTextMaximum = 180
+const resizableTextDefault = 100
+const resizableTextStep = 10
+
+class ResizableText extends HTMLElement {
+  static get observedAttributes() {
+    return ['data-key']
+  }
+
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.size = resizableTextDefault
+    this.onClick = this.onClick.bind(this)
+  }
+
+  connectedCallback() {
+    const style = document.createElement('style')
+    style.textContent = `
+      :host {
+        color: var(--color-menu-text, #666);
+        display: block;
+        max-width: 100%;
+      }
+
+      .toolbar {
+        align-items: center;
+        display: flex;
+        gap: 0.4rem;
+        margin-bottom: 0.5rem;
+      }
+
+      button {
+        background: var(--color-menu-background, #eee);
+        border: 1px solid var(--color-body-subtext, #aaa);
+        border-radius: 0.3rem;
+        color: inherit;
+        cursor: pointer;
+        font: inherit;
+        line-height: 1;
+        padding: 0.4rem 0.6rem;
+      }
+
+      button:hover:not(:disabled) {
+        border-color: var(--color-marker-background, #006eff);
+      }
+
+      button:focus-visible {
+        outline: 2px solid var(--color-marker-background, #006eff);
+        outline-offset: 2px;
+      }
+
+      button:disabled {
+        cursor: default;
+        opacity: 0.5;
+      }
+
+      output {
+        font-variant-numeric: tabular-nums;
+        min-width: 4ch;
+        text-align: center;
+      }
+
+      .content {
+        font-size: var(--resizable-text-size, 100%);
+      }
+    `
+
+    const toolbar = document.createElement('div')
+    toolbar.className = 'toolbar'
+
+    this.decreaseButton = this.createButton('Decrease font size', 'A−', -resizableTextStep)
+    this.increaseButton = this.createButton('Increase font size', 'A+', resizableTextStep)
+    this.output = document.createElement('output')
+    this.output.setAttribute('aria-live', 'polite')
+    this.output.setAttribute('aria-label', 'Current font size')
+    toolbar.append(this.decreaseButton, this.output, this.increaseButton)
+
+    this.content = document.createElement('div')
+    this.content.className = 'content'
+    this.content.append(document.createElement('slot'))
+    this.shadowRoot.replaceChildren(style, toolbar, this.content)
+    this.shadowRoot.addEventListener('click', this.onClick)
+
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'group')
+    }
+    if (!this.hasAttribute('aria-label')) {
+      this.setAttribute('aria-label', 'Resizable text controls')
+    }
+
+    this.loadSize()
+    this.renderSize()
+  }
+
+  disconnectedCallback() {
+    this.shadowRoot.removeEventListener('click', this.onClick)
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name !== 'data-key' || oldValue === newValue || !this.isConnected) {
+      return
+    }
+
+    this.loadSize()
+    this.renderSize()
+  }
+
+  createButton(label, text, change) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.textContent = text
+    button.setAttribute('aria-label', label)
+    button.dataset.change = String(change)
+    return button
+  }
+
+  onClick(event) {
+    const button = event.target.closest('button[data-change]')
+    if (!button || button.disabled) {
+      return
+    }
+
+    this.size = Math.min(
+      resizableTextMaximum,
+      Math.max(resizableTextMinimum, this.size + Number(button.dataset.change)),
+    )
+    this.renderSize()
+    this.saveSize()
+  }
+
+  loadSize() {
+    const key = this.getAttribute('data-key')
+    if (!key) {
+      // this.size = resizableTextDefault
+      // return
+      key = "mdcoachResizableTextGlobalFontSize"
+    }
+
+    try {
+      const storedSize = Number(window.localStorage.getItem(key))
+      this.size = Number.isFinite(storedSize) && storedSize >= resizableTextMinimum
+        ? Math.min(storedSize, resizableTextMaximum)
+        : resizableTextDefault
+    } catch {
+      this.size = resizableTextDefault
+    }
+  }
+
+  saveSize() {
+    const key = this.getAttribute('data-key')
+    if (!key) {
+      return
+    }
+
+    try {
+      window.localStorage.setItem(key, String(this.size))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
+  }
+
+  renderSize() {
+    if (!this.content) {
+      return
+    }
+
+    this.content.style.setProperty('--resizable-text-size', `${this.size}%`)
+    this.output.textContent = `${this.size}%`
+    this.decreaseButton.disabled = this.size <= resizableTextMinimum
+    this.increaseButton.disabled = this.size >= resizableTextMaximum
+  }
+}
+
+if (!customElements.get('resizable-text')) {
+  customElements.define('resizable-text', ResizableText)
 }
 </script><main>
 <section data-heading-level="1" data-heading-level="1" data-layout="splash"><div class="grid"><div class="content"><h1>MdCoach Demo</h1>
