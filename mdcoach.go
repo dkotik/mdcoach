@@ -7,6 +7,7 @@ import (
 	meta "github.com/yuin/goldmark-meta/v2"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/extension"
+	footnoteast "github.com/yuin/goldmark/v2/extension/ast"
 	"github.com/yuin/goldmark/v2/parser"
 	"github.com/yuin/goldmark/v2/renderer/html"
 	"github.com/yuin/goldmark/v2/util"
@@ -58,6 +59,10 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 			func(html.NodeRenderer) html.NodeRenderer { return NewImageRenderer() },
 		),
 		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(cache)),
+		html.WithNodeRenderers(map[ast.NodeKind]html.NodeRenderer{
+			footnoteast.KindFootnoteDefinition: NewFootnoteRenderer(),
+			footnoteast.KindFootnoteReference:  NewFootnoteRenderer(),
+		}),
 		html.WithNodeRenderer(KindSlideNotes, NewSlideNotesRenderer()),
 		html.WithNodeRenderer(KindFigure, NewFigureRenderer()),
 		html.WithNodeRendererDecorator(
