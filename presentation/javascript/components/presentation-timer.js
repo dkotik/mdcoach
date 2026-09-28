@@ -1,5 +1,7 @@
 // use as <presentation-timer duration="60">; duration is in seconds
 
+const presentationTimerTickEventType = 'presentation-timer-tick'
+
 class PresentationTimer extends HTMLElement {
   constructor() {
     super()
@@ -8,6 +10,7 @@ class PresentationTimer extends HTMLElement {
     this.running = false
     this.frame = undefined
     this.startedAt = 0
+    this.lastDispatchedSecond = 0
     this.onClick = this.onClick.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.tick = this.tick.bind(this)
@@ -128,6 +131,7 @@ class PresentationTimer extends HTMLElement {
     }
 
     this.startedAt = performance.now()
+    this.lastDispatchedSecond = Math.floor(this.elapsed / 1000)
     this.running = true
     this.updateProgress(this.elapsed)
     this.updateState()
@@ -156,8 +160,12 @@ class PresentationTimer extends HTMLElement {
     }
 
     const elapsed = this.elapsed + timestamp - this.startedAt
+    this.dispatchElapsedSeconds(elapsed)
     if (elapsed >= this.duration) {
       this.elapsed = this.duration
+      if (this.duration % 1000 !== 0) {
+        this.dispatchTimerTick(this.duration)
+      }
       this.running = false
       this.frame = undefined
       this.updateProgress(this.elapsed)
@@ -167,6 +175,25 @@ class PresentationTimer extends HTMLElement {
 
     this.updateProgress(elapsed)
     this.frame = window.requestAnimationFrame(this.tick)
+  }
+
+  dispatchElapsedSeconds(elapsed) {
+    const elapsedSeconds = Math.floor(elapsed / 1000)
+    while (this.lastDispatchedSecond < elapsedSeconds) {
+      this.lastDispatchedSecond++
+      this.dispatchTimerTick(Math.min(this.lastDispatchedSecond * 1000, this.duration))
+    }
+  }
+
+  dispatchTimerTick(elapsed) {
+    this.dispatchEvent(new CustomEvent(presentationTimerTickEventType, {
+      bubbles: true,
+      composed: true,
+      detail: {
+        totalDuration: this.duration,
+        remainingDuration: Math.max(0, this.duration - elapsed),
+      },
+    }))
   }
 
   updateProgress(elapsed) {

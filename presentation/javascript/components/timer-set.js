@@ -2,12 +2,18 @@
 // emits 'presentation-timer-change' with the selected duration in seconds
 
 class TimerSet extends HTMLElement {
+  static get observedAttributes() {
+    return ['data-timer-id']
+  }
+
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
     this.onClick = this.onClick.bind(this)
+    this.onTimerTick = this.onTimerTick.bind(this)
     this.defaultDuration = 60
     this.duration = this.defaultDuration
+    this.isListeningForTimerTicks = false
   }
 
   connectedCallback() {
@@ -135,12 +141,55 @@ class TimerSet extends HTMLElement {
     controls.append(addButtons, this.output, otherButtons)
     this.shadowRoot.replaceChildren(style, controls)
     this.shadowRoot.addEventListener('click', this.onClick)
+    this.updateTimerTickSubscription()
     this.renderDuration()
     this.dispatchDurationChange()
   }
 
   disconnectedCallback() {
     this.shadowRoot.removeEventListener('click', this.onClick)
+    this.removeTimerTickSubscription()
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'data-timer-id' && oldValue !== newValue && this.isConnected) {
+      this.updateTimerTickSubscription()
+    }
+  }
+
+  updateTimerTickSubscription() {
+    if (this.getAttribute('data-timer-id')) {
+      if (!this.isListeningForTimerTicks) {
+        window.addEventListener(presentationTimerTickEventType, this.onTimerTick)
+        this.isListeningForTimerTicks = true
+      }
+      return
+    }
+
+    this.removeTimerTickSubscription()
+  }
+
+  removeTimerTickSubscription() {
+    if (!this.isListeningForTimerTicks) {
+      return
+    }
+
+    window.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.isListeningForTimerTicks = false
+  }
+
+  onTimerTick(event) {
+    if (event.target?.id !== this.getAttribute('data-timer-id')) {
+      return
+    }
+
+    const remainingDuration = Number(event.detail?.remainingDuration)
+    if (!Number.isFinite(remainingDuration) || remainingDuration < 0) {
+      return
+    }
+
+    this.duration = Math.ceil(remainingDuration / 1000)
+    this.renderDuration()
   }
 
   getDurationAttribute() {

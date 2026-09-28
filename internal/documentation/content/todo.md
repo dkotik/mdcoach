@@ -4,6 +4,7 @@ weight: 60
 ---
 
 - [ ] Utilize Presentation API: https://developer.mozilla.org/en-US/docs/Web/API/Presentation_API
+  - [ ] html[data-presentation-receiver] to hide elements
 - [ ] before.gen.html should be scripts.gen.js
 - [ ] return regular emotes
 - [x] add body[class="is-focused"] that toggles based on logic in synchronize.js
@@ -17,6 +18,7 @@ weight: 60
 
 ## Considerations
 
+- <https://revealjs.com/>
 - <https://voussoir.net/writing/css_for_printing>
 - <https://github.com/quail-ink/goldmark-enclave> - more embeds
 - https://www.deckset.com/features/
