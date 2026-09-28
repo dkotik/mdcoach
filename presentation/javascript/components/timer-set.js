@@ -10,6 +10,7 @@ class TimerSet extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.onClick = this.onClick.bind(this)
+    this.onInputKeyDown = this.onInputKeyDown.bind(this)
     this.onTimerTick = this.onTimerTick.bind(this)
     this.defaultDuration = 60
     this.duration = this.defaultDuration
@@ -62,26 +63,23 @@ class TimerSet extends HTMLElement {
         outline-offset: 2px;
       }
 
-      output {
-        align-items: center;
+      .duration-input {
         background: var(--color-menu-background, #eee);
         border: 1px solid var(--color-body-subtext, #aaa);
         border-radius: 0.35rem;
-        display: flex;
+        box-sizing: content-box;
+        color: inherit;
+        font: inherit;
         font-variant-numeric: tabular-nums;
         font-weight: 700;
-        gap: 0.2rem;
         padding: 0.45rem 0.6rem;
-      }
-
-      .slot {
-        min-width: 2ch;
         text-align: center;
+        width: 5ch;
       }
 
-      .separator,
-      .unit {
-        color: var(--color-body-subtext, #aaa);
+      .duration-input:focus-visible {
+        outline: 2px solid var(--color-marker-background, #006eff);
+        outline-offset: 2px;
       }
 
       @media (max-width: 30rem) {
@@ -96,32 +94,12 @@ class TimerSet extends HTMLElement {
       }
     `
 
-    this.output = document.createElement('output')
-    this.output.setAttribute('aria-label', 'Timer duration')
-
-    this.minutes = document.createElement('span')
-    this.minutes.className = 'slot'
-    this.minutes.setAttribute('aria-label', 'minutes')
-
-    const separator = document.createElement('span')
-    separator.className = 'separator'
-    separator.textContent = ':'
-    separator.setAttribute('aria-hidden', 'true')
-
-    this.seconds = document.createElement('span')
-    this.seconds.className = 'slot'
-    this.seconds.setAttribute('aria-label', 'seconds')
-
-    // const minuteUnit = document.createElement('span')
-    // minuteUnit.className = 'unit'
-    // minuteUnit.textContent = 'm'
-    // minuteUnit.setAttribute('aria-hidden', 'true')
-    // const secondUnit = document.createElement('span')
-    // secondUnit.className = 'unit'
-    // secondUnit.textContent = 's'
-    // secondUnit.setAttribute('aria-hidden', 'true')
-    // this.output.append(this.minutes, minuteUnit, separator, this.seconds, secondUnit)
-    this.output.append(this.minutes, separator, this.seconds)
+    this.input = document.createElement('input')
+    this.input.className = 'duration-input'
+    this.input.type = 'text'
+    this.input.setAttribute('aria-label', 'Timer duration in minutes and seconds')
+    this.input.setAttribute('autocomplete', 'off')
+    this.input.addEventListener('keydown', this.onInputKeyDown)
 
     const addButtons = document.createElement('div')
     addButtons.className = 'group'
@@ -139,7 +117,7 @@ class TimerSet extends HTMLElement {
 
     const controls = document.createElement('div')
     controls.className = 'controls'
-    controls.append(addButtons, this.output, otherButtons)
+    controls.append(addButtons, this.input, otherButtons)
     this.shadowRoot.replaceChildren(style, controls)
     this.shadowRoot.addEventListener('click', this.onClick)
     this.renderDuration()
@@ -147,6 +125,7 @@ class TimerSet extends HTMLElement {
 
   disconnectedCallback() {
     this.shadowRoot.removeEventListener('click', this.onClick)
+    this.input?.removeEventListener('keydown', this.onInputKeyDown)
     this.removeTimerTickSubscription()
   }
 
@@ -171,6 +150,33 @@ class TimerSet extends HTMLElement {
   removeTimerTickSubscription() {
     this.timerElement?.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
     this.timerElement = null
+  }
+
+  onInputKeyDown(event) {
+    if (event.key !== 'Enter') {
+      return
+    }
+
+    event.preventDefault()
+    const duration = this.parseDuration(this.input.value)
+    if (duration !== null) {
+      this.duration = duration
+      this.updateTimerDuration()
+    }
+    this.input.blur()
+    this.renderDuration()
+  }
+
+  parseDuration(value) {
+    const match = /^(\d+):([0-5]?\d)$/.exec(value.trim())
+    if (!match) {
+      return null
+    }
+
+    const minutes = Number(match[1])
+    const seconds = Number(match[2])
+    const duration = minutes * 60 + seconds
+    return Number.isSafeInteger(duration) ? duration : null
   }
 
   onTimerTick(event) {
@@ -221,21 +227,24 @@ class TimerSet extends HTMLElement {
       this.duration = Math.max(0, this.duration + Number(adjustment))
     }
     this.renderDuration()
+    this.updateTimerDuration()
+  }
+
+  updateTimerDuration() {
     if (this.timerElement) {
       this.timerElement.duration = this.duration * 1000
     }
   }
 
   renderDuration() {
-    if (!this.minutes || !this.seconds) {
+    if (!this.input || this.shadowRoot.activeElement === this.input) {
       return
     }
 
     const minutes = Math.floor(this.duration / 60)
     const seconds = this.duration % 60
-    this.minutes.textContent = String(minutes).padStart(2, '0')
-    this.seconds.textContent = String(seconds).padStart(2, '0')
-    this.output.setAttribute('aria-label', `${minutes} minutes ${seconds} seconds`)
+    this.input.value = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    this.input.setAttribute('aria-valuetext', `${minutes} minutes ${seconds} seconds`)
   }
 }
 

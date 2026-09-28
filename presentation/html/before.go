@@ -19,6 +19,7 @@ var scripts = []string{
 	"components/presentation-clock.js",
 	"components/presentation-timer.js",
 	"components/timer-set.js",
+	"components/mouse-proximity.js",
 	"components/presentation-progress.js",
 	"components/presentation-play.js",
 	"components/presentation-curtain.js",
