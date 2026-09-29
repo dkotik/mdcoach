@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="05a2c8cd06ded830"]
+  [id="d371b5bade7a0d71"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -213,16 +213,8 @@ Document: MdCoach Demo {
         [class="icon"]
         Text: salad
       }
-      Text: ;) ![slashes](in brackets) \
-      Emote: cat {
-        [class="icon"]
-        Text: cat
-      }
-      Text: \\ hmm
-      Emote: smile {
-        [class="icon"]
-        Text: smile
-      }
+      Text: ;) ![slashes](in brackets) \:cat: \\ hmm:
+      Text: -)
     }
     List: [x] # first ahem {
       ListItem: [x] # first ahem {

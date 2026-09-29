@@ -92,6 +92,11 @@ func TestEmoteColonCodeParser(t *testing.T) {
 			source:    ":+1:\n",
 			wantNames: []string{"+1"},
 		},
+		{
+			name:      "does not accept:+1: unless there is space before it",
+			source:    "does not accept:+1: unless there is space before it\n",
+			wantNames: nil,
+		},
 	}
 
 	for _, tt := range tests {

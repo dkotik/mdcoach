@@ -7,7 +7,6 @@ weight: 60
 - [ ] Utilize Presentation API: https://developer.mozilla.org/en-US/docs/Web/API/Presentation_API
   - [ ] html[data-presentation-receiver] to hide elements
 - [ ] before.gen.html should be scripts.gen.js
-- [x] return regular emotes > add the box ones
 - [x] add body[class="is-focused"] that toggles based on logic in synchronize.js
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
@@ -16,6 +15,7 @@ weight: 60
   > to solve above issue, use webpack to bundle in fonts | or packer JS?
   > https://survivejs.com/webpack/loading/fonts/
 - [ ] Safari sizing is off.
+- [x] return regular emotes > add the box ones?
 
 ## Considerations
 

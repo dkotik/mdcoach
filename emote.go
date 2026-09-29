@@ -81,7 +81,14 @@ func (p *emoteParser) Trigger() []byte {
 }
 
 func (p *emoteParser) Parse(_ ast.Node, reader text.Reader, _ parser.Context) ast.Node {
-	line, _ := reader.PeekLine()
+	line, segment := reader.PeekLine()
+	if segment.Start > 0 {
+		previous := reader.Source()[segment.Start-1]
+		if previous != '\n' && previous != '\r' && !util.IsSpace(previous) {
+			return nil
+		}
+	}
+
 	for _, emoticon := range p.keys {
 		if !bytes.HasPrefix(line, []byte(emoticon)) {
 			continue
@@ -113,6 +120,12 @@ func (*emoteColonCodeParser) Parse(_ ast.Node, reader text.Reader, _ parser.Cont
 	line, segment := reader.PeekLine()
 	if len(line) < 3 || line[0] != ':' {
 		return nil
+	}
+	if segment.Start > 0 {
+		previous := reader.Source()[segment.Start-1]
+		if previous != '\n' && previous != '\r' && !util.IsSpace(previous) {
+			return nil
+		}
 	}
 
 	end := 1
