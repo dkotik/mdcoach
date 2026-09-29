@@ -25,7 +25,7 @@ var scripts = []string{
 	"components/timer-start-pause.js",
 	"components/mouse-proximity.js",
 	"components/presentation-progress.js",
-	"components/presentation-play.js",
+	// "components/presentation-play.js",
 	"components/resizable-text.js",
 	"components/slide-notes.js",
 }

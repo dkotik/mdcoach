@@ -27,6 +27,7 @@ Questions:
       more details about the question here
     - or is it three?
 footer: What would you change for the course?
+duration: 30s
 ---
 # MdCoach Demo
 

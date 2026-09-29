@@ -38,7 +38,7 @@
         <path d="M9 9v6M15 9v6" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
       </svg>
     </curtain-toggle>
-    <presentation-play></presentation-play>
+    <!--<presentation-play></presentation-play>-->
   </presentation-menu>
   <presentation-side-button side="left" onclick="previous(event)">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
@@ -53,10 +53,10 @@
   <presentation-curtain></presentation-curtain>
 
 <timer-start-pause>
-  <mouse-proximity style="position: fixed; bottom: 1rem; right: 4rem; z-index: 77;" distance="120">
-    <timer-set duration="60" data-timer-id="mainTimer"></timer-set>
+  <mouse-proximity style="position: fixed; bottom: 0.75rem; right: 3.4rem; z-index: 77;" distance="20">
+    <timer-set data-timer-id="mainTimer"></timer-set>
   </mouse-proximity>
-  <presentation-timer id="mainTimer" duration="333"></presentation-timer>
+  <presentation-timer id="mainTimer" duration="{{ .Duration.Seconds }}"></presentation-timer>
 </timer-start-pause>
 <keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>
 <presentation-progress></presentation-progress>

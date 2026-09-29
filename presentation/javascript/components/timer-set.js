@@ -27,9 +27,11 @@ class TimerSet extends HTMLElement {
     const style = document.createElement('style')
     style.textContent = `
       :host {
-        color: var(--color-menu-text, #666);
+        color: var(--color-body-text);
         display: inline-flex;
         max-width: 100%;
+        margin-top: 0.6rem;
+        font-size: 1rem;
       }
 
       .controls {
@@ -40,19 +42,21 @@ class TimerSet extends HTMLElement {
 
 
       button {
-        background: var(--color-menu-background, #eee);
-        border: 1px solid var(--color-body-subtext, #aaa);
+        color: var(--color-body-text);
+        border: 1px solid transparent;
+        background: transparent;
         border-radius: 0.3rem;
-        color: inherit;
         cursor: pointer;
         font: inherit;
         line-height: 1.2;
-        padding: 0.3rem 0.5rem;
+        padding: 0.3rem 0.9rem;
         white-space: nowrap;
       }
 
       button:hover {
-        border-color: var(--color-marker-background, #006eff);
+        color: var(--color-marker-background, #006eff);
+        background: var(--color-menu-background, #eee);
+        border: 1px solid var(--color-marker-background, #006eff);
       }
 
       button:focus-visible {
@@ -61,17 +65,22 @@ class TimerSet extends HTMLElement {
       }
 
       .duration-input {
-        background: var(--color-menu-background, #eee);
-        border: 1px solid var(--color-body-subtext, #aaa);
+        color: var(--color-body-text);
+        border: 1px solid transparent;
+        background: transparent;
         border-radius: 0.35rem;
         box-sizing: content-box;
-        color: inherit;
         font: inherit;
         font-variant-numeric: tabular-nums;
         font-weight: 700;
         padding: 0.45rem 0.6rem;
         text-align: center;
         width: 5ch;
+
+        &:hover {
+          background: var(--color-menu-background, #eee);
+          border: 1px solid var(--color-body-subtext, #aaa);
+        }
       }
 
       .duration-input:focus-visible {
@@ -103,11 +112,11 @@ class TimerSet extends HTMLElement {
     const controls = document.createElement('div')
     controls.className = 'controls'
     controls.append(
-      this.createButton('Add 1 minute', '+1 min', 60),
-      this.createButton('Add 5 minutes', '+5 min', 300),
+      this.createButton('Reset timer', '↻', 'reset'),
+      this.createButton('Subtract one minute', '−1', -61),
+      this.createButton('Add 1 minute', '+1', 59),
+      this.createButton('Add 5 minutes', '+5', 299),
       this.input,
-      this.createButton('Reset timer', 'Reset', 'reset'),
-      this.createButton('Subtract 30 seconds', '−30 sec', -30),
     )
     this.shadowRoot.replaceChildren(style, controls)
     this.shadowRoot.addEventListener('click', this.onClick)
@@ -228,14 +237,17 @@ class TimerSet extends HTMLElement {
       this.duration = this.defaultDuration
     } else {
       this.duration = Math.max(0, this.duration + Number(adjustment))
+      // round up to the nearest minute
+      this.duration = Math.ceil(this.duration / 60) * 60
     }
-    this.renderDuration()
     this.updateTimerDuration()
+    this.renderDuration()
   }
 
   updateTimerDuration() {
     if (this.timerElement) {
       this.timerElement.duration = this.duration * 1000
+      this.timerElement.start()
     }
   }
 

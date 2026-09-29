@@ -24,7 +24,9 @@ func New(page Page) ([]byte, error) {
 	document := gpdf.NewDocument(
 		gpdf.WithPageSize(gpdf.A4),
 		gpdf.WithMargins(gpdfdocument.UniformEdges(gpdfdocument.Mm(20))),
-		gpdf.WithMetadata(gpdfdocument.DocumentMetadata{Title: page.Title}),
+		gpdf.WithMetadata(gpdfdocument.DocumentMetadata{
+			Title: page.Title,
+		}),
 	)
 	document.Footer(func(footer *gpdftemplate.PageBuilder) {
 		labels := make([]string, 0, 20)
@@ -51,14 +53,14 @@ func New(page Page) ([]byte, error) {
 			column.Text("Class number: __________", gpdftemplate.FontSize(12))
 		})
 	})
-	if !page.CreatedAt.IsZero() {
-		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
-			row.Col(12, func(column *gpdftemplate.ColBuilder) {
-				column.Text(page.CreatedAt.Format(time.DateOnly), gpdftemplate.FontSize(10))
-				column.Spacer(gpdfdocument.Mm(12))
-			})
-		})
-	}
+	// if !page.CreatedAt.IsZero() {
+	// 	pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
+	// 		row.Col(12, func(column *gpdftemplate.ColBuilder) {
+	// 			column.Text(page.CreatedAt.Format(time.DateOnly), gpdftemplate.FontSize(10))
+	// 			column.Spacer(gpdfdocument.Mm(12))
+	// 		})
+	// 	})
+	// }
 	if page.Title != "" {
 		pdfPage.AutoRow(func(row *gpdftemplate.RowBuilder) {
 			row.Col(12, func(column *gpdftemplate.ColBuilder) {

@@ -1,21 +1,20 @@
 ---
-title: "Roadmap to v1.0.0"
+title: "Development"
 weight: 60
 ---
 
-- [ ] Utilize Presentation API: https://developer.mozilla.org/en-US/docs/Web/API/Presentation_API
-  - [ ] html[data-presentation-receiver] to hide elements
+- [ ] Safari sizing is off.
 - [ ] before.gen.html should be scripts.gen.js
 - [x] add body[class="is-focused"] that toggles based on logic in synchronize.js
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
 - [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)
 - https://keleshev.com/my-book-writing-setup/ - pandoc to pdf and to epub
-- [ ] Safari sizing is off.
-- [x] return regular emotes > add the box ones?
 
 ## Considerations
 
+- [ ] Utilize Presentation API: https://developer.mozilla.org/en-US/docs/Web/API/Presentation_API
+  - [ ] html[data-presentation-receiver] to hide elements
 - <https://revealjs.com/>
 - <https://voussoir.net/writing/css_for_printing>
 - <https://github.com/quail-ink/goldmark-enclave> - more embeds
