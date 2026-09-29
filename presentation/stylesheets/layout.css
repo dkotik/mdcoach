@@ -12,6 +12,15 @@ body {
   overflow: hidden !important;
 }
 
+timer-start-pause {
+  max-width: 2rem;
+  max-height: 2rem;
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 1200;
+}
+
 keystroke-combo {
   position: fixed;
   right: 1rem;

@@ -53,10 +53,10 @@
   <presentation-curtain></presentation-curtain>
 
 <timer-start-pause>
-  <presentation-timer id="mainTimer" style="max-width: 2rem; max-height: 2rem; position: fixed; bottom: 1rem; right: 1rem;z-index: 77;" duration="333"></presentation-timer>
+  <mouse-proximity style="position: fixed; bottom: 1rem; right: 4rem; z-index: 77;" distance="120">
+    <timer-set duration="60" data-timer-id="mainTimer"></timer-set>
+  </mouse-proximity>
+  <presentation-timer id="mainTimer" duration="333"></presentation-timer>
 </timer-start-pause>
-<mouse-proximity style="position: fixed; bottom: 1rem; right: 4rem; z-index: 77;" distance="120">
-  <timer-set duration="60" data-timer-id="mainTimer"></timer-set>
-</mouse-proximity>
 <keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>
 <presentation-progress></presentation-progress>

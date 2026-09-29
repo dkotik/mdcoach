@@ -3,7 +3,6 @@ title: "Roadmap to v1.0.0"
 weight: 60
 ---
 
-- [ ] start timer after leaving first slide, pause timer when returning to it, or when curtain is down
 - [ ] Utilize Presentation API: https://developer.mozilla.org/en-US/docs/Web/API/Presentation_API
   - [ ] html[data-presentation-receiver] to hide elements
 - [ ] before.gen.html should be scripts.gen.js

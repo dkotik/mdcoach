@@ -1616,7 +1616,7 @@ class TimerStartPause extends HTMLElement {
     }
 
     const slideIndex = event.detail?.slideIndex
-    this.setTimerRunning(slideIndex !== 0 && this.isCurtainOpen())
+    this.setTimerRunning(slideIndex !== 0 && !this.isCurtainOpen())
   }
 
   onCurtainToggle(event) {
@@ -1627,19 +1627,19 @@ class TimerStartPause extends HTMLElement {
       return
     }
 
-    this.setTimerRunning(event.detail?.open === true)
+    this.setTimerRunning(event.detail?.open !== true)
   }
 
   syncTimerWithCurtain() {
     const curtain = document.querySelector('presentation-curtain')
     if (curtain) {
-      this.setTimerRunning(curtain.hasAttribute('open'))
+      this.setTimerRunning(!curtain.hasAttribute('open'))
     }
   }
 
   isCurtainOpen() {
     const curtain = document.querySelector('presentation-curtain')
-    return !curtain || curtain.hasAttribute('open')
+    return Boolean(curtain?.hasAttribute('open'))
   }
 
   setTimerRunning(shouldRun) {
