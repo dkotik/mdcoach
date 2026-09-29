@@ -5,7 +5,9 @@ class TimerStartPause extends HTMLElement {
     super()
     // critical! otherwise "this" will refer to event context
     // and the timerElement will be <null>
+    this.onDOMReady = this.onDOMReady.bind(this)
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    this.onCurtainToggle = this.onCurtainToggle.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
     this.onTimerTick = this.onTimerTick.bind(this)
     this.timerElement = null
@@ -24,6 +26,7 @@ class TimerStartPause extends HTMLElement {
   disconnectedCallback() {
     document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    window.removeEventListener(curtainToggleEventType, this.onCurtainToggle)
     this.timerElement?.removeEventListener('presentation-timer-tick', this.onTimerTick)
     this.timerStateObserver.disconnect()
     this.timerElement = null
@@ -47,6 +50,8 @@ class TimerStartPause extends HTMLElement {
       attributeFilter: ['paused'],
     })
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    window.addEventListener(curtainToggleEventType, this.onCurtainToggle)
+    this.syncTimerWithCurtain()
   }
 
   onNavigationComplete(event) {
@@ -55,11 +60,43 @@ class TimerStartPause extends HTMLElement {
     }
 
     const slideIndex = event.detail?.slideIndex
-    if (slideIndex === 0) {
-      this.timerElement.pause()
-    } else if (this.timerElement.hasAttribute('paused')) {
-      this.timerElement.start()
+    this.setTimerRunning(slideIndex !== 0 && this.isCurtainOpen())
+  }
+
+  onCurtainToggle(event) {
+    if (
+      !this.timerElement ||
+      event.target !== document.querySelector('presentation-curtain')
+    ) {
+      return
     }
+
+    this.setTimerRunning(event.detail?.open === true)
+  }
+
+  syncTimerWithCurtain() {
+    const curtain = document.querySelector('presentation-curtain')
+    if (curtain) {
+      this.setTimerRunning(curtain.hasAttribute('open'))
+    }
+  }
+
+  isCurtainOpen() {
+    const curtain = document.querySelector('presentation-curtain')
+    return !curtain || curtain.hasAttribute('open')
+  }
+
+  setTimerRunning(shouldRun) {
+    if (!this.timerElement) {
+      return
+    }
+
+    if (shouldRun && this.timerElement.hasAttribute('paused')) {
+      this.timerElement.start()
+    } else if (!shouldRun && !this.timerElement.hasAttribute('paused')) {
+      this.timerElement.pause()
+    }
+    this.onTimerStateChange()
   }
 
   onTimerTick(event) {

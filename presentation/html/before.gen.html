@@ -23,6 +23,158 @@ const element = (name, attributes = {}) => {
   }
   return node
 }
+// use as custom element <presentation-curtain> for a full-screen pause cover
+
+const curtainOpenStorageKey = 'presentationCurtainOpen'
+const curtainToggleEventType = 'presentationCurtainToggle'
+
+class PresentationCurtain extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.onKeyUp = this.onKeyUp.bind(this)
+  }
+
+  static get observedAttributes() {
+    return ['open']
+  }
+
+  connectedCallback() {
+    const storedOpenState = this.readOpenState()
+    const style = document.createElement('style')
+    style.textContent = `
+      :host {
+        display: block;
+        inset: 0;
+        pointer-events: none;
+        position: fixed;
+        z-index: 900;
+      }
+
+      :host([open]) {
+        pointer-events: auto;
+      }
+
+      .cover {
+        align-items: center;
+        background: linear-gradient(
+          135deg,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 8%, var(--color-body-background, white)) 0%,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 12%, var(--color-body-background, white)) 33%,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 16%, var(--color-body-background, white)) 66%,
+          color-mix(in srgb, var(--color-marker-background, #006eff) 20%, var(--color-body-background, white)) 100%
+        );
+        border-bottom: 0.2rem solid var(--color-body-subtext, #aaa);
+        box-sizing: border-box;
+        color: var(--color-body-subtext, #aaa);
+        display: grid;
+        font-size: 3rem;
+        font-weight: bold;
+        height: 100%;
+        justify-content: center;
+        transform: translateY(-100%);
+        transition: transform 1450ms ease;
+        width: 100%;
+      }
+
+      :host([open]) .cover {
+        transform: translateY(0);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .cover {
+          transition: none;
+        }
+      }
+    `
+
+    if (!this.cover) {
+      this.cover = document.createElement('div')
+      this.cover.className = 'cover'
+      this.cover.textContent = this.getAttribute('label') || '⏸'
+      this.cover.setAttribute('aria-hidden', 'true')
+    }
+    this.shadowRoot.replaceChildren(style, this.cover)
+
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'status')
+    }
+    if (!this.hasAttribute('aria-label')) {
+      this.setAttribute('aria-label', 'Presentation paused')
+    }
+
+    if (storedOpenState === null) {
+      this.storeOpenState(this.hasAttribute('open'))
+    } else {
+      this.toggleAttribute('open', storedOpenState)
+    }
+    this.updateState()
+    window.addEventListener('keyup', this.onKeyUp)
+  }
+
+  disconnectedCallback() {
+    window.removeEventListener('keyup', this.onKeyUp)
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (oldValue === newValue) {
+      return
+    }
+
+    this.updateState()
+    if (this.isConnected) {
+      const isOpen = newValue !== null
+      this.storeOpenState(isOpen)
+      this.dispatchEvent(new CustomEvent(curtainToggleEventType, {
+        bubbles: true,
+        composed: true,
+        detail: { open: isOpen },
+      }))
+    }
+  }
+
+  onKeyUp(event) {
+    if (event.code !== 'Period') {
+      return
+    }
+
+    event.preventDefault()
+    this.toggleAttribute('open')
+  }
+
+  readOpenState() {
+    try {
+      const storedState = window.localStorage.getItem(curtainOpenStorageKey)
+      if (storedState === 'true') {
+        return true
+      }
+      if (storedState === 'false') {
+        return false
+      }
+    } catch {
+      return null
+    }
+    return null
+  }
+
+  storeOpenState(isOpen) {
+    try {
+      window.localStorage.setItem(curtainOpenStorageKey, String(isOpen))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
+  }
+
+  updateState() {
+    const isOpen = this.hasAttribute('open')
+    this.setAttribute('aria-hidden', String(!isOpen))
+    this.inert = !isOpen
+  }
+}
+
+if (!customElements.get('presentation-curtain')) {
+  customElements.define('presentation-curtain', PresentationCurtain)
+}
 // use as <keystroke-combo timeout="1000">; timeout is in milliseconds
 
 const keyStrokeCompleteEventType = "keystroke-combo-complete"
@@ -1409,7 +1561,9 @@ class TimerStartPause extends HTMLElement {
     super()
     // critical! otherwise "this" will refer to event context
     // and the timerElement will be <null>
+    this.onDOMReady = this.onDOMReady.bind(this)
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    this.onCurtainToggle = this.onCurtainToggle.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
     this.onTimerTick = this.onTimerTick.bind(this)
     this.timerElement = null
@@ -1428,6 +1582,7 @@ class TimerStartPause extends HTMLElement {
   disconnectedCallback() {
     document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    window.removeEventListener(curtainToggleEventType, this.onCurtainToggle)
     this.timerElement?.removeEventListener('presentation-timer-tick', this.onTimerTick)
     this.timerStateObserver.disconnect()
     this.timerElement = null
@@ -1451,6 +1606,8 @@ class TimerStartPause extends HTMLElement {
       attributeFilter: ['paused'],
     })
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    window.addEventListener(curtainToggleEventType, this.onCurtainToggle)
+    this.syncTimerWithCurtain()
   }
 
   onNavigationComplete(event) {
@@ -1459,11 +1616,43 @@ class TimerStartPause extends HTMLElement {
     }
 
     const slideIndex = event.detail?.slideIndex
-    if (slideIndex === 0) {
-      this.timerElement.pause()
-    } else if (this.timerElement.hasAttribute('paused')) {
-      this.timerElement.start()
+    this.setTimerRunning(slideIndex !== 0 && this.isCurtainOpen())
+  }
+
+  onCurtainToggle(event) {
+    if (
+      !this.timerElement ||
+      event.target !== document.querySelector('presentation-curtain')
+    ) {
+      return
     }
+
+    this.setTimerRunning(event.detail?.open === true)
+  }
+
+  syncTimerWithCurtain() {
+    const curtain = document.querySelector('presentation-curtain')
+    if (curtain) {
+      this.setTimerRunning(curtain.hasAttribute('open'))
+    }
+  }
+
+  isCurtainOpen() {
+    const curtain = document.querySelector('presentation-curtain')
+    return !curtain || curtain.hasAttribute('open')
+  }
+
+  setTimerRunning(shouldRun) {
+    if (!this.timerElement) {
+      return
+    }
+
+    if (shouldRun && this.timerElement.hasAttribute('paused')) {
+      this.timerElement.start()
+    } else if (!shouldRun && !this.timerElement.hasAttribute('paused')) {
+      this.timerElement.pause()
+    }
+    this.onTimerStateChange()
   }
 
   onTimerTick(event) {
@@ -2131,158 +2320,6 @@ class PresentationPlay extends HTMLElement {
 
 if (!customElements.get('presentation-play')) {
   customElements.define('presentation-play', PresentationPlay)
-}
-// use as custom element <presentation-curtain> for a full-screen pause cover
-
-const curtainOpenStorageKey = 'presentationCurtainOpen'
-const curtainToggleEventType = 'presentationCurtainToggle'
-
-class PresentationCurtain extends HTMLElement {
-  constructor() {
-    super()
-    this.attachShadow({ mode: 'open' })
-    this.onKeyUp = this.onKeyUp.bind(this)
-  }
-
-  static get observedAttributes() {
-    return ['open']
-  }
-
-  connectedCallback() {
-    const storedOpenState = this.readOpenState()
-    const style = document.createElement('style')
-    style.textContent = `
-      :host {
-        display: block;
-        inset: 0;
-        pointer-events: none;
-        position: fixed;
-        z-index: 900;
-      }
-
-      :host([open]) {
-        pointer-events: auto;
-      }
-
-      .cover {
-        align-items: center;
-        background: linear-gradient(
-          135deg,
-          color-mix(in srgb, var(--color-marker-background, #006eff) 8%, var(--color-body-background, white)) 0%,
-          color-mix(in srgb, var(--color-marker-background, #006eff) 12%, var(--color-body-background, white)) 33%,
-          color-mix(in srgb, var(--color-marker-background, #006eff) 16%, var(--color-body-background, white)) 66%,
-          color-mix(in srgb, var(--color-marker-background, #006eff) 20%, var(--color-body-background, white)) 100%
-        );
-        border-bottom: 0.2rem solid var(--color-body-subtext, #aaa);
-        box-sizing: border-box;
-        color: var(--color-body-subtext, #aaa);
-        display: grid;
-        font-size: 3rem;
-        font-weight: bold;
-        height: 100%;
-        justify-content: center;
-        transform: translateY(-100%);
-        transition: transform 1450ms ease;
-        width: 100%;
-      }
-
-      :host([open]) .cover {
-        transform: translateY(0);
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .cover {
-          transition: none;
-        }
-      }
-    `
-
-    if (!this.cover) {
-      this.cover = document.createElement('div')
-      this.cover.className = 'cover'
-      this.cover.textContent = this.getAttribute('label') || '⏸'
-      this.cover.setAttribute('aria-hidden', 'true')
-    }
-    this.shadowRoot.replaceChildren(style, this.cover)
-
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'status')
-    }
-    if (!this.hasAttribute('aria-label')) {
-      this.setAttribute('aria-label', 'Presentation paused')
-    }
-
-    if (storedOpenState === null) {
-      this.storeOpenState(this.hasAttribute('open'))
-    } else {
-      this.toggleAttribute('open', storedOpenState)
-    }
-    this.updateState()
-    window.addEventListener('keyup', this.onKeyUp)
-  }
-
-  disconnectedCallback() {
-    window.removeEventListener('keyup', this.onKeyUp)
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    if (oldValue === newValue) {
-      return
-    }
-
-    this.updateState()
-    if (this.isConnected) {
-      const isOpen = newValue !== null
-      this.storeOpenState(isOpen)
-      this.dispatchEvent(new CustomEvent(curtainToggleEventType, {
-        bubbles: true,
-        composed: true,
-        detail: { open: isOpen },
-      }))
-    }
-  }
-
-  onKeyUp(event) {
-    if (event.code !== 'Period') {
-      return
-    }
-
-    event.preventDefault()
-    this.toggleAttribute('open')
-  }
-
-  readOpenState() {
-    try {
-      const storedState = window.localStorage.getItem(curtainOpenStorageKey)
-      if (storedState === 'true') {
-        return true
-      }
-      if (storedState === 'false') {
-        return false
-      }
-    } catch {
-      return null
-    }
-    return null
-  }
-
-  storeOpenState(isOpen) {
-    try {
-      window.localStorage.setItem(curtainOpenStorageKey, String(isOpen))
-    } catch {
-      // Local storage may be unavailable in restricted browsing contexts.
-    }
-  }
-
-  updateState() {
-    const isOpen = this.hasAttribute('open')
-    this.setAttribute('aria-hidden', String(!isOpen))
-    this.inert = !isOpen
-  }
-}
-
-if (!customElements.get('presentation-curtain')) {
-  customElements.define('presentation-curtain', PresentationCurtain)
 }
 // use as <resizable-text data-key="slide-text-size">; size persists as a percentage
 
