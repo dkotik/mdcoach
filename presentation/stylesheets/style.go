@@ -25,6 +25,7 @@ var styleSheets = []string{
 	"table.css",
 	"image.css",
 	"links.css",
+	"slide_notes.css",
 	"pygments.css",
 }
 

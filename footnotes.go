@@ -15,6 +15,20 @@ import (
 
 var _ htmlrenderer.NodeRenderer = (*footnoteRenderer)(nil)
 
+const FootnoteIndexAttribute = "data-slide-footnote-index"
+
+func getFootnoteIndex(node ast.Node, source []byte) (int, bool) {
+	index, ok := node.Attribute(FootnoteIndexAttribute)
+	if !ok {
+		return 0, false
+	}
+	i, err := strconv.Atoi(index.Str(source))
+	if err != nil {
+		return 0, false
+	}
+	return i, true
+}
+
 type footnoteRenderer struct{}
 
 // NewFootnoteRenderer returns an HTML renderer that renders footnotes at their
@@ -29,7 +43,7 @@ func (*footnoteRenderer) Render(
 	node ast.Node,
 	entering bool,
 	_ renderer.Context,
-) (ast.WalkStatus, error) {
+) (_ ast.WalkStatus, err error) {
 	w, ok := writer.(util.BufWriter)
 	if !ok {
 		w = util.NewErrorBufWriter(writer)
@@ -41,19 +55,28 @@ func (*footnoteRenderer) Render(
 			return ast.WalkSkipChildren, nil
 		}
 		label := footnoteID(node.Label.Str(source))
-		_, err := fmt.Fprintf(
+		index, ok := getFootnoteIndex(node, source)
+		if !ok {
+			index = node.Index
+		}
+		_, err = fmt.Fprintf(
 			w,
-			`<sup id="fnref-%s-%d"><a href="#%s" class="footnote-ref" role="doc-noteref">%s</a></sup>`,
+			`<sup id="fnref-%s-%d"><a href="#%s" class="footnote-ref" role="doc-noteref">%d</a></sup>`,
 			label,
 			node.RefIndex,
 			label,
-			strconv.Itoa(node.Index),
+			index,
 		)
 		return ast.WalkSkipChildren, err
 	case *footnoteast.FootnoteDefinition:
-		label := footnoteID(node.Label.Str(source))
 		if entering {
-			_, err := fmt.Fprintf(w, `<div class="footnote-definition" id="%s" role="doc-footnote">`, label)
+			label := footnoteID(node.Label.Str(source))
+			if _, err = fmt.Fprintf(w, `<div class="footnote-definition" id="%s" role="doc-footnote">`, label); err != nil {
+				return ast.WalkContinue, err
+			}
+			if index, ok := node.Attribute(FootnoteIndexAttribute); ok {
+				_, err = fmt.Fprintf(w, `<a class="footnote-ref">%s</a>`, index.Value(source))
+			}
 			return ast.WalkContinue, err
 		}
 		_, err := io.WriteString(w, `</div>`)

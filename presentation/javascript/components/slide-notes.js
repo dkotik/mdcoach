@@ -52,6 +52,14 @@ class SlideNotes extends HTMLElement {
 
       :host([open]) {
         transform: translateX(0);
+
+        button {
+          color: var(--color-body-subtext, #aaa);
+          border: 1px solid transparent;
+          padding: 0.75rem 0.2rem 0.75rem 0.1rem;
+          right: 0rem;
+          left: auto;
+        }
       }
 
       button {
@@ -116,16 +124,6 @@ class SlideNotes extends HTMLElement {
         user-select: none;
       }
 
-      h2 {
-        font-size: 1.25rem;
-        margin: 0 0 1rem;
-      }
-
-      .content:empty::after {
-        color: var(--color-body-subtext, #aaa);
-        content: 'No notes for this slide.';
-      }
-
       @media (prefers-reduced-motion: reduce) {
         :host {
           transition: none;
@@ -142,7 +140,7 @@ class SlideNotes extends HTMLElement {
     this.dock.className = 'dock'
     this.dock.setAttribute('aria-label', 'Speaker notes')
     this.content = document.createElement('resizable-text')
-    this.content.className = 'content'
+    // this.content.className = 'content'
     this.content.append(document.createElement('slot'))
     this.dock.append(this.content)
 

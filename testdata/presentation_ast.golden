@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="d371b5bade7a0d71"]
+  [id="d7bdcabcda7eabea"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -92,12 +92,14 @@ Document: MdCoach Demo {
           Text: ”
           Text: )
           FootnoteReference
+            [data-slide-footnote-index="1"]
         }
       }
       ListItem: lists[^ft] {
         Paragraph: lists[^ft] {
           Text: lists
           FootnoteReference
+            [data-slide-footnote-index="2"]
         }
       }
     }
@@ -107,12 +109,14 @@ Document: MdCoach Demo {
         Text: .
       }
       FootnoteDefinition: first footnote {
+        [data-slide-footnote-index="1"]
         Paragraph: first footnote {
           Text: first
           Text: footnote
         }
       }
       FootnoteDefinition: notes des noteshrink {
+        [data-slide-footnote-index="2"]
         Paragraph: notes des noteshrink {
           Text: notes des
           Text: noteshrink
@@ -602,6 +606,7 @@ Document: MdCoach Demo {
     Paragraph: The archive containing this game weighs 13.21 megabytes, whi {
       Text: The archive containing this game weighs 13.21 megabytes, whi
       FootnoteReference
+        [data-slide-footnote-index="1"]
       Text: Despite fitting its entire logic in under 10 megabytes of da
       Text: .
     }
@@ -613,6 +618,7 @@ Document: MdCoach Demo {
     }
     SlideNotes: this is a great test question `code in it` {
       FootnoteDefinition: this is a great test question `code in it` {
+        [data-slide-footnote-index="1"]
         Paragraph: this is a great test question `code in it` {
           Text: this is a great test question
           CodeSpan

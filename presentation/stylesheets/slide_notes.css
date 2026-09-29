@@ -1,0 +1,25 @@
+slide-notes > *:first-child {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+slide-notes {
+  .footnote-definition {
+    /*text-indent: -1rem;*/
+    padding-left: 2rem;
+  }
+
+  .footnote-ref {
+    float: left;
+    /*font-size: 80%;*/
+    cursor: help;
+    margin-left: -1.5rem;
+
+    &::after {
+      content: ": ";
+      color: var(--color-body-subtext);
+      margin-right: 0.3rem;
+      margin-left: 0.1rem;
+    }
+  }
+}

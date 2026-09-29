@@ -3,6 +3,7 @@ package mdcoach
 import (
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 
 	meta "github.com/yuin/goldmark-meta/v2"
@@ -44,11 +45,15 @@ type Slide struct {
 
 func NewSlide(children ...ast.Node) (s *Slide) {
 	s = &Slide{}
-	s.withChildren(children...)
+	s.withChildren(nil, nil, children...)
 	return
 }
 
-func (s *Slide) withChildren(children ...ast.Node) {
+func (s *Slide) withChildren(
+	source []byte,
+	footnoteReferences []*footnoteast.FootnoteReference,
+	children ...ast.Node,
+) {
 	s.SlideLayout = SlideNormalLayout
 	defer func() {
 		s.SetAttribute("data-layout", text.NewMultiLineValueFromString(string(s.SlideLayout), text.IdentityDecoder))
@@ -92,13 +97,43 @@ func (s *Slide) withChildren(children ...ast.Node) {
 	}
 
 	if len(footnotes) > 0 {
+		if len(footnoteReferences) > 0 {
+			firstReferenceOrder := make(map[string]int, len(footnoteReferences))
+			for i, reference := range footnoteReferences {
+				label := reference.Label.Value(source)
+				if _, exists := firstReferenceOrder[label]; !exists {
+					firstReferenceOrder[label] = i
+				}
+			}
+			sort.SliceStable(footnotes, func(i, j int) bool {
+				leftOrder, leftReferenced := firstReferenceOrder[footnotes[i].Label.Value(source)]
+				rightOrder, rightReferenced := firstReferenceOrder[footnotes[j].Label.Value(source)]
+				if leftReferenced != rightReferenced {
+					return leftReferenced
+				}
+				return leftReferenced && leftOrder < rightOrder
+			})
+		}
+
 		if notes == nil {
 			notes = &slideNotes{}
 			s.AppendChild(notes)
 		}
-		for _, footnote := range footnotes {
+
+		for i, footnote := range footnotes {
 			s.RemoveChild(footnote)
 			notes.AppendChild(footnote)
+
+			indexValue := text.NewMultiLineValueFromString(
+				fmt.Sprintf("%d", i+1),
+				text.IdentityDecoder,
+			)
+			footnote.SetAttribute(FootnoteIndexAttribute, indexValue)
+			for _, reference := range footnoteReferences {
+				if reference.Label.Value(source) == footnote.Label.Value(source) {
+					reference.SetAttribute(FootnoteIndexAttribute, indexValue)
+				}
+			}
 		}
 	}
 
@@ -144,6 +179,23 @@ func (s *Slide) Dump(_ []byte) *ast.NodeDump {
 		// "headingLevel": s.HeadingLevel,
 		// "children":   s.Children(),
 	})
+}
+
+func getAllFootnoteReferences(node ast.Node) []*footnoteast.FootnoteReference {
+	var references []*footnoteast.FootnoteReference
+	if node == nil {
+		return references
+	}
+
+	_ = ast.Walk(node, func(node ast.Node, entering bool) (ast.WalkStatus, error) {
+		if entering {
+			if reference, ok := node.(*footnoteast.FootnoteReference); ok {
+				references = append(references, reference)
+			}
+		}
+		return ast.WalkContinue, nil
+	})
+	return references
 }
 
 type slideRenderer struct {
@@ -198,11 +250,16 @@ func NewSlideTransformer(headingLevelLimit int) parser.ASTTransformer {
 // Transform groups the document's top-level blocks into sections. Content
 // before the first heading is retained in the first slide. An empty document
 // remains empty.
-func (s *slideCutter) Transform(document *ast.Document, _ text.Reader, _ parser.Context) {
+func (s *slideCutter) Transform(document *ast.Document, reader text.Reader, _ parser.Context) {
 	if document.ChildCount() == 0 {
 		return
 	}
 
+	var source []byte
+	if reader != nil {
+		source = reader.Source()
+	}
+	footnoteReferences := getAllFootnoteReferences(document)
 	children := make([]ast.Node, 0, 12)
 	lastChild := document.FirstChild()
 	makeSlide := func() ast.Node {
@@ -211,7 +268,7 @@ func (s *slideCutter) Transform(document *ast.Document, _ text.Reader, _ parser.
 		// for _, child := range children {
 		// 	document.RemoveChild(child)
 		// }
-		slide.withChildren(children...)
+		slide.withChildren(source, footnoteReferences, children...)
 		children = children[:0]
 		return slide
 	}
