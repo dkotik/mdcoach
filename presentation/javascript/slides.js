@@ -38,8 +38,6 @@ const navigate = (targetSlide) => {
   document.title = `${currentSlide + 1}/${finalSlideIndex + 1} ${title}`
   window.history.replaceState(null, null, '#' + (currentSlide + 1))
 }
-
-const navigationCompleteEventType = "slideNavigationFinished"
 const dispatchNavigationCompleteEvent = (concealedListItemCount) => {
   window.dispatchEvent(
     new CustomEvent(
