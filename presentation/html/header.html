@@ -21,14 +21,12 @@
   </head>
 <body class="is-focused">
   <presentation-menu>
-    <fullscreen-toggle class="icon">
-      Fullscreen
+    <fullscreen-toggle class="icon" title="Fullscreen">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" aria-hidden="true" focusable="false">
         <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
       </svg>
     </fullscreen-toggle>
-    <dark-light-toggle>
-      Dark
+    <dark-light-toggle class="icon" title="Fullscreen">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M8 256c0 136.966 111.033 248 248 248s248-111.034 248-248S392.966 8 256 8 8 119.033 8 256zm248 184V72c101.705 0 184 82.311 184 184 0 101.705-82.311 184-184 184z"/></svg>
     </dark-light-toggle>
     <presentation-play></presentation-play>
@@ -46,7 +44,7 @@
   <presentation-curtain></presentation-curtain>
 
 <presentation-timer id="mainTimer" style="max-width: 2rem; max-height: 2rem; position: fixed; bottom: 1rem; right: 1rem;z-index: 77;" duration="333"></presentation-timer>
-<mouse-proximity style="position: fixed; bottom: 1rem; right: 4rem; z-index: 77;">
+<mouse-proximity style="position: fixed; bottom: 1rem; right: 4rem; z-index: 77;" distance="120">
   <timer-set duration="60" data-timer-id="mainTimer"></timer-set>
 </mouse-proximity>
 <keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>

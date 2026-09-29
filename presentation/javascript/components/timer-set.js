@@ -10,7 +10,9 @@ class TimerSet extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.onClick = this.onClick.bind(this)
+    this.onInputChange = this.onInputChange.bind(this)
     this.onInputKeyDown = this.onInputKeyDown.bind(this)
+    this.onInputBlur = this.onInputBlur.bind(this)
     this.onTimerTick = this.onTimerTick.bind(this)
     this.defaultDuration = 60
     this.duration = this.defaultDuration
@@ -99,7 +101,9 @@ class TimerSet extends HTMLElement {
     this.input.type = 'text'
     this.input.setAttribute('aria-label', 'Timer duration in minutes and seconds')
     this.input.setAttribute('autocomplete', 'off')
+    this.input.addEventListener('change', this.onInputChange)
     this.input.addEventListener('keydown', this.onInputKeyDown)
+    this.input.addEventListener('blur', this.onInputBlur)
 
     const addButtons = document.createElement('div')
     addButtons.className = 'group'
@@ -125,7 +129,9 @@ class TimerSet extends HTMLElement {
 
   disconnectedCallback() {
     this.shadowRoot.removeEventListener('click', this.onClick)
+    this.input?.removeEventListener('change', this.onInputChange)
     this.input?.removeEventListener('keydown', this.onInputKeyDown)
+    this.input?.removeEventListener('blur', this.onInputBlur)
     this.removeTimerTickSubscription()
   }
 
@@ -158,12 +164,22 @@ class TimerSet extends HTMLElement {
     }
 
     event.preventDefault()
-    const duration = this.parseDuration(this.input.value)
-    if (duration !== null) {
-      this.duration = duration
-      this.updateTimerDuration()
-    }
+    this.onInputChange()
     this.input.blur()
+    this.renderDuration()
+  }
+
+  onInputChange() {
+    const duration = this.parseDuration(this.input.value)
+    if (duration === null) {
+      return
+    }
+
+    this.duration = duration
+    this.updateTimerDuration()
+  }
+
+  onInputBlur() {
     this.renderDuration()
   }
 

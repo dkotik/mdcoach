@@ -36,7 +36,12 @@ const previous = (event) => {
 document.addEventListener(
   'keydown',
   (event) => {
-    if (document.querySelector('presentation-curtain[open]')) {
+    const isEditing = event.composedPath().some((target) =>
+      target instanceof HTMLElement && (
+        target.matches('input, textarea, select') || target.isContentEditable
+      )
+    )
+    if (isEditing || document.querySelector('presentation-curtain[open]')) {
       return
     }
 
@@ -55,11 +60,15 @@ document.addEventListener(
       case 'KeyK':
         previous(event)
         return
+      case 'KeyN':
+        document.querySelector('slide-notes')?.onToggle()
+        return
       case 'KeyC':
         window.open(window.location.href, '_blank')
         return
       case 'KeyR':
         window.location.reload()
+        return
     }
   }
 )

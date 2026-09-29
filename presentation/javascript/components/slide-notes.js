@@ -135,7 +135,7 @@ class SlideNotes extends HTMLElement {
 
     this.button = document.createElement('button')
     this.button.type = 'button'
-    this.button.textContent = 'Notes'
+    this.button.textContent = this.getAttribute('label') ?? 'Notes'
     this.button.addEventListener('click', this.onToggle)
 
     this.dock = document.createElement('aside')

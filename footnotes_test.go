@@ -32,7 +32,7 @@ func TestFootnoteRendererRendersDefinitionsInSlideNotes(t *testing.T) {
 		t.Errorf("rendered %d footnote definitions, want 1: %s", got, rendered)
 	}
 
-	notesStart := strings.Index(rendered, "<slide-notes>")
+	notesStart := strings.Index(rendered, "<slide-notes")
 	definitionStart := strings.Index(rendered, `<div class="footnote-definition"`)
 	notesEnd := strings.Index(rendered, "</slide-notes>")
 	if notesStart < 0 || definitionStart < notesStart || notesEnd < definitionStart {

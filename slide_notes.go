@@ -2,8 +2,10 @@ package mdcoach
 
 import (
 	"io"
+	"strings"
 
 	"github.com/yuin/goldmark/v2/ast"
+	footnoteast "github.com/yuin/goldmark/v2/extension/ast"
 	"github.com/yuin/goldmark/v2/parser"
 	"github.com/yuin/goldmark/v2/renderer"
 	"github.com/yuin/goldmark/v2/renderer/html"
@@ -44,6 +46,47 @@ func NewSlideNotesRenderer() html.NodeRenderer {
 	return &slideNotesRenderer{}
 }
 
+func newSlideNotesLabel(n ast.Node) string {
+	if n == nil || n.ChildCount() == 0 {
+		return ""
+	}
+	paragraphCount := 0
+	footnoteCount := 0
+	for child := range n.Children() {
+		switch child.Kind() {
+		case ast.KindParagraph:
+			paragraphCount++
+		case footnoteast.KindFootnoteDefinition:
+			footnoteCount++
+		}
+	}
+	b := &strings.Builder{}
+	needsEllipsis := paragraphCount+footnoteCount > 7
+	if paragraphCount > 0 {
+		if needsEllipsis && paragraphCount > 2 {
+			paragraphCount = 2
+		}
+		for i := 0; i < paragraphCount; i++ {
+			_, _ = b.WriteRune('◉')
+		}
+	}
+	if footnoteCount > 0 {
+		// if b.Len() > 0 {
+		// 	_, _ = b.WriteString(" ")
+		// }
+		if needsEllipsis && footnoteCount > 4 {
+			footnoteCount = 4
+		}
+		for i := 0; i < footnoteCount; i++ {
+			_, _ = b.WriteRune('✱')
+		}
+	}
+	if needsEllipsis {
+		_, _ = b.WriteString("…")
+	}
+	return b.String()
+}
+
 func (*slideNotesRenderer) Render(
 	writer io.Writer,
 	_ []byte,
@@ -56,7 +99,7 @@ func (*slideNotesRenderer) Render(
 		w = util.NewErrorBufWriter(writer)
 	}
 	if entering {
-		_, _ = w.WriteString("<slide-notes>")
+		_, _ = w.WriteString("<slide-notes label=\"" + newSlideNotesLabel(node) + "\">")
 	} else {
 		_, _ = w.WriteString("</slide-notes>")
 	}

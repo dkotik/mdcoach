@@ -21,11 +21,6 @@ class FullscreenToggle extends HTMLElement {
       :host([fullscreen]) {
         color: red;
       }
-
-      :host(:focus-visible) {
-        outline: 2px solid currentColor;
-        outline-offset: 2px;
-      }
     `
 
     const slot = document.createElement('slot')
