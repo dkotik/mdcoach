@@ -5,7 +5,7 @@ import (
 	"fmt"
 	stdImage "image"
 	"io"
-	"path"
+	"io/fs"
 	"sort"
 
 	"github.com/dkotik/mdcoach/internal"
@@ -143,16 +143,25 @@ func isEmoteCharacter(character byte) bool {
 }
 
 // NewEmoteRenderer returns a Goldmark renderer that uses cached images for
-// emote names found in internal/assets/emojis.
-func NewEmoteRenderer(cache *ImageCache) html.NodeRenderer {
+// emote names found in the storage.
+func NewEmoteRenderer(cache *ImageCache, storage fs.FS, imageExtension string) html.NodeRenderer {
 	if cache == nil {
 		panic("nil image cache")
 	}
-	return html.NodeRendererFunc((&emoteRenderer{cache: cache}).render)
+	if storage == nil {
+		panic("nil emote asset storage")
+	}
+	return html.NodeRendererFunc((&emoteRenderer{
+		cache:          cache,
+		storage:        storage,
+		imageExtension: imageExtension,
+	}).render)
 }
 
 type emoteRenderer struct {
-	cache *ImageCache
+	cache          *ImageCache
+	storage        fs.FS
+	imageExtension string
 }
 
 func (r *emoteRenderer) render(
@@ -178,11 +187,10 @@ func (r *emoteRenderer) render(
 		return ast.WalkSkipChildren, nil
 	}
 
-	assetPath := path.Join("assets", "emojis", name+".png")
-	location := path.Join("internal", assetPath)
-	image, ok := r.cache.Get(location)
+	assetPath := name + "." + r.imageExtension
+	image, ok := r.cache.Get(assetPath)
 	if !ok {
-		data, err := internal.Assets.ReadFile(assetPath)
+		data, err := fs.ReadFile(r.storage, assetPath)
 		if err != nil {
 			return ast.WalkStop, fmt.Errorf("read emote asset %q: %w", assetPath, err)
 		}
@@ -194,7 +202,6 @@ func (r *emoteRenderer) render(
 		if err != nil {
 			return ast.WalkStop, fmt.Errorf("cache emote asset %q: %w", assetPath, err)
 		}
-		image.Location = location
 		r.cache.Set(image)
 	}
 

@@ -4,6 +4,10 @@ Package mdcoach converts Markdown files to HTML presentations with notes.
 package mdcoach
 
 import (
+	"io/fs"
+	"path"
+
+	"github.com/dkotik/mdcoach/internal"
 	meta "github.com/yuin/goldmark-meta/v2"
 	"github.com/yuin/goldmark/v2/ast"
 	"github.com/yuin/goldmark/v2/extension"
@@ -29,6 +33,17 @@ func NewParser() parser.Parser {
 				":)":  "slight_smile",
 				":-)": "smile",
 				";-)": "wink",
+				";)":  "wink",
+				":(":  "slight_frown",
+				"B-)": "sunglasses",
+				":D":  "grin",
+				":-D": "grin",
+				":P":  "tongue",
+				":-P": "tongue",
+				":-O": "surprise",
+				":-o": "surprise",
+				"%-)": "crazy",
+				"%)":  "crazy",
 			}), 300),
 			util.Prioritized(NewEmoteColonCodeParser(), 500),
 		),
@@ -52,6 +67,10 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 	if cache == nil {
 		cache = NewImageCache()
 	}
+	emoteFS, err := fs.Sub(internal.Assets, path.Join("assets", "emojis"))
+	if err != nil {
+		panic(err)
+	}
 	return html.New(
 		html.WithExtensions(
 			extension.NewStrikethroughHTMLRenderer(),
@@ -63,7 +82,11 @@ func NewRenderer(cache *ImageCache) html.Renderer {
 			ast.KindImage,
 			func(html.NodeRenderer) html.NodeRenderer { return NewImageRenderer() },
 		),
-		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(cache)),
+		html.WithNodeRenderer(KindEmote, NewEmoteRenderer(
+			cache,
+			emoteFS,
+			"png"),
+		),
 		html.WithNodeRenderers(map[ast.NodeKind]html.NodeRenderer{
 			footnoteast.KindFootnoteDefinition: NewFootnoteRenderer(),
 			footnoteast.KindFootnoteReference:  NewFootnoteRenderer(),

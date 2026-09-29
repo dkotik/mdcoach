@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="84ee236b40f2f0da"]
+  [id="05a2c8cd06ded830"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -566,8 +566,16 @@ Document: MdCoach Demo {
         [class="icon"]
         Text: ok
       }
-      Text: sddsf :-D %
-      Text: -)
+      Text: sddsf
+      Emote: grin {
+        [class="icon"]
+        Text: grin
+      }
+      Text
+      Emote: crazy {
+        [class="icon"]
+        Text: crazy
+      }
     }
     List: [x] dfgdfg {
       ListItem: [x] dfgdfg {
