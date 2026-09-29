@@ -27,16 +27,14 @@ class ResizableText extends HTMLElement {
       }
 
       .toolbar {
-        align-items: center;
-        display: flex;
-        gap: 0.4rem;
+        float: right;
         margin-bottom: 0.5rem;
+        font-size: 0.8rem;
       }
 
       button {
         background: var(--color-menu-background, #eee);
-        border: 1px solid var(--color-body-subtext, #aaa);
-        border-radius: 0.3rem;
+        border: 0px;
         color: inherit;
         cursor: pointer;
         font: inherit;
@@ -72,8 +70,8 @@ class ResizableText extends HTMLElement {
     const toolbar = document.createElement('div')
     toolbar.className = 'toolbar'
 
-    this.decreaseButton = this.createButton('Decrease font size', 'A−', -resizableTextStep)
-    this.increaseButton = this.createButton('Increase font size', 'A+', resizableTextStep)
+    this.decreaseButton = this.createButton('Decrease font size', '－', -resizableTextStep)
+    this.increaseButton = this.createButton('Increase font size', '＋', resizableTextStep)
     this.output = document.createElement('output')
     this.output.setAttribute('aria-live', 'polite')
     this.output.setAttribute('aria-label', 'Current font size')

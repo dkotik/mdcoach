@@ -16,6 +16,8 @@ var scripts = []string{
 	"components/presentation-side-button.js",
 	"components/dark-light-toggle.js",
 	"components/fullscreen-toggle.js",
+	"components/slideview-toggle.js",
+	"components/curtain-toggle.js",
 	"components/presentation-clock.js",
 	"components/presentation-timer.js",
 	"components/timer-set.js",

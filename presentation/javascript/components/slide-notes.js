@@ -34,9 +34,9 @@ class SlideNotes extends HTMLElement {
         position: fixed;
         right: 0;
         top: 0;
-        transform: translateX(calc(100% - 2.5rem));
+        transform: translateX(calc(100% - 1.3rem));
         transition: transform 250ms ease;
-        width: var(--notes-panel-width, calc(36vw + 2.5rem));
+        width: var(--notes-panel-width, calc(36vw + 1.3rem));
         z-index: 9999;
 
         .dock {
@@ -44,7 +44,7 @@ class SlideNotes extends HTMLElement {
           box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
           box-sizing: border-box;
           height: 100%;
-          margin-left: 2.5rem;
+          margin-left: 1.3rem;
           overflow: auto;
           padding: 1rem 1.25rem;
         }
@@ -59,16 +59,16 @@ class SlideNotes extends HTMLElement {
         border: 1px solid var(--color-body-subtext, #aaa);
         border-right: 0;
         border-radius: 0.5rem 0 0 0.5rem;
-        color: inherit;
+        color: var(--color-body-subtext, #aaa);
         cursor: pointer;
         font: inherit;
-        font-weight: 600;
+        font-size: 0.8rem;
         left: 0;
-        padding: 0.75rem 0.5rem;
+        padding: 0.75rem 0.5rem 0.75rem 0.1rem;
         position: absolute;
         top: 10vh;
         writing-mode: vertical-rl;
-        max-width: 4rem;
+        max-width: 2rem;
         overflow: hidden;
         z-index: 10;
       }
@@ -82,7 +82,7 @@ class SlideNotes extends HTMLElement {
       .resize-handle {
         bottom: 0;
         cursor: ew-resize;
-        left: calc(2.5rem - 0.25rem);
+        left: 1.25rem;
         position: absolute;
         top: 0;
         touch-action: none;

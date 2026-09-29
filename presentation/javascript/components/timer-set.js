@@ -38,11 +38,6 @@ class TimerSet extends HTMLElement {
         gap: 0.5rem;
       }
 
-      .group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
 
       button {
         background: var(--color-menu-background, #eee);
@@ -105,23 +100,15 @@ class TimerSet extends HTMLElement {
     this.input.addEventListener('keydown', this.onInputKeyDown)
     this.input.addEventListener('blur', this.onInputBlur)
 
-    const addButtons = document.createElement('div')
-    addButtons.className = 'group'
-    addButtons.append(
+    const controls = document.createElement('div')
+    controls.className = 'controls'
+    controls.append(
       this.createButton('Add 1 minute', '+1 min', 60),
       this.createButton('Add 5 minutes', '+5 min', 300),
-    )
-
-    const otherButtons = document.createElement('div')
-    otherButtons.className = 'group'
-    otherButtons.append(
+      this.input,
       this.createButton('Reset timer', 'Reset', 'reset'),
       this.createButton('Subtract 30 seconds', '−30 sec', -30),
     )
-
-    const controls = document.createElement('div')
-    controls.className = 'controls'
-    controls.append(addButtons, this.input, otherButtons)
     this.shadowRoot.replaceChildren(style, controls)
     this.shadowRoot.addEventListener('click', this.onClick)
     this.renderDuration()

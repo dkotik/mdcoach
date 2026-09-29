@@ -623,6 +623,210 @@ class FullscreenToggle extends HTMLElement {
 if (!customElements.get('fullscreen-toggle')) {
   customElements.define('fullscreen-toggle', FullscreenToggle)
 }
+// use as <slideview-toggle> to toggle the body's slides class
+
+const slideViewStorageKey = 'slideViewEnabled'
+
+class SlideViewToggle extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.onClick = this.onClick.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
+  }
+
+  connectedCallback() {
+    const style = document.createElement('style')
+    style.textContent = `
+      :host {
+        cursor: pointer;
+        display: inline-flex;
+      }
+
+      :host(:focus-visible) {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
+
+      ::slotted(svg) {
+        fill: currentColor;
+        height: 1em;
+        width: 1em;
+      }
+    `
+
+    this.shadowRoot.replaceChildren(style, document.createElement('slot'))
+    this.slideViewEnabled = this.readStoredState()
+
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'button')
+    }
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', '0')
+    }
+
+    this.addEventListener('click', this.onClick)
+    this.addEventListener('keydown', this.onKeyDown)
+    this.updateState()
+  }
+
+  disconnectedCallback() {
+    this.removeEventListener('click', this.onClick)
+    this.removeEventListener('keydown', this.onKeyDown)
+  }
+
+  onClick() {
+    this.toggle()
+  }
+
+  onKeyDown(event) {
+    if (event.code !== 'Enter' && event.code !== 'Space') {
+      return
+    }
+
+    event.preventDefault()
+    this.toggle()
+  }
+
+  toggle() {
+    this.slideViewEnabled = !this.slideViewEnabled
+    this.updateState()
+    this.storeState()
+  }
+
+  updateState() {
+    document.body?.classList.toggle('slides', this.slideViewEnabled)
+    this.setAttribute('aria-pressed', String(this.slideViewEnabled))
+    this.setAttribute(
+      'aria-label',
+      this.slideViewEnabled ? 'Disable slide view' : 'Enable slide view',
+    )
+  }
+
+  readStoredState() {
+    try {
+      return window.localStorage.getItem(slideViewStorageKey) !== 'false'
+    } catch {
+      return true
+    }
+  }
+
+  storeState() {
+    try {
+      window.localStorage.setItem(slideViewStorageKey, String(this.slideViewEnabled))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
+  }
+}
+
+if (!customElements.get('slideview-toggle')) {
+  customElements.define('slideview-toggle', SlideViewToggle)
+}
+// use as <curtain-toggle> to toggle the first presentation-curtain
+
+class CurtainToggle extends HTMLElement {
+  constructor() {
+    super()
+    this.attachShadow({ mode: 'open' })
+    this.onClick = this.onClick.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
+    this.onDOMReady = this.onDOMReady.bind(this)
+    this.updateState = this.updateState.bind(this)
+    this.curtainObserver = new MutationObserver(this.updateState)
+    this.curtainElement = null
+  }
+
+  connectedCallback() {
+    const style = document.createElement('style')
+    style.textContent = `
+      :host {
+        cursor: pointer;
+        display: inline-flex;
+      }
+
+      :host(:focus-visible) {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+      }
+
+      ::slotted(svg) {
+        fill: currentColor;
+        height: 1em;
+        width: 1em;
+      }
+    `
+
+    this.shadowRoot.replaceChildren(style, document.createElement('slot'))
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'button')
+    }
+    if (!this.hasAttribute('tabindex')) {
+      this.setAttribute('tabindex', '0')
+    }
+
+    this.addEventListener('click', this.onClick)
+    this.addEventListener('keydown', this.onKeyDown)
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
+    } else {
+      this.updateState()
+    }
+  }
+
+  disconnectedCallback() {
+    document.removeEventListener('DOMContentLoaded', this.onDOMReady)
+    this.removeEventListener('click', this.onClick)
+    this.removeEventListener('keydown', this.onKeyDown)
+    this.curtainObserver.disconnect()
+    this.curtainElement = null
+  }
+
+  onDOMReady() {
+    this.updateState()
+  }
+
+  onClick() {
+    const curtain = document.querySelector('presentation-curtain')
+    if (!curtain) {
+      return
+    }
+
+    curtain.toggleAttribute('open')
+    this.updateState()
+  }
+
+  onKeyDown(event) {
+    if ((event.code !== 'Enter' && event.code !== 'Space') || event.repeat) {
+      return
+    }
+
+    event.preventDefault()
+    this.onClick()
+  }
+
+  updateState() {
+    const curtain = document.querySelector('presentation-curtain')
+    if (curtain !== this.curtainElement) {
+      this.curtainObserver.disconnect()
+      this.curtainElement = curtain
+      if (curtain) {
+        this.curtainObserver.observe(curtain, {
+          attributes: true,
+          attributeFilter: ['open'],
+        })
+      }
+    }
+
+    const isOpen = Boolean(curtain?.hasAttribute('open'))
+    this.setAttribute('aria-pressed', String(isOpen))
+    this.setAttribute('aria-label', isOpen ? 'Close presentation curtain' : 'Open presentation curtain')
+  }
+}
+
+if (!customElements.get('curtain-toggle')) {
+  customElements.define('curtain-toggle', CurtainToggle)
+}
 // use as custom element <clock> anywhere on the page
 
 class PresentationClock extends HTMLElement {
@@ -970,11 +1174,6 @@ class TimerSet extends HTMLElement {
         gap: 0.5rem;
       }
 
-      .group {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-      }
 
       button {
         background: var(--color-menu-background, #eee);
@@ -1037,23 +1236,15 @@ class TimerSet extends HTMLElement {
     this.input.addEventListener('keydown', this.onInputKeyDown)
     this.input.addEventListener('blur', this.onInputBlur)
 
-    const addButtons = document.createElement('div')
-    addButtons.className = 'group'
-    addButtons.append(
+    const controls = document.createElement('div')
+    controls.className = 'controls'
+    controls.append(
       this.createButton('Add 1 minute', '+1 min', 60),
       this.createButton('Add 5 minutes', '+5 min', 300),
-    )
-
-    const otherButtons = document.createElement('div')
-    otherButtons.className = 'group'
-    otherButtons.append(
+      this.input,
       this.createButton('Reset timer', 'Reset', 'reset'),
       this.createButton('Subtract 30 seconds', '−30 sec', -30),
     )
-
-    const controls = document.createElement('div')
-    controls.className = 'controls'
-    controls.append(addButtons, this.input, otherButtons)
     this.shadowRoot.replaceChildren(style, controls)
     this.shadowRoot.addEventListener('click', this.onClick)
     this.renderDuration()
@@ -1787,7 +1978,7 @@ class PresentationCurtain extends HTMLElement {
         inset: 0;
         pointer-events: none;
         position: fixed;
-        z-index: 9999998;
+        z-index: 900;
       }
 
       :host([open]) {
@@ -1937,16 +2128,14 @@ class ResizableText extends HTMLElement {
       }
 
       .toolbar {
-        align-items: center;
-        display: flex;
-        gap: 0.4rem;
+        float: right;
         margin-bottom: 0.5rem;
+        font-size: 0.8rem;
       }
 
       button {
         background: var(--color-menu-background, #eee);
-        border: 1px solid var(--color-body-subtext, #aaa);
-        border-radius: 0.3rem;
+        border: 0px;
         color: inherit;
         cursor: pointer;
         font: inherit;
@@ -1982,8 +2171,8 @@ class ResizableText extends HTMLElement {
     const toolbar = document.createElement('div')
     toolbar.className = 'toolbar'
 
-    this.decreaseButton = this.createButton('Decrease font size', 'A−', -resizableTextStep)
-    this.increaseButton = this.createButton('Increase font size', 'A+', resizableTextStep)
+    this.decreaseButton = this.createButton('Decrease font size', '－', -resizableTextStep)
+    this.increaseButton = this.createButton('Increase font size', '＋', resizableTextStep)
     this.output = document.createElement('output')
     this.output.setAttribute('aria-live', 'polite')
     this.output.setAttribute('aria-label', 'Current font size')
@@ -2118,9 +2307,9 @@ class SlideNotes extends HTMLElement {
         position: fixed;
         right: 0;
         top: 0;
-        transform: translateX(calc(100% - 2.5rem));
+        transform: translateX(calc(100% - 1.3rem));
         transition: transform 250ms ease;
-        width: var(--notes-panel-width, calc(36vw + 2.5rem));
+        width: var(--notes-panel-width, calc(36vw + 1.3rem));
         z-index: 9999;
 
         .dock {
@@ -2128,7 +2317,7 @@ class SlideNotes extends HTMLElement {
           box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
           box-sizing: border-box;
           height: 100%;
-          margin-left: 2.5rem;
+          margin-left: 1.3rem;
           overflow: auto;
           padding: 1rem 1.25rem;
         }
@@ -2143,16 +2332,16 @@ class SlideNotes extends HTMLElement {
         border: 1px solid var(--color-body-subtext, #aaa);
         border-right: 0;
         border-radius: 0.5rem 0 0 0.5rem;
-        color: inherit;
+        color: var(--color-body-subtext, #aaa);
         cursor: pointer;
         font: inherit;
-        font-weight: 600;
+        font-size: 0.8rem;
         left: 0;
-        padding: 0.75rem 0.5rem;
+        padding: 0.75rem 0.5rem 0.75rem 0.1rem;
         position: absolute;
         top: 10vh;
         writing-mode: vertical-rl;
-        max-width: 4rem;
+        max-width: 2rem;
         overflow: hidden;
         z-index: 10;
       }
@@ -2166,7 +2355,7 @@ class SlideNotes extends HTMLElement {
       .resize-handle {
         bottom: 0;
         cursor: ew-resize;
-        left: calc(2.5rem - 0.25rem);
+        left: 1.25rem;
         position: absolute;
         top: 0;
         touch-action: none;

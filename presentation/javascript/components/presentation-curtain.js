@@ -22,7 +22,7 @@ class PresentationCurtain extends HTMLElement {
         inset: 0;
         pointer-events: none;
         position: fixed;
-        z-index: 9999998;
+        z-index: 900;
       }
 
       :host([open]) {
