@@ -25,7 +25,7 @@ func NewParser() parser.Parser {
 			extension.NewTypographerParser(),
 		),
 		parser.WithInlineParsers(
-			util.Prioritized(NewEmoteParser(), 500),
+			util.Prioritized(NewEmoteColonCodeParser(), 500),
 		),
 		parser.WithBlockParsers(
 			util.Prioritized(NewSlideNotesParser(), 10),

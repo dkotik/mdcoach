@@ -25,7 +25,7 @@ type Emote struct {
 }
 
 var _ ast.Node = (*Emote)(nil)
-var _ parser.InlineParser = (*emoteParser)(nil)
+var _ parser.InlineParser = (*emoteColonCodeParser)(nil)
 
 // Kind returns EmoteKind.
 func (*Emote) Kind() ast.NodeKind {
@@ -37,18 +37,18 @@ func (e *Emote) Dump(source []byte) *ast.NodeDump {
 	return ast.NewNodeDump(e, map[string]any{"Name": e.Name.Str(source)})
 }
 
-// NewEmoteParser returns a Goldmark v2 inline parser for :text: emotes.
-func NewEmoteParser() parser.InlineParser {
-	return &emoteParser{}
+// NewEmoteColonCodeParser returns a Goldmark v2 inline parser for :text: emotes.
+func NewEmoteColonCodeParser() parser.InlineParser {
+	return &emoteColonCodeParser{}
 }
 
-type emoteParser struct{}
+type emoteColonCodeParser struct{}
 
-func (*emoteParser) Trigger() []byte {
+func (*emoteColonCodeParser) Trigger() []byte {
 	return []byte{':'}
 }
 
-func (*emoteParser) Parse(_ ast.Node, reader text.Reader, _ parser.Context) ast.Node {
+func (*emoteColonCodeParser) Parse(_ ast.Node, reader text.Reader, _ parser.Context) ast.Node {
 	line, segment := reader.PeekLine()
 	if len(line) < 3 || line[0] != ':' {
 		return nil
