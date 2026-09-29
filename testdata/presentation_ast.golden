@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="13a4dd917ab24223"]
+  [id="84ee236b40f2f0da"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -199,7 +199,11 @@ Document: MdCoach Demo {
       Text: Title1
     }
     Paragraph: :) :checkbox: \:cat: :salad: \;) \!\[slashes\]\(in brackets\ {
-      Text: :)
+      Emote: slight_smile {
+        [class="icon"]
+        Text: slight_smile
+      }
+      Text
       Emote: checkbox {
         [class="icon"]
         Text: checkbox
@@ -214,8 +218,11 @@ Document: MdCoach Demo {
         [class="icon"]
         Text: cat
       }
-      Text: \\ hmm:
-      Text: -)
+      Text: \\ hmm
+      Emote: smile {
+        [class="icon"]
+        Text: smile
+      }
     }
     List: [x] # first ahem {
       ListItem: [x] # first ahem {
@@ -279,7 +286,12 @@ Document: MdCoach Demo {
     }
     Blockquote: full block blockquote лыво адлыовалд :) ыоадл оывдал оывдла {
       Paragraph: full block blockquote лыво адлыовалд :) ыоадл оывдал оывдла  {
-        Text: full block blockquote лыво адлыовалд :) ыоадл оывдал оывдла 
+        Text: full block blockquote лыво адлыовалд
+        Emote: slight_smile {
+          [class="icon"]
+          Text: slight_smile
+        }
+        Text: ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыовал оывдало ыдл
         Text: (Cite)
       }
       Paragraph: лыво адлыовалд ыоадл оывдал оывдла оыдлвао длыоа длывоадл ыо {
@@ -508,7 +520,12 @@ Document: MdCoach Demo {
       Emphasis: fdgkj {
         Text: fdgkj
       }
-      Text: dfgkj :-)
+      Text: dfgkj
+      Emote: smile {
+        [class="icon"]
+        Text: smile
+      }
+      Text
       Emote: home {
         [class="icon"]
         Text: home
@@ -534,7 +551,17 @@ Document: MdCoach Demo {
       Text: :)
     }
     Paragraph: sdf kjsdkfj sdf :-) dksjfkds ;-) :ok: sddsf :-D %-) {
-      Text: sdf kjsdkfj sdf :-) dksjfkds ;-)
+      Text: sdf kjsdkfj sdf
+      Emote: smile {
+        [class="icon"]
+        Text: smile
+      }
+      Text: dksjfkds
+      Emote: wink {
+        [class="icon"]
+        Text: wink
+      }
+      Text
       Emote: ok {
         [class="icon"]
         Text: ok

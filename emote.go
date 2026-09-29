@@ -6,6 +6,7 @@ import (
 	stdImage "image"
 	"io"
 	"path"
+	"sort"
 
 	"github.com/dkotik/mdcoach/internal"
 	"github.com/yuin/goldmark/v2/ast"
@@ -26,6 +27,7 @@ type Emote struct {
 
 var _ ast.Node = (*Emote)(nil)
 var _ parser.InlineParser = (*emoteColonCodeParser)(nil)
+var _ parser.InlineParser = (*emoteParser)(nil)
 
 // Kind returns EmoteKind.
 func (*Emote) Kind() ast.NodeKind {
@@ -37,12 +39,71 @@ func (e *Emote) Dump(source []byte) *ast.NodeDump {
 	return ast.NewNodeDump(e, map[string]any{"Name": e.Name.Str(source)})
 }
 
+type emoteParser struct {
+	codes    map[string]string
+	keys     []string
+	triggers []byte
+}
+
+// NewEmoteParser returns a Goldmark v2 inline parser for configured emoticons.
+func NewEmoteParser(emoticons map[string]string) parser.InlineParser {
+	p := &emoteParser{
+		codes:    make(map[string]string, len(emoticons)),
+		keys:     make([]string, 0, len(emoticons)),
+		triggers: make([]byte, 0, len(emoticons)),
+	}
+	triggerSet := make(map[byte]struct{}, len(emoticons))
+	for emoticon, code := range emoticons {
+		if emoticon == "" {
+			continue
+		}
+		p.codes[emoticon] = code
+		p.keys = append(p.keys, emoticon)
+		triggerSet[emoticon[0]] = struct{}{}
+	}
+	sort.Slice(p.keys, func(i, j int) bool {
+		if len(p.keys[i]) == len(p.keys[j]) {
+			return p.keys[i] < p.keys[j]
+		}
+		return len(p.keys[i]) > len(p.keys[j])
+	})
+	for trigger := range triggerSet {
+		p.triggers = append(p.triggers, trigger)
+	}
+	sort.Slice(p.triggers, func(i, j int) bool {
+		return p.triggers[i] < p.triggers[j]
+	})
+	return p
+}
+
+func (p *emoteParser) Trigger() []byte {
+	return append([]byte(nil), p.triggers...)
+}
+
+func (p *emoteParser) Parse(_ ast.Node, reader text.Reader, _ parser.Context) ast.Node {
+	line, _ := reader.PeekLine()
+	for _, emoticon := range p.keys {
+		if !bytes.HasPrefix(line, []byte(emoticon)) {
+			continue
+		}
+
+		reader.Advance(len(emoticon))
+		name := text.NewSingleLineValueFromString(p.codes[emoticon], text.IdentityDecoder)
+		emote := &Emote{Name: name}
+		emote.Init(emote)
+		emote.AppendChild(ast.NewText(name))
+		emote.SetAttribute("class", text.NewMultiLineValueFromString("icon", text.IdentityDecoder))
+		return emote
+	}
+	return nil
+}
+
+type emoteColonCodeParser struct{}
+
 // NewEmoteColonCodeParser returns a Goldmark v2 inline parser for :text: emotes.
 func NewEmoteColonCodeParser() parser.InlineParser {
 	return &emoteColonCodeParser{}
 }
-
-type emoteColonCodeParser struct{}
 
 func (*emoteColonCodeParser) Trigger() []byte {
 	return []byte{':'}

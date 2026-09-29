@@ -40,11 +40,11 @@ Some text before figure.
 
 **Emphasis centered.**
 
-![cat image](media/cat_3.jpg "some cat")
+![cat image](media/cat_4.jpg "some cat")
 
 ## Figure To the Left
 
-![cat image](media/cat_3.jpg "some cat")
+![cat image](media/cat_2.jpg "some cat")
 
 Some text after figure.
 

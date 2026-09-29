@@ -25,6 +25,11 @@ func NewParser() parser.Parser {
 			extension.NewTypographerParser(),
 		),
 		parser.WithInlineParsers(
+			util.Prioritized(NewEmoteParser(map[string]string{
+				":)":  "slight_smile",
+				":-)": "smile",
+				";-)": "wink",
+			}), 300),
 			util.Prioritized(NewEmoteColonCodeParser(), 500),
 		),
 		parser.WithBlockParsers(
