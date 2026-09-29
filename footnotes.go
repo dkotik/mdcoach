@@ -61,7 +61,7 @@ func (*footnoteRenderer) Render(
 		}
 		_, err = fmt.Fprintf(
 			w,
-			`<sup id="fnref-%s-%d"><a href="#%s" class="footnote-ref" role="doc-noteref">%d</a></sup>`,
+			`<sup id="fnref-%s-%d"><a data-ref="#%s" class="footnote-ref" role="doc-noteref">%d</a></sup>`,
 			label,
 			node.RefIndex,
 			label,

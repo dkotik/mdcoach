@@ -70,7 +70,7 @@ func TestFootnoteRendererRendersDefinitionsInSlideNotes(t *testing.T) {
 
 	rendered := output.String()
 	for _, expected := range []string{
-		`href="#fn-bm90ZQ"`,
+		`<a data-ref="#fn-bm90ZQ" class="footnote-ref" role="doc-noteref">1</a>`,
 		`<div class="footnote-definition" id="fn-bm90ZQ" role="doc-footnote">`,
 		"Footnote body.",
 	} {

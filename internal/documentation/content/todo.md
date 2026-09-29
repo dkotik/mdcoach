@@ -12,8 +12,6 @@ weight: 60
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
 - [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)
 - https://keleshev.com/my-book-writing-setup/ - pandoc to pdf and to epub
-  > to solve above issue, use webpack to bundle in fonts | or packer JS?
-  > https://survivejs.com/webpack/loading/fonts/
 - [ ] Safari sizing is off.
 - [x] return regular emotes > add the box ones?
 

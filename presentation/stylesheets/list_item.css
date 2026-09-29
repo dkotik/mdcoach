@@ -2,11 +2,19 @@
 
 .content > ul > li {
   position: relative; /* Establishes a bounding box for the overlay */
-  overflow: hidden;    /* Optional: Prevents the color from bleeding past rounded corners */
+  display: list-item;
+}
+
+.content > ul > li::marker {
+  color: var(--color-marker-background);
+  content: '•  ';
+  font-weight: bolder;
+  font-size: 120%;
 }
 
 .content > ul > li::after {
   content: '';
+  /*font-size: 30%;*/
   position: absolute;
   top: 0;
   left: 0;
@@ -14,7 +22,9 @@
   height: 100%;
   border-left: 0.7rem solid var(--color-marker-background);
   background-color: var(--color-marker-trail); /* Change to your desired covering color */
+  color: var(--color-marker-background);
   z-index: 10;               /* Ensures the color sits on top of the content */
+  padding-bottom: 0.2rem;
 }
 
 .content > ul > li.is-revealed::after {

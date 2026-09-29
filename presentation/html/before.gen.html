@@ -633,6 +633,7 @@ class SlideViewToggle extends HTMLElement {
     this.attachShadow({ mode: 'open' })
     this.onClick = this.onClick.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
+    this.restoreDarkMode = false
   }
 
   connectedCallback() {
@@ -689,6 +690,15 @@ class SlideViewToggle extends HTMLElement {
   }
 
   toggle() {
+    const root = document.documentElement
+    if (this.restoreDarkMode) {
+      root.dataset.theme = 'dark'
+      this.restoreDarkMode = false
+    } else if (root.dataset.theme !== 'light') {
+      this.restoreDarkMode = true
+      root.dataset.theme = 'light'
+    }
+
     this.slideViewEnabled = !this.slideViewEnabled
     this.updateState()
     this.storeState()
