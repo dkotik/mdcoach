@@ -1,6 +1,7 @@
 // use as custom element <presentation-curtain> for a full-screen pause cover
 
 const curtainOpenStorageKey = 'presentationCurtainOpen'
+const curtainToggleEventType = 'presentationCurtainToggle'
 
 class PresentationCurtain extends HTMLElement {
   constructor() {
@@ -97,7 +98,13 @@ class PresentationCurtain extends HTMLElement {
 
     this.updateState()
     if (this.isConnected) {
-      this.storeOpenState(newValue !== null)
+      const isOpen = newValue !== null
+      this.storeOpenState(isOpen)
+      this.dispatchEvent(new CustomEvent(curtainToggleEventType, {
+        bubbles: true,
+        composed: true,
+        detail: { open: isOpen },
+      }))
     }
   }
 
