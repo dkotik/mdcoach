@@ -1,74 +1,74 @@
 /* =================== section.css =================== */
 
 /* section scaling */
+body.slides > main > section > .grid {
+  & > .content[data-scale="90"] {
+    font-size: 90%;
+  }
 
-section > .grid > .content[data-scale="90"] {
-  font-size: 90%;
+  & > .content[data-scale="80"] {
+    font-size: 80%;
+  }
+
+  & > .content[data-scale="70"] {
+    font-size: 70%;
+  }
+
+  & > .content[data-scale="60"] {
+    font-size: 65%;
+
+    .mdcoachImage {
+      max-width: 90%;
+    }
+  }
+
+  & > .content[data-scale="50"] {
+    font-size: 60%;
+
+    .mdcoachImage {
+      max-width: 80%;
+    }
+  }
+
+  & > .content[data-scale="40"] {
+    font-size: 55%;
+
+    .mdcoachImage {
+      max-width: 70%;
+    }
+  }
+
+  & > .content[data-scale="30"] {
+    font-size: 50%;
+
+    .mdcoachImage {
+      max-width: 50%;
+      max-height: 20vh;
+    }
+  }
+
+  & > .content[data-scale="20"] {
+    font-size: 40%;
+
+    .mdcoachImage {
+      float: right;
+      margin-left: 1rem;
+      max-width: 30%;
+      max-height: 15vh;
+    }
+  }
+
+  & > .content[data-scale="10"] {
+    font-size: 30%;
+
+    .mdcoachImage {
+      float: right;
+      margin-left: 1rem;
+      max-width: 15rem;
+      max-height: 15rem;
+    }
+  }
 }
-
-section > .grid > .content[data-scale="80"] {
-  font-size: 80%;
-}
-
-section > .grid > .content[data-scale="70"] {
-  font-size: 70%;
-}
-
-section > .grid > .content[data-scale="60"] {
-  font-size: 65%;
-}
-
-section > .grid > .content[data-scale="50"] {
-  font-size: 60%;
-}
-
-section > .grid > .content[data-scale="40"] {
-  font-size: 55%;
-}
-
-section > .grid > .content[data-scale="30"] {
-  font-size: 50%;
-}
-
-section > .grid > .content[data-scale="20"] {
-  font-size: 40%;
-}
-
-section > .grid > .content[data-scale="10"] {
-  font-size: 30%;
-}
-
-section > .grid > .content[data-scale="60"] .mdcoachImage {
-  max-width: 90%;
-}
-
-section > .grid > .content[data-scale="50"] .mdcoachImage {
-  max-width: 80%;
-}
-
-section > .grid > .content[data-scale="40"] .mdcoachImage {
-  max-width: 70%;
-}
-
-section > .grid > .content[data-scale="30"] .mdcoachImage {
-  max-width: 50%;
-  max-height: 20vh;
-}
-
-section > .grid > .content[data-scale="20"] .mdcoachImage {
-  float: right;
-  margin-left: 1rem;
-  max-width: 30%;
-  max-height: 15vh;
-}
-
-section > .grid > .content[data-scale="10"] .mdcoachImage {
-  float: right;
-  margin-left: 1rem;
-  max-width: 15rem;
-  max-height: 15rem;
-}
-
 
 section {
   display: block;
@@ -144,7 +144,6 @@ section > .grid > .content {
 }
 
 /* section layout */
-
 section[data-layout="splash"] > .grid > .content {
   figure {
     position: fixed;
