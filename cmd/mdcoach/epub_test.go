@@ -10,19 +10,29 @@ import (
 	"path/filepath"
 	"slices"
 	"testing"
+
+	"github.com/dkotik/mdcoach/presentation"
 )
 
 func TestWriteEPUB(t *testing.T) {
 	tests := []struct {
-		name string
-		page []byte
+		name        string
+		page        []byte
+		author      string
+		wantCreator string
 	}{
 		{
-			name: "complete HTML page",
-			page: []byte(`<!doctype html><html><head><title>Talk</title></head><body><h1>Hello</h1></body></html>`),
+			name:        "author from parsed metadata",
+			page:        []byte(`<!doctype html><html><head><title>Talk</title></head><body><h1>Hello</h1></body></html>`),
+			author:      "Ada & Grace",
+			wantCreator: `<dc:creator>Ada &amp; Grace</dc:creator>`,
 		},
 		{
-			name: "empty HTML page",
+			name: "does not infer author from rendered HTML",
+			page: []byte(`<!doctype html><html><head><meta name="author" content="HTML author"></head><body></body></html>`),
+		},
+		{
+			name: "empty HTML page and metadata",
 			page: nil,
 		},
 	}
@@ -32,7 +42,7 @@ func TestWriteEPUB(t *testing.T) {
 			t.Parallel()
 
 			var output bytes.Buffer
-			if err := writeEPUB(&output, tt.page); err != nil {
+			if err := writeEPUB(&output, tt.page, presentation.Frontmatter{Author: tt.author}); err != nil {
 				t.Fatal(err)
 			}
 
@@ -71,6 +81,13 @@ func TestWriteEPUB(t *testing.T) {
 			if !bytes.Contains(container, []byte(`full-path="OEBPS/package.opf"`)) {
 				t.Errorf("container does not point to package.opf: %s", container)
 			}
+			packageDocument := readEPUBEntry(t, archive.File[2])
+			if tt.wantCreator != "" && !bytes.Contains(packageDocument, []byte(tt.wantCreator)) {
+				t.Errorf("EPUB package does not contain creator %q: %s", tt.wantCreator, packageDocument)
+			}
+			if tt.wantCreator == "" && bytes.Contains(packageDocument, []byte("<dc:creator>")) {
+				t.Errorf("EPUB package contains unexpected creator: %s", packageDocument)
+			}
 			page := readEPUBEntry(t, archive.File[4])
 			if !bytes.Equal(page, tt.page) {
 				t.Errorf("packaged page = %q, want %q", page, tt.page)
@@ -81,14 +98,18 @@ func TestWriteEPUB(t *testing.T) {
 
 func TestCompileMarkdownToEPUB(t *testing.T) {
 	tests := []struct {
-		name     string
-		markdown string
-		wantText string
+		name        string
+		markdown    string
+		wantText    string
+		wantAuthor  string
+		wantCreator string
 	}{
 		{
-			name:     "single slide",
-			markdown: "# Opening\n\nWelcome to the presentation.\n",
-			wantText: "Welcome to the presentation.",
+			name:        "single slide with frontmatter author",
+			markdown:    "---\nauthor: Ada & Lovelace\n---\n# Opening\n\nWelcome to the presentation.\n",
+			wantText:    "Welcome to the presentation.",
+			wantAuthor:  `name="author" content="Ada &amp; Lovelace"`,
+			wantCreator: `<dc:creator>Ada &amp; Lovelace</dc:creator>`,
 		},
 	}
 
@@ -116,13 +137,20 @@ func TestCompileMarkdownToEPUB(t *testing.T) {
 			if !bytes.Contains(page, []byte(tt.wantText)) {
 				t.Errorf("EPUB page = %q, want it to contain %q", page, tt.wantText)
 			}
+			if !bytes.Contains(page, []byte(tt.wantAuthor)) {
+				t.Errorf("EPUB page does not contain author metadata %q", tt.wantAuthor)
+			}
+			packageDocument := readEPUBEntry(t, archive.File[2])
+			if !bytes.Contains(packageDocument, []byte(tt.wantCreator)) {
+				t.Errorf("EPUB package does not contain creator %q: %s", tt.wantCreator, packageDocument)
+			}
 		})
 	}
 }
 
 func TestWriteEPUBReturnsWriterError(t *testing.T) {
 	wantErr := errors.New("write failed")
-	err := writeEPUB(errorWriter{err: wantErr}, []byte("<html></html>"))
+	err := writeEPUB(errorWriter{err: wantErr}, []byte("<html></html>"), presentation.Frontmatter{})
 	if !errors.Is(err, wantErr) {
 		t.Fatalf("writeEPUB() error = %v, want wrapped %v", err, wantErr)
 	}

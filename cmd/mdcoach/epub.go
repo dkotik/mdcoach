@@ -2,17 +2,21 @@ package main
 
 import (
 	"archive/zip"
+	"bytes"
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/xml"
 	"fmt"
 	"hash/crc32"
 	"io"
 	"time"
+
+	"github.com/dkotik/mdcoach/presentation"
 )
 
 const epubMimetype = "application/epub+zip"
 
-func writeEPUB(w io.Writer, htmlPage []byte) error {
+func writeEPUB(w io.Writer, htmlPage []byte, metadata presentation.Frontmatter) error {
 	archive := zip.NewWriter(w)
 
 	mimetype := []byte(epubMimetype)
@@ -33,6 +37,14 @@ func writeEPUB(w io.Writer, htmlPage []byte) error {
 
 	identifier := epubIdentifier(htmlPage)
 	modified := time.Now().UTC().Format("2006-01-02T15:04:05Z")
+	creator := ""
+	if metadata.Author != "" {
+		var escapedAuthor bytes.Buffer
+		if err := xml.EscapeText(&escapedAuthor, []byte(metadata.Author)); err != nil {
+			return fmt.Errorf("escape EPUB author: %w", err)
+		}
+		creator = fmt.Sprintf("    <dc:creator>%s</dc:creator>\n", escapedAuthor.String())
+	}
 	entries := []struct {
 		name    string
 		content []byte
@@ -54,7 +66,7 @@ func writeEPUB(w io.Writer, htmlPage []byte) error {
     <dc:identifier id="pub-id">%s</dc:identifier>
     <dc:title>Presentation</dc:title>
     <dc:language>en</dc:language>
-    <meta property="dcterms:modified">%s</meta>
+%s    <meta property="dcterms:modified">%s</meta>
   </metadata>
   <manifest>
     <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
@@ -63,7 +75,7 @@ func writeEPUB(w io.Writer, htmlPage []byte) error {
   <spine>
     <itemref idref="presentation"/>
   </spine>
-</package>`, identifier, modified)),
+</package>`, identifier, creator, modified)),
 		},
 		{
 			name: "OEBPS/nav.xhtml",

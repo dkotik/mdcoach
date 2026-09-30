@@ -58,9 +58,14 @@ func compileMarkdownToEPUB(
 		return err
 	}
 
+	parsed, err := presentation.Parse(sources)
+	if err != nil {
+		return fmt.Errorf("parse presentation: %w", err)
+	}
+
 	var htmlPage bytes.Buffer
-	if err := presentation.New(ctx, &htmlPage, sources); err != nil {
-		return fmt.Errorf("compile presentation: %w", err)
+	if err := parsed.Render(ctx, &htmlPage); err != nil {
+		return fmt.Errorf("render presentation: %w", err)
 	}
 
 	w, err := os.Create(output)
@@ -69,7 +74,7 @@ func compileMarkdownToEPUB(
 	}
 	defer w.Close()
 
-	if err := writeEPUB(w, htmlPage.Bytes()); err != nil {
+	if err := writeEPUB(w, htmlPage.Bytes(), parsed.Metadata); err != nil {
 		return fmt.Errorf("write EPUB: %w", err)
 	}
 	return nil

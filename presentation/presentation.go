@@ -38,12 +38,21 @@ var afterMain []byte
 //go:embed html/before.gen.html
 var beforeMain []byte
 
-func New(
-	ctx context.Context,
-	w io.Writer,
-	sources []string,
-	withOptions ...Option,
-) (err error) {
+type parsedSource struct {
+	path   string
+	source []byte
+	tree   ast.Node
+}
+
+// ParsedPresentation contains parsed Markdown sources and their frontmatter metadata.
+type ParsedPresentation struct {
+	Metadata Frontmatter
+	options  *options
+	sources  []parsedSource
+}
+
+// Parse reads and parses Markdown sources, extracting frontmatter from the first source.
+func Parse(sources []string, withOptions ...Option) (*ParsedPresentation, error) {
 	o := &options{}
 	for _, opt := range append(withOptions,
 		func(o *options) error {
@@ -61,82 +70,97 @@ func New(
 		withDefaultTemplates,
 	) {
 		if err := opt(o); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	mo := mdcoach.MediaOptions{
+	parsed := &ParsedPresentation{options: o}
+	for i, sourcePath := range sources {
+		source, err := os.ReadFile(sourcePath)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read source file %s: %w", sourcePath, err)
+		}
+		tree := o.Parser.Parse(source)
+		if i == 0 {
+			parsed.Metadata, err = frontmatterFromTree(tree, sourcePath)
+			if err != nil {
+				return nil, fmt.Errorf("failed to read frontmatter from %s: %w", sourcePath, err)
+			}
+			parsed.Metadata.Favicon, err = faviconFromFigure(tree, source, sourcePath)
+			if err != nil {
+				return nil, fmt.Errorf("failed to create favicon from %s: %w", sourcePath, err)
+			}
+		}
+		parsed.sources = append(parsed.sources, parsedSource{
+			path:   sourcePath,
+			source: source,
+			tree:   tree,
+		})
+	}
+	parsed.Metadata.Stylesheet = template.CSS(
+		string(defaultStylesheet) + string(parsed.Metadata.Stylesheet),
+	)
+	return parsed, nil
+}
+
+// Render writes the parsed presentation as an HTML document.
+func (p *ParsedPresentation) Render(ctx context.Context, w io.Writer) error {
+	if p == nil || p.options == nil {
+		return fmt.Errorf("cannot render an uninitialized presentation")
+	}
+
+	o := p.options
+	if err := o.HeaderTemplate.Execute(w, p.Metadata); err != nil {
+		return fmt.Errorf("failed to render header: %w", err)
+	}
+	if _, err := w.Write(beforeMain); err != nil {
+		return fmt.Errorf("failed to write before main: %w", err)
+	}
+
+	mediaOptions := mdcoach.MediaOptions{
 		Path:        ".",
 		WidthLimit:  o.ImageWidthLimit,
 		HeightLimit: o.ImageHeightLimit,
 		Quality:     o.ImageQuality,
 	}
-
-	var firstSource []byte
-	var firstTree ast.Node
-	frontmatter := Frontmatter{}
-	if len(sources) > 0 {
-		firstSource, err = os.ReadFile(sources[0])
-		if err != nil {
-			return fmt.Errorf("failed to read source file %s: %w", sources[0], err)
-		}
-		firstTree = o.Parser.Parse(firstSource)
-		frontmatter, err = frontmatterFromTree(firstTree, sources[0])
-		if err != nil {
-			return fmt.Errorf("failed to read frontmatter from %s: %w", sources[0], err)
-		}
-
-		frontmatter.Favicon, err = faviconFromFigure(firstTree, firstSource, sources[0])
-		if err != nil {
-			return fmt.Errorf("failed to create favicon from %s: %w", sources[0], err)
-		}
-	}
-	frontmatter.Stylesheet = template.CSS(string(defaultStylesheet) + string(frontmatter.Stylesheet))
-	if err = o.HeaderTemplate.Execute(w, frontmatter); err != nil {
-		return fmt.Errorf("failed to render header: %w", err)
-	}
-	if _, err = w.Write(beforeMain); err != nil {
-		return fmt.Errorf("failed to write before main: %w", err)
-	}
-
-	for i, sourcePath := range sources {
-		source, tree := firstSource, firstTree
-		if i > 0 {
-			source, err = os.ReadFile(sourcePath)
-			if err != nil {
-				return fmt.Errorf("failed to read source file %s: %w", sourcePath, err)
-			}
-			tree = o.Parser.Parse(source)
-		}
-		mo.Path = filepath.Dir(sourcePath)
-		if err = mdcoach.NewImageLoader(o.ImageCache, mo).LoadImages(
+	for _, source := range p.sources {
+		mediaOptions.Path = filepath.Dir(source.path)
+		if err := mdcoach.NewImageLoader(o.ImageCache, mediaOptions).LoadImages(
 			ctx,
-			source,
-			tree,
+			source.source,
+			source.tree,
 		); err != nil {
-			return fmt.Errorf("failed to load images from %s: %w", sourcePath, err)
+			return fmt.Errorf("failed to load images from %s: %w", source.path, err)
 		}
-
-		err = o.Renderer.Render(w, source, tree)
-		if err != nil {
-			return fmt.Errorf("failed to render file %s: %w", sourcePath, err)
+		if err := o.Renderer.Render(w, source.source, source.tree); err != nil {
+			return fmt.Errorf("failed to render file %s: %w", source.path, err)
 		}
 	}
 
-	_, err = w.Write(afterMain)
-	if err != nil {
+	if _, err := w.Write(afterMain); err != nil {
 		return fmt.Errorf("failed to write after main: %w", err)
 	}
-
-	if err = o.ImageCache.WriteImageDataCSS(w); err != nil {
+	if err := o.ImageCache.WriteImageDataCSS(w); err != nil {
 		return fmt.Errorf("failed to write image data CSS: %w", err)
 	}
-
-	if err = o.FooterTemplate.Execute(w, frontmatter); err != nil {
+	if err := o.FooterTemplate.Execute(w, p.Metadata); err != nil {
 		return fmt.Errorf("failed to render footer: %w", err)
 	}
-
 	return nil
+}
+
+// New parses Markdown sources and renders them as an HTML presentation.
+func New(
+	ctx context.Context,
+	w io.Writer,
+	sources []string,
+	withOptions ...Option,
+) error {
+	parsed, err := Parse(sources, withOptions...)
+	if err != nil {
+		return err
+	}
+	return parsed.Render(ctx, w)
 }
 
 func faviconFromFigure(tree ast.Node, source []byte, sourcePath string) (template.HTML, error) {
