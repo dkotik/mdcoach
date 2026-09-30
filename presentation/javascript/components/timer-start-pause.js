@@ -10,7 +10,10 @@ class TimerStartPause extends HTMLElement {
     this.onCurtainToggle = this.onCurtainToggle.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
     this.onTimerTick = this.onTimerTick.bind(this)
+    this.onTimerStateBroadcast = this.onTimerStateBroadcast.bind(this)
+    this.sourceID = `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`
     this.timerElement = null
+    this.timerStateChannel = null
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
 
@@ -28,6 +31,9 @@ class TimerStartPause extends HTMLElement {
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
     window.removeEventListener(curtainToggleEventType, this.onCurtainToggle)
     this.timerElement?.removeEventListener('presentation-timer-tick', this.onTimerTick)
+    this.timerStateChannel?.removeEventListener('message', this.onTimerStateBroadcast)
+    this.timerStateChannel?.close()
+    this.timerStateChannel = null
     this.timerStateObserver.disconnect()
     this.timerElement = null
   }
@@ -44,14 +50,17 @@ class TimerStartPause extends HTMLElement {
     }
 
     this.timerElement.addEventListener('presentation-timer-tick', this.onTimerTick)
+    this.timerStateChannel = new BroadcastChannel(`${documentID}TimerState`)
+    this.timerStateChannel.addEventListener('message', this.onTimerStateBroadcast)
     this.restoreTimerState()
     this.timerStateObserver.observe(this.timerElement, {
       attributes: true,
-      attributeFilter: ['paused'],
+      attributeFilter: ['paused', 'expired'],
     })
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
     window.addEventListener(curtainToggleEventType, this.onCurtainToggle)
     this.syncTimerWithCurtain()
+    this.onTimerStateChange()
   }
 
   onNavigationComplete(event) {
@@ -99,6 +108,67 @@ class TimerStartPause extends HTMLElement {
     this.onTimerStateChange()
   }
 
+  onTimerStateBroadcast(event) {
+    const broadcast = event.data
+    if (
+      !this.timerElement ||
+      !broadcast ||
+      typeof broadcast.sourceID !== 'string' ||
+      broadcast.sourceID === this.sourceID ||
+      broadcast.timerID !== (this.timerElement.id || 'default') ||
+      this.timerElement.hasAttribute('expired')
+    ) {
+      return
+    }
+
+    const state = broadcast.state
+    const duration = Number(state?.duration)
+    const remainingDuration = Number(state?.remainingDuration)
+    if (
+      !Number.isFinite(duration) || duration <= 0 ||
+      !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
+      remainingDuration > duration || typeof state?.running !== 'boolean' ||
+      typeof state.expired !== 'boolean'
+    ) {
+      return
+    }
+
+    this.applyTimerState({
+      duration,
+      remainingDuration,
+      running: state.running,
+      expired: state.expired,
+    })
+  }
+
+  applyTimerState(state) {
+    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
+      return
+    }
+
+    this.timerStateObserver.disconnect()
+    try {
+      this.timerElement.pause()
+      this.timerElement.duration = state.duration
+      this.timerElement.elapsed = state.duration - state.remainingDuration
+      this.timerElement.updateProgress(this.timerElement.elapsed)
+      if (state.expired) {
+        this.timerElement.setExpired(true)
+      }
+      this.timerElement.updateState()
+      if (state.running && state.remainingDuration > 0 && !state.expired) {
+        this.timerElement.start()
+      }
+    } finally {
+      if (this.timerElement) {
+        this.timerStateObserver.observe(this.timerElement, {
+          attributes: true,
+          attributeFilter: ['paused', 'expired'],
+        })
+      }
+    }
+  }
+
   onTimerTick(event) {
     if (
       !this.timerElement ||
@@ -125,7 +195,17 @@ class TimerStartPause extends HTMLElement {
   }
 
   onTimerStateChange() {
-    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
+    if (!this.timerElement) {
+      return
+    }
+
+    if (this.timerElement.hasAttribute('expired')) {
+      this.broadcastTimerState({
+        duration: this.timerElement.duration,
+        remainingDuration: 0,
+        running: false,
+        expired: true,
+      })
       return
     }
 
@@ -140,6 +220,18 @@ class TimerStartPause extends HTMLElement {
       remainingDuration: Math.max(0, duration - elapsed),
       running: this.timerElement.running && elapsed < duration,
     })
+  }
+
+  broadcastTimerState(state) {
+    try {
+      this.timerStateChannel?.postMessage({
+        sourceID: this.sourceID,
+        timerID: this.timerElement?.id || 'default',
+        state,
+      })
+    } catch {
+      // Broadcast channels may be unavailable in restricted browsing contexts.
+    }
   }
 
   getStorageKey() {
@@ -198,15 +290,18 @@ class TimerStartPause extends HTMLElement {
     }
 
     const key = this.getStorageKey()
-    if (!key) {
-      return
+    if (key) {
+      try {
+        window.localStorage.setItem(key, JSON.stringify(state))
+      } catch {
+        // Local storage may be unavailable in restricted browsing contexts.
+      }
     }
 
-    try {
-      window.localStorage.setItem(key, JSON.stringify(state))
-    } catch {
-      // Local storage may be unavailable in restricted browsing contexts.
-    }
+    this.broadcastTimerState({
+      ...state,
+      expired: false,
+    })
   }
 }
 
