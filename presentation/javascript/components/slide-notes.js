@@ -18,6 +18,8 @@ class SlideNotes extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.onDOMReady = this.onDOMReady.bind(this)
+    this.onHashChange = debounce(this.onHashChange.bind(this), 120)
     this.onShowSlideNotes = this.onShowSlideNotes.bind(this)
     this.onTextSizeClick = this.onTextSizeClick.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
@@ -44,6 +46,10 @@ class SlideNotes extends HTMLElement {
     const defaultWidth = window.innerWidth * 0.36 + notesPanelTabWidth
     this.setPanelWidth(this.getStoredPanelWidth() ?? defaultWidth)
     window.addEventListener('resize', this.onWindowResize)
+    window.addEventListener('hashchange', debounce(
+      this.onHashChange,
+      120
+    ))
     window.addEventListener(showSlideNotesEventType, this.onShowSlideNotes)
     const storedOpenState = this.readOpenState()
     if (storedOpenState === null) {
@@ -51,6 +57,25 @@ class SlideNotes extends HTMLElement {
     } else {
       this.toggleAttribute('open', storedOpenState)
     }
+    this.updateStateWhenDOMReady()
+  }
+
+  onDOMReady() {
+    this.updateState()
+  }
+
+  onHashChange() {
+    if (this.isConnected) {
+      this.updateStateWhenDOMReady()
+    }
+  }
+
+  updateStateWhenDOMReady() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
+      return
+    }
+
     this.updateState()
   }
 
@@ -212,7 +237,6 @@ class SlideNotes extends HTMLElement {
     this.resizeHandle.setAttribute('aria-orientation', 'vertical')
     this.resizeHandle.setAttribute('tabindex', '0')
     this.shadowRoot.replaceChildren(style, this.resizeHandle, this.dock)
-    this.updateState()
   }
 
   createTextSizeButton(label, text, change) {
@@ -265,8 +289,10 @@ class SlideNotes extends HTMLElement {
   }
 
   disconnectedCallback() {
+    document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     this.textSizeToolbar?.removeEventListener('click', this.onTextSizeClick)
     window.removeEventListener('resize', this.onWindowResize)
+    window.removeEventListener('hashchange', this.onHashChange)
     window.removeEventListener(showSlideNotesEventType, this.onShowSlideNotes)
     this.resizeHandle?.removeEventListener('pointerdown', this.onResizeStart)
     this.resizeHandle?.removeEventListener('pointermove', this.onResizeMove)
@@ -288,7 +314,7 @@ class SlideNotes extends HTMLElement {
       return
     }
 
-    this.updateState()
+    this.updateStateWhenDOMReady()
     if (this.isConnected) {
       this.storeOpenState(newValue !== null)
     }
