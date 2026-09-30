@@ -211,8 +211,8 @@ class SlideNotes extends HTMLElement {
     this.resizeHandle.setAttribute('aria-label', 'Resize notes panel')
     this.resizeHandle.setAttribute('aria-orientation', 'vertical')
     this.resizeHandle.setAttribute('tabindex', '0')
-
     this.shadowRoot.replaceChildren(style, this.resizeHandle, this.dock)
+    this.updateState()
   }
 
   createTextSizeButton(label, text, change) {
@@ -331,6 +331,26 @@ class SlideNotes extends HTMLElement {
       this.resizeHandle.inert = !isOpen
       this.resizeHandle.setAttribute('aria-hidden', String(!isOpen))
     }
+    this.updateMainMargin()
+  }
+
+  updateMainMargin() {
+    // const container = document.querySelector('body.slides')
+    const container = document.querySelector('section.is-focused > .grid > .content')
+    if (!container) {
+      return
+    }
+
+    const panelWidth = this.style.getPropertyValue('--notes-panel-width')
+    // if (panelWidth) {
+    //   main.style.setProperty('--notes-panel-width', panelWidth)
+    // }
+
+    if (this.hasAttribute('open') && panelWidth) {
+      container.style.paddingRight = panelWidth
+    } else {
+      container.style.removeProperty('padding-right')
+    }
   }
 
   onWindowResize() {
@@ -385,6 +405,7 @@ class SlideNotes extends HTMLElement {
     const minWidth = Math.min(240, maxWidth)
     const boundedWidth = Math.min(maxWidth, Math.max(minWidth, width))
     this.style.setProperty('--notes-panel-width', `${boundedWidth}px`)
+    this.updateMainMargin()
     this.resizeHandle?.setAttribute('aria-valuemin', String(Math.round(minWidth)))
     this.resizeHandle?.setAttribute('aria-valuemax', String(Math.round(maxWidth)))
     this.resizeHandle?.setAttribute('aria-valuenow', String(Math.round(boundedWidth)))
