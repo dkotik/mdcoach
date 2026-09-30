@@ -63,10 +63,11 @@ const setMainTimerState = (state) => {
     timer.start()
   }
 }
-const broadcastWindowState = () => channel.postMessage({
+const broadcastWindowState = (reload = false) => channel.postMessage({
   slideIndex: navigationState.slideIndex,
   concealedListItemCount: navigationState.concealedListItemCount,
   timerState: getMainTimerState(),
+  reload: reload === true,
   window: windowID,
 })
 const setWindowFocused = (focused) => {
@@ -89,6 +90,10 @@ window.addEventListener('blur', () => {
 
 channel.addEventListener('message', (event) => {
   const broadcast = event.data
+  if (broadcast.reload === true) {
+    window.location.reload()
+    return
+  }
   if (broadcast.window === windowID) {
     setWindowFocused(broadcast.focused === true)
     return

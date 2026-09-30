@@ -53,6 +53,7 @@ document.addEventListener(
         window.open(window.location.href, '_blank')
         return
       case 'KeyR':
+        broadcastWindowState(true)
         window.location.reload()
         return
     }
