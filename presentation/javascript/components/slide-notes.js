@@ -8,6 +8,7 @@ const notesTextSizeMinimum = 20
 const notesTextSizeMaximum = 180
 const notesTextSizeDefault = 100
 const notesTextSizeStep = 10
+const showSlideNotesEventType = 'showSlideNotes'
 
 class SlideNotes extends HTMLElement {
   static get observedAttributes() {
@@ -17,6 +18,7 @@ class SlideNotes extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.onShowSlideNotes = this.onShowSlideNotes.bind(this)
     this.onTextSizeClick = this.onTextSizeClick.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
     this.onResizeStart = this.onResizeStart.bind(this)
@@ -28,7 +30,7 @@ class SlideNotes extends HTMLElement {
   }
 
   connectedCallback() {
-    if (!this.toggleButton) {
+    if (!this.dock) {
       this.initializePanel()
     }
 
@@ -42,6 +44,7 @@ class SlideNotes extends HTMLElement {
     const defaultWidth = window.innerWidth * 0.36 + notesPanelTabWidth
     this.setPanelWidth(this.getStoredPanelWidth() ?? defaultWidth)
     window.addEventListener('resize', this.onWindowResize)
+    window.addEventListener(showSlideNotesEventType, this.onShowSlideNotes)
     const storedOpenState = this.readOpenState()
     if (storedOpenState === null) {
       this.storeOpenState(this.hasAttribute('open'))
@@ -200,14 +203,6 @@ class SlideNotes extends HTMLElement {
     this.loadTextSize()
     this.renderTextSize()
 
-    this.toggleButton = document.createElement('slide-notes-toggle')
-    this.toggleButton.setAttribute('slot', 'toggle')
-    this.toggleButton.setAttribute('label', this.getAttribute('label') ?? 'Notes')
-    this.appendChild(this.toggleButton)
-
-    this.toggleSlot = document.createElement('slot')
-    this.toggleSlot.name = 'toggle'
-    this.toggleSlot.setAttribute('part', 'controls')
 
     this.resizeHandle = document.createElement('div')
     this.resizeHandle.className = 'resize-handle'
@@ -217,7 +212,7 @@ class SlideNotes extends HTMLElement {
     this.resizeHandle.setAttribute('aria-orientation', 'vertical')
     this.resizeHandle.setAttribute('tabindex', '0')
 
-    this.shadowRoot.replaceChildren(style, this.toggleSlot, this.resizeHandle, this.dock)
+    this.shadowRoot.replaceChildren(style, this.resizeHandle, this.dock)
   }
 
   createTextSizeButton(label, text, change) {
@@ -272,11 +267,20 @@ class SlideNotes extends HTMLElement {
   disconnectedCallback() {
     this.textSizeToolbar?.removeEventListener('click', this.onTextSizeClick)
     window.removeEventListener('resize', this.onWindowResize)
+    window.removeEventListener(showSlideNotesEventType, this.onShowSlideNotes)
     this.resizeHandle?.removeEventListener('pointerdown', this.onResizeStart)
     this.resizeHandle?.removeEventListener('pointermove', this.onResizeMove)
     this.resizeHandle?.removeEventListener('pointerup', this.onResizeEnd)
     this.resizeHandle?.removeEventListener('pointercancel', this.onResizeEnd)
     this.resizeHandle?.removeEventListener('keydown', this.onResizeKeyDown)
+  }
+
+  onShowSlideNotes(event) {
+    if (typeof event.detail !== 'boolean') {
+      return
+    }
+
+    this.toggleAttribute('open', event.detail)
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -315,7 +319,10 @@ class SlideNotes extends HTMLElement {
 
   updateState() {
     const isOpen = this.hasAttribute('open')
-    this.toggleButton?.toggleAttribute('open', isOpen)
+    const toggleButton = document.getElementById('slideNotesToggle')
+    toggleButton?.setAttribute('aria-expanded', String(isOpen))
+    toggleButton?.setAttribute('aria-label', isOpen ? 'Hide speaker notes' : 'Show speaker notes')
+    toggleButton?.setAttribute('title', isOpen ? 'Hide notes' : 'Show notes')
     if (this.dock) {
       this.dock.inert = !isOpen
       this.dock.setAttribute('aria-hidden', String(!isOpen))

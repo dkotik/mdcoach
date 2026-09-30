@@ -61,4 +61,13 @@
       <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
     </svg>
   </presentation-side-button>
+  <button
+    id="slideNotesToggle"
+    class="notes-toggle"
+    type="button"
+    aria-expanded="false"
+    aria-label="Show speaker notes"
+    title="Show notes"
+    onclick="this.dispatchEvent(new CustomEvent('showSlideNotes', { bubbles: true, detail: this.getAttribute('aria-expanded') !== 'true' }))"
+  >Notes</button>
 </div>

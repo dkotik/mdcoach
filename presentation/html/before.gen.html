@@ -2220,107 +2220,6 @@ class ResizableText extends HTMLElement {
 if (!customElements.get('resizable-text')) {
   customElements.define('resizable-text', ResizableText)
 }
-class SlideNotesToggle extends HTMLElement {
-  static get observedAttributes() {
-    return ['label', 'open']
-  }
-
-  constructor() {
-    super()
-    this.attachShadow({ mode: 'open' })
-    this.onClick = this.onClick.bind(this)
-  }
-
-  connectedCallback() {
-    if (!this.button) {
-      const style = document.createElement('style')
-      style.textContent = `
-        :host {
-          display: block;
-          inset: 0;
-          pointer-events: none;
-          position: absolute;
-          z-index: 10;
-        }
-
-        button.notes-toggle {
-          background: transparent;
-          border: 1px solid var(--color-body-subtext, #aaa);
-          border-radius: 0.5rem 0 0 0.5rem;
-          border-right: 0;
-          color: var(--color-body-subtext, #aaa);
-          cursor: pointer;
-          font: inherit;
-          font-size: 0.8rem;
-          left: 0;
-          max-width: 2rem;
-          overflow: hidden;
-          padding: 0.75rem 0.5rem 0.75rem 0.1rem;
-          pointer-events: auto;
-          position: absolute;
-          top: 10vh;
-          writing-mode: vertical-rl;
-          z-index: 10;
-        }
-
-        :host([open]) button.notes-toggle {
-          border: 1px solid transparent;
-          color: var(--color-body-subtext, #aaa);
-          left: auto;
-          padding: 0.75rem 0.2rem 0.75rem 0.1rem;
-          right: 0;
-        }
-
-        button.notes-toggle:focus-visible {
-          outline: 2px solid var(--color-marker-background, #006eff);
-          outline-offset: 2px;
-        }
-      `
-
-      this.button = document.createElement('button')
-      this.button.className = 'notes-toggle'
-      this.button.type = 'button'
-      this.shadowRoot.replaceChildren(style, this.button)
-    }
-
-    this.button.addEventListener('click', this.onClick)
-    this.updateState()
-  }
-
-  disconnectedCallback() {
-    this.button?.removeEventListener('click', this.onClick)
-  }
-
-  attributeChangedCallback() {
-    this.updateState()
-  }
-
-  onClick() {
-    const root = this.getRootNode()
-    const slideNotes = root.host ?? this.closest('slide-notes')
-    if (!slideNotes || slideNotes.localName !== 'slide-notes') {
-      return
-    }
-
-    slideNotes.toggleAttribute('open')
-  }
-
-  updateState() {
-    if (!this.button) {
-      return
-    }
-
-    const isOpen = this.hasAttribute('open')
-    this.button.textContent = this.getAttribute('label') ?? 'Notes'
-    this.button.setAttribute('aria-expanded', String(isOpen))
-    this.button.setAttribute('aria-label', isOpen ? 'Hide speaker notes' : 'Show speaker notes')
-    this.button.setAttribute('title', isOpen ? 'Hide notes' : 'Show notes')
-  }
-}
-
-if (!customElements.get('slide-notes-toggle')) {
-  customElements.define('slide-notes-toggle', SlideNotesToggle)
-}
 // use as custom element <slide-notes> to show notes from the focused slide
 
 const notesPanelWidthStorageKey = 'presentationNotesWidth'
@@ -2331,6 +2230,7 @@ const notesTextSizeMinimum = 20
 const notesTextSizeMaximum = 180
 const notesTextSizeDefault = 100
 const notesTextSizeStep = 10
+const showSlideNotesEventType = 'showSlideNotes'
 
 class SlideNotes extends HTMLElement {
   static get observedAttributes() {
@@ -2340,6 +2240,7 @@ class SlideNotes extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
+    this.onShowSlideNotes = this.onShowSlideNotes.bind(this)
     this.onTextSizeClick = this.onTextSizeClick.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
     this.onResizeStart = this.onResizeStart.bind(this)
@@ -2351,7 +2252,7 @@ class SlideNotes extends HTMLElement {
   }
 
   connectedCallback() {
-    if (!this.toggleButton) {
+    if (!this.dock) {
       this.initializePanel()
     }
 
@@ -2365,6 +2266,7 @@ class SlideNotes extends HTMLElement {
     const defaultWidth = window.innerWidth * 0.36 + notesPanelTabWidth
     this.setPanelWidth(this.getStoredPanelWidth() ?? defaultWidth)
     window.addEventListener('resize', this.onWindowResize)
+    window.addEventListener(showSlideNotesEventType, this.onShowSlideNotes)
     const storedOpenState = this.readOpenState()
     if (storedOpenState === null) {
       this.storeOpenState(this.hasAttribute('open'))
@@ -2523,14 +2425,6 @@ class SlideNotes extends HTMLElement {
     this.loadTextSize()
     this.renderTextSize()
 
-    this.toggleButton = document.createElement('slide-notes-toggle')
-    this.toggleButton.setAttribute('slot', 'toggle')
-    this.toggleButton.setAttribute('label', this.getAttribute('label') ?? 'Notes')
-    this.appendChild(this.toggleButton)
-
-    this.toggleSlot = document.createElement('slot')
-    this.toggleSlot.name = 'toggle'
-    this.toggleSlot.setAttribute('part', 'controls')
 
     this.resizeHandle = document.createElement('div')
     this.resizeHandle.className = 'resize-handle'
@@ -2540,7 +2434,7 @@ class SlideNotes extends HTMLElement {
     this.resizeHandle.setAttribute('aria-orientation', 'vertical')
     this.resizeHandle.setAttribute('tabindex', '0')
 
-    this.shadowRoot.replaceChildren(style, this.toggleSlot, this.resizeHandle, this.dock)
+    this.shadowRoot.replaceChildren(style, this.resizeHandle, this.dock)
   }
 
   createTextSizeButton(label, text, change) {
@@ -2595,11 +2489,20 @@ class SlideNotes extends HTMLElement {
   disconnectedCallback() {
     this.textSizeToolbar?.removeEventListener('click', this.onTextSizeClick)
     window.removeEventListener('resize', this.onWindowResize)
+    window.removeEventListener(showSlideNotesEventType, this.onShowSlideNotes)
     this.resizeHandle?.removeEventListener('pointerdown', this.onResizeStart)
     this.resizeHandle?.removeEventListener('pointermove', this.onResizeMove)
     this.resizeHandle?.removeEventListener('pointerup', this.onResizeEnd)
     this.resizeHandle?.removeEventListener('pointercancel', this.onResizeEnd)
     this.resizeHandle?.removeEventListener('keydown', this.onResizeKeyDown)
+  }
+
+  onShowSlideNotes(event) {
+    if (typeof event.detail !== 'boolean') {
+      return
+    }
+
+    this.toggleAttribute('open', event.detail)
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -2638,7 +2541,10 @@ class SlideNotes extends HTMLElement {
 
   updateState() {
     const isOpen = this.hasAttribute('open')
-    this.toggleButton?.toggleAttribute('open', isOpen)
+    const toggleButton = document.getElementById('slideNotesToggle')
+    toggleButton?.setAttribute('aria-expanded', String(isOpen))
+    toggleButton?.setAttribute('aria-label', isOpen ? 'Hide speaker notes' : 'Show speaker notes')
+    toggleButton?.setAttribute('title', isOpen ? 'Hide notes' : 'Show notes')
     if (this.dock) {
       this.dock.inert = !isOpen
       this.dock.setAttribute('aria-hidden', String(!isOpen))

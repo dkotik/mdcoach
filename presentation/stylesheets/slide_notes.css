@@ -33,6 +33,36 @@ slide-notes > *:first-child {
   margin-top: 0;
 }
 
+button.notes-toggle {
+  background: var(--color-menu-background);
+  border: 1px solid var(--color-body-subtext);
+  border-radius: 0.5rem 0 0 0.5rem;
+  border-right: 0;
+  color: var(--color-body-subtext, #aaa);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  right: 0;
+  max-width: 2rem;
+  overflow: hidden;
+  padding: 0.75rem 0.5rem 0.75rem 0.1rem;
+  position: absolute;
+  top: 10vh;
+  writing-mode: vertical-rl;
+  z-index: 10;
+}
+
+button.notes-toggle[aria-expanded="true"] {
+  border: 1px solid transparent;
+  color: var(--color-body-subtext, #aaa);
+  padding: 0.75rem 0.2rem 0.75rem 0.1rem;
+}
+
+button.notes-toggle:focus-visible {
+  outline: 2px solid var(--color-marker-background, #006eff);
+  outline-offset: 2px;
+}
+
 body.slides > main > section > .grid > .content > slide-notes {
   margin-left: 0;
   font-size: 100%;
