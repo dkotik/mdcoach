@@ -3,8 +3,8 @@ title: "Development"
 weight: 60
 ---
 
-- [ ] hide controls role=toolbar on secondary windows
 - [ ] Safari sizing is off.
+- [ ] timer-start-pause should also sync state changes across windows
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)
 - [ ] Complete EPUB rendering by stripping scripts and styles | Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images

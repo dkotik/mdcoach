@@ -8,9 +8,9 @@ MdCoach turns Markdown documents into browser-based slide presentations. It is a
 ## What it provides
 
 - **Write slides in Markdown.** Top-level level-one and level-two headings start slides; horizontal rules provide manual breaks.
-- **Keep speaker notes with the source.** The command-line compiler separates note sections from slide content.
-- **Use familiar Markdown.** The parser includes tables, task lists, strikethrough, footnotes, definition lists, and typographic substitutions.
-- **Handle presentation media.** Local and remote images can be loaded, resized, cached, and embedded in generated HTML.
+- **Keep speaker notes with the source.** The command-line compiler separates note sections from slide content by asterisk thematic break `***`.
+- **Use familiar Markdown.** The parser includes tables, task lists, strikethrough, footnotes, definition lists, typographic substitutions, and emotes.
+- **Handle presentation media.** Local and remote images are embedded resized into generated HTML.
 - **Create review sheets.** A `questions` list in YAML front matter can be turned into a shuffled PDF worksheet.
 - **Use it as a Go library.** The `presentation` package writes a complete HTML presentation to any `io.Writer`.
 
@@ -44,7 +44,7 @@ Add an image with standard Markdown syntax:
 Compile it to HTML:
 
 ```sh
-mdcoach compile --output talk.html talk.md
+mdcoach talk.md
 ```
 
 See [Installation](/intallation.html), [Command line](/command.html), [Go library](/library.html), and [Markdown behavior](/specification.html) for details.

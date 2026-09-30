@@ -27,6 +27,7 @@ var scripts = []string{
 	"components/presentation-progress.js",
 	// "components/presentation-play.js",
 	"components/resizable-text.js",
+	"components/slide-notes-toggle.js",
 	"components/slide-notes.js",
 }
 

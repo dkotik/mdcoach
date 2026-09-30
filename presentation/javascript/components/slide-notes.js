@@ -17,7 +17,6 @@ class SlideNotes extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.onToggle = this.onToggle.bind(this)
     this.onTextSizeClick = this.onTextSizeClick.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
     this.onResizeStart = this.onResizeStart.bind(this)
@@ -29,11 +28,10 @@ class SlideNotes extends HTMLElement {
   }
 
   connectedCallback() {
-    if (!this.button) {
+    if (!this.toggleButton) {
       this.initializePanel()
     }
 
-    this.button.addEventListener('click', this.onToggle)
     this.textSizeToolbar.addEventListener('click', this.onTextSizeClick)
     this.resizeHandle.addEventListener('pointerdown', this.onResizeStart)
     this.resizeHandle.addEventListener('pointermove', this.onResizeMove)
@@ -112,34 +110,6 @@ class SlideNotes extends HTMLElement {
         padding-top: 0;
       }
 
-      button.notes-toggle {
-        background: transparent;
-        border: 1px solid var(--color-body-subtext, #aaa);
-        border-radius: 0.5rem 0 0 0.5rem;
-        border-right: 0;
-        color: var(--color-body-subtext, #aaa);
-        cursor: pointer;
-        font: inherit;
-        font-size: 0.8rem;
-        left: 0;
-        max-width: 2rem;
-        overflow: hidden;
-        padding: 0.75rem 0.5rem 0.75rem 0.1rem;
-        position: absolute;
-        top: 10vh;
-        writing-mode: vertical-rl;
-        z-index: 10;
-      }
-
-      :host([open]) button.notes-toggle {
-        border: 1px solid transparent;
-        color: var(--color-body-subtext, #aaa);
-        left: auto;
-        padding: 0.75rem 0.2rem 0.75rem 0.1rem;
-        right: 0;
-      }
-
-      button.notes-toggle:focus-visible,
       .resize-handle:focus-visible {
         outline: 2px solid var(--color-marker-background, #006eff);
         outline-offset: 2px;
@@ -230,12 +200,14 @@ class SlideNotes extends HTMLElement {
     this.loadTextSize()
     this.renderTextSize()
 
-    this.button = document.createElement('button')
-    this.button.className = 'notes-toggle'
-    this.button.setAttribute('part', 'controls')
-    this.button.type = 'button'
-    this.button.setAttribute('role', 'toolbar')
-    this.button.textContent = this.getAttribute('label') ?? 'Notes'
+    this.toggleButton = document.createElement('slide-notes-toggle')
+    this.toggleButton.setAttribute('slot', 'toggle')
+    this.toggleButton.setAttribute('label', this.getAttribute('label') ?? 'Notes')
+    this.appendChild(this.toggleButton)
+
+    this.toggleSlot = document.createElement('slot')
+    this.toggleSlot.name = 'toggle'
+    this.toggleSlot.setAttribute('part', 'controls')
 
     this.resizeHandle = document.createElement('div')
     this.resizeHandle.className = 'resize-handle'
@@ -245,7 +217,7 @@ class SlideNotes extends HTMLElement {
     this.resizeHandle.setAttribute('aria-orientation', 'vertical')
     this.resizeHandle.setAttribute('tabindex', '0')
 
-    this.shadowRoot.replaceChildren(style, this.button, this.resizeHandle, this.dock)
+    this.shadowRoot.replaceChildren(style, this.toggleSlot, this.resizeHandle, this.dock)
   }
 
   createTextSizeButton(label, text, change) {
@@ -298,7 +270,6 @@ class SlideNotes extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.button?.removeEventListener('click', this.onToggle)
     this.textSizeToolbar?.removeEventListener('click', this.onTextSizeClick)
     window.removeEventListener('resize', this.onWindowResize)
     this.resizeHandle?.removeEventListener('pointerdown', this.onResizeStart)
@@ -306,11 +277,6 @@ class SlideNotes extends HTMLElement {
     this.resizeHandle?.removeEventListener('pointerup', this.onResizeEnd)
     this.resizeHandle?.removeEventListener('pointercancel', this.onResizeEnd)
     this.resizeHandle?.removeEventListener('keydown', this.onResizeKeyDown)
-  }
-
-  onToggle() {
-    this.toggleAttribute('open')
-    this.updateState()
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -349,9 +315,7 @@ class SlideNotes extends HTMLElement {
 
   updateState() {
     const isOpen = this.hasAttribute('open')
-    this.button?.setAttribute('aria-expanded', String(isOpen))
-    this.button?.setAttribute('aria-label', isOpen ? 'Hide speaker notes' : 'Show speaker notes')
-    this.button?.setAttribute('title', isOpen ? 'Hide notes' : 'Show notes')
+    this.toggleButton?.toggleAttribute('open', isOpen)
     if (this.dock) {
       this.dock.inert = !isOpen
       this.dock.setAttribute('aria-hidden', String(!isOpen))
