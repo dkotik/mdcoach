@@ -10,19 +10,6 @@ const finalSlideIndex = slides.length - 1
 slides[currentSlide].classList.add(focusedClass)
 slides[currentSlide].classList.add(reverseClass)
 
-const updateSlideNotesToggle = () => {
-  const button = document.getElementById('slideNotesToggle')
-  if (!button) {
-    return
-  }
-
-  const slideNotes = slides[currentSlide].querySelector('slide-notes')
-  button.hidden = !slideNotes
-  if (slideNotes) {
-    button.textContent = slideNotes.getAttribute('label') ?? 'Notes'
-  }
-}
-updateSlideNotesToggle()
 
 const getCurrentConcealedListItems = () => {
   return slides[currentSlide].querySelectorAll(":scope > .grid > .content > ul > li:not(.is-revealed)")
@@ -51,7 +38,6 @@ const navigate = (targetSlide) => {
   const title = document.title.replace(/^\d+\/\d+\s*/, '')
   document.title = `${currentSlide + 1}/${finalSlideIndex + 1} ${title}`
   window.history.replaceState(null, null, '#' + (currentSlide + 1))
-  updateSlideNotesToggle()
 }
 const dispatchNavigationCompleteEvent = (concealedListItemCount) => {
   window.dispatchEvent(

@@ -319,7 +319,7 @@ class SlideNotes extends HTMLElement {
 
   updateState() {
     const isOpen = this.hasAttribute('open')
-    const toggleButton = document.getElementById('slideNotesToggle')
+    const toggleButton = document.querySelector('slide-notes-toggle')
     toggleButton?.setAttribute('aria-expanded', String(isOpen))
     toggleButton?.setAttribute('aria-label', isOpen ? 'Hide speaker notes' : 'Show speaker notes')
     toggleButton?.setAttribute('title', isOpen ? 'Hide notes' : 'Show notes')

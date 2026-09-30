@@ -17,6 +17,7 @@ body.slides.is-focused {
 body {
   box-sizing: border-box;
   margin: 1rem auto;
+  padding: 1rem 2rem;
   max-width: 40rem;
 }
 
