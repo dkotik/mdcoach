@@ -87,12 +87,9 @@ class TimerStartPause extends HTMLElement {
   }
 
   setTimerRunning(shouldRun) {
-    if (!this.timerElement) {
+    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
       return
     }
-    // if (shouldRun && this.timerElement.hasAttribute('expired')) {
-    //   return
-    // }
 
     if (shouldRun && this.timerElement.hasAttribute('paused')) {
       this.timerElement.start()
@@ -103,7 +100,11 @@ class TimerStartPause extends HTMLElement {
   }
 
   onTimerTick(event) {
-    if (event.currentTarget !== this.timerElement) {
+    if (
+      !this.timerElement ||
+      event.currentTarget !== this.timerElement ||
+      this.timerElement.hasAttribute('expired')
+    ) {
       return
     }
 
@@ -124,7 +125,7 @@ class TimerStartPause extends HTMLElement {
   }
 
   onTimerStateChange() {
-    if (!this.timerElement) {
+    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
       return
     }
 
@@ -151,6 +152,10 @@ class TimerStartPause extends HTMLElement {
   }
 
   restoreTimerState() {
+    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
+      return
+    }
+
     const key = this.getStorageKey()
     if (!key) {
       return
@@ -188,6 +193,10 @@ class TimerStartPause extends HTMLElement {
   }
 
   storeTimerState(state) {
+    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
+      return
+    }
+
     const key = this.getStorageKey()
     if (!key) {
       return
