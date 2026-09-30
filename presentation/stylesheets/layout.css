@@ -1,11 +1,15 @@
 /* =============== layout.css ================= */
 
-*[role="toolbar"] {
+*[role="toolbar"], slide-notes {
   display: none;
 }
 
 body.slides.is-focused {
   *[role="toolbar"] {
+    display: block;
+  }
+
+  slide-notes {
     display: block;
   }
 }

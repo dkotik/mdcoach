@@ -47,7 +47,7 @@ document.addEventListener(
         previous(event)
         return
       case 'KeyN':
-        document.querySelector('slide-notes')?.onToggle()
+        document.getElementById('slideNotesToggle')?.click()
         return
       case 'KeyC':
         window.open(window.location.href, '_blank')

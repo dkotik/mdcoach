@@ -113,10 +113,7 @@ class TimerStartPause extends HTMLElement {
     if (
       !this.timerElement ||
       !broadcast ||
-      typeof broadcast.sourceID !== 'string' ||
-      broadcast.sourceID === this.sourceID ||
-      broadcast.timerID !== (this.timerElement.id || 'default') ||
-      this.timerElement.hasAttribute('expired')
+      broadcast.sourceID === this.sourceID
     ) {
       return
     }
@@ -142,7 +139,7 @@ class TimerStartPause extends HTMLElement {
   }
 
   applyTimerState(state) {
-    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
+    if (!this.timerElement) {
       return
     }
 
