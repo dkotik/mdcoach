@@ -2182,6 +2182,11 @@ if (!customElements.get('resizable-text')) {
 const notesPanelWidthStorageKey = 'presentationNotesWidth'
 const notesPanelOpenStorageKey = 'presentationNotesOpen'
 const notesPanelTabWidth = 40
+const notesTextSizeStorageKey = 'mdcoachResizableTextGlobalSize'
+const notesTextSizeMinimum = 20
+const notesTextSizeMaximum = 180
+const notesTextSizeDefault = 100
+const notesTextSizeStep = 10
 
 class SlideNotes extends HTMLElement {
   static get observedAttributes() {
@@ -2192,69 +2197,145 @@ class SlideNotes extends HTMLElement {
     super()
     this.attachShadow({ mode: 'open' })
     this.onToggle = this.onToggle.bind(this)
-    // this.onDOMReady = this.onDOMReady.bind(this)
-    // this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    this.onTextSizeClick = this.onTextSizeClick.bind(this)
     this.onWindowResize = this.onWindowResize.bind(this)
     this.onResizeStart = this.onResizeStart.bind(this)
     this.onResizeMove = this.onResizeMove.bind(this)
     this.onResizeEnd = this.onResizeEnd.bind(this)
     this.onResizeKeyDown = this.onResizeKeyDown.bind(this)
     this.isResizing = false
+    this.textSize = notesTextSizeDefault
   }
 
   connectedCallback() {
+    if (!this.button) {
+      this.initializePanel()
+    }
+
+    this.button.addEventListener('click', this.onToggle)
+    this.textSizeToolbar.addEventListener('click', this.onTextSizeClick)
+    this.resizeHandle.addEventListener('pointerdown', this.onResizeStart)
+    this.resizeHandle.addEventListener('pointermove', this.onResizeMove)
+    this.resizeHandle.addEventListener('pointerup', this.onResizeEnd)
+    this.resizeHandle.addEventListener('pointercancel', this.onResizeEnd)
+    this.resizeHandle.addEventListener('keydown', this.onResizeKeyDown)
+
+    const defaultWidth = window.innerWidth * 0.36 + notesPanelTabWidth
+    this.setPanelWidth(this.getStoredPanelWidth() ?? defaultWidth)
+    window.addEventListener('resize', this.onWindowResize)
+    const storedOpenState = this.readOpenState()
+    if (storedOpenState === null) {
+      this.storeOpenState(this.hasAttribute('open'))
+    } else {
+      this.toggleAttribute('open', storedOpenState)
+    }
+    this.updateState()
+  }
+
+  createStyleElement() {
     const style = document.createElement('style')
     style.textContent = `
       :host {
+        box-sizing: border-box;
         color: var(--color-menu-text, #666);
+        display: block;
+        height: 100vh;
+        position: fixed;
+        right: 0;
+        top: 0;
         transform: translateX(calc(100% - 1.3rem));
         transition: transform 250ms ease;
         width: var(--notes-panel-width, calc(36vw + 1.3rem));
         z-index: 9999;
+      }
 
-        .dock {
-          background: var(--color-menu-background, #eee);
-          box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
-          box-sizing: border-box;
-          height: 100%;
-          margin-left: 1.3rem;
-          overflow: auto;
-          padding: 1rem 1.25rem;
-        }
+      .dock {
+        background: var(--color-menu-background, #eee);
+        box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
+        box-sizing: border-box;
+        height: 100%;
+        margin-left: 1.3rem;
+        overflow: auto;
+        padding: 1rem 1.25rem;
       }
 
       :host([open]) {
         transform: translateX(0);
-
-        button {
-          color: var(--color-body-subtext, #aaa);
-          border: 1px solid transparent;
-          padding: 0.75rem 0.2rem 0.75rem 0.1rem;
-          right: 0rem;
-          left: auto;
-        }
       }
 
-      button {
+      .text-size-toolbar {
+        float: right;
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .text-size-toolbar button {
+        background: var(--color-menu-background, #eee);
+        border: 0;
+        color: inherit;
+        cursor: pointer;
+        font: inherit;
+        line-height: 1;
+        padding: 0.4rem 0.6rem;
+      }
+
+      .text-size-toolbar button:hover:not(:disabled) {
+        border-color: var(--color-marker-background, #006eff);
+      }
+
+      .text-size-toolbar button:focus-visible {
+        outline: 2px solid var(--color-marker-background, #006eff);
+        outline-offset: 2px;
+      }
+
+      .text-size-toolbar button:disabled {
+        cursor: default;
+        opacity: 0.5;
+      }
+
+      .text-size-toolbar output {
+        font-variant-numeric: tabular-nums;
+        min-width: 4ch;
+        text-align: center;
+      }
+
+      .notes-content {
+        font-size: var(--notes-text-size, 100%);
+      }
+
+      .notes-content > :first-child {
+        margin-top: 0;
+        padding-top: 0;
+      }
+
+      button.notes-toggle {
         background: var(--color-menu-background, #eee);
         border: 1px solid var(--color-body-subtext, #aaa);
-        border-right: 0;
         border-radius: 0.5rem 0 0 0.5rem;
+        border-right: 0;
         color: var(--color-body-subtext, #aaa);
         cursor: pointer;
         font: inherit;
         font-size: 0.8rem;
         left: 0;
+        max-width: 2rem;
+        overflow: hidden;
         padding: 0.75rem 0.5rem 0.75rem 0.1rem;
         position: absolute;
         top: 10vh;
         writing-mode: vertical-rl;
-        max-width: 2rem;
-        overflow: hidden;
         z-index: 10;
       }
 
-      button:focus-visible,
+      :host([open]) button.notes-toggle {
+        border: 1px solid transparent;
+        color: var(--color-body-subtext, #aaa);
+        left: auto;
+        padding: 0.75rem 0.2rem 0.75rem 0.1rem;
+        right: 0;
+      }
+
+      button.notes-toggle:focus-visible,
       .resize-handle:focus-visible {
         outline: 2px solid var(--color-marker-background, #006eff);
         outline-offset: 2px;
@@ -2303,19 +2384,50 @@ class SlideNotes extends HTMLElement {
         }
       }
     `
+    return style
+  }
 
-    this.button = document.createElement('button')
-    this.button.type = 'button'
-    this.button.textContent = this.getAttribute('label') ?? 'Notes'
-    this.button.addEventListener('click', this.onToggle)
+  initializePanel() {
+    const style = this.createStyleElement()
 
     this.dock = document.createElement('aside')
     this.dock.className = 'dock'
     this.dock.setAttribute('aria-label', 'Speaker notes')
-    this.content = document.createElement('resizable-text')
-    // this.content.className = 'content'
-    this.content.append(document.createElement('slot'))
+    this.content = document.createElement('div')
+    this.textSizeToolbar = document.createElement('div')
+    this.textSizeToolbar.className = 'text-size-toolbar'
+    this.decreaseTextSizeButton = this.createTextSizeButton(
+      'Decrease font size',
+      '－',
+      -notesTextSizeStep,
+    )
+    this.increaseTextSizeButton = this.createTextSizeButton(
+      'Increase font size',
+      '＋',
+      notesTextSizeStep,
+    )
+    this.textSizeOutput = document.createElement('output')
+    this.textSizeOutput.setAttribute('aria-live', 'polite')
+    this.textSizeOutput.setAttribute('aria-label', 'Current font size')
+    this.textSizeToolbar.append(
+      this.decreaseTextSizeButton,
+      this.textSizeOutput,
+      this.increaseTextSizeButton,
+    )
+
+    this.notesContent = document.createElement('div')
+    this.notesContent.className = 'notes-content'
+    this.notesContent.append(document.createElement('slot'))
+    this.content.append(this.textSizeToolbar, this.notesContent)
     this.dock.append(this.content)
+
+    this.loadTextSize()
+    this.renderTextSize()
+
+    this.button = document.createElement('button')
+    this.button.className = 'notes-toggle'
+    this.button.type = 'button'
+    this.button.textContent = this.getAttribute('label') ?? 'Notes'
 
     this.resizeHandle = document.createElement('div')
     this.resizeHandle.className = 'resize-handle'
@@ -2323,33 +2435,62 @@ class SlideNotes extends HTMLElement {
     this.resizeHandle.setAttribute('aria-label', 'Resize notes panel')
     this.resizeHandle.setAttribute('aria-orientation', 'vertical')
     this.resizeHandle.setAttribute('tabindex', '0')
-    this.resizeHandle.addEventListener('pointerdown', this.onResizeStart)
-    this.resizeHandle.addEventListener('pointermove', this.onResizeMove)
-    this.resizeHandle.addEventListener('pointerup', this.onResizeEnd)
-    this.resizeHandle.addEventListener('pointercancel', this.onResizeEnd)
-    this.resizeHandle.addEventListener('keydown', this.onResizeKeyDown)
 
     this.shadowRoot.replaceChildren(style, this.button, this.resizeHandle, this.dock)
-    const defaultWidth = window.innerWidth * 0.36 + notesPanelTabWidth
-    this.setPanelWidth(this.getStoredPanelWidth() ?? defaultWidth)
-    window.addEventListener('resize', this.onWindowResize)
-    const storedOpenState = this.readOpenState()
-    if (storedOpenState === null) {
-      this.storeOpenState(this.hasAttribute('open'))
-    } else {
-      this.toggleAttribute('open', storedOpenState)
+  }
+
+  createTextSizeButton(label, text, change) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.textContent = text
+    button.setAttribute('aria-label', label)
+    button.dataset.change = String(change)
+    return button
+  }
+
+  onTextSizeClick(event) {
+    const button = event.target.closest('button[data-change]')
+    if (!button || !this.textSizeToolbar.contains(button) || button.disabled) {
+      return
     }
-    this.updateState()
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
+
+    this.textSize = Math.min(
+      notesTextSizeMaximum,
+      Math.max(notesTextSizeMinimum, this.textSize + Number(button.dataset.change)),
+    )
+    this.renderTextSize()
+    this.storeTextSize()
+  }
+
+  loadTextSize() {
+    try {
+      const storedSize = Number(window.localStorage.getItem(notesTextSizeStorageKey))
+      this.textSize = Number.isFinite(storedSize) && storedSize >= notesTextSizeMinimum
+        ? Math.min(storedSize, notesTextSizeMaximum)
+        : notesTextSizeDefault
+    } catch {
+      this.textSize = notesTextSizeDefault
     }
-    window.addEventListener('slideNavigationFinished', this.onNavigationComplete)
+  }
+
+  renderTextSize() {
+    this.notesContent.style.setProperty('--notes-text-size', `${this.textSize}%`)
+    this.textSizeOutput.textContent = `${this.textSize}%`
+    this.decreaseTextSizeButton.disabled = this.textSize <= notesTextSizeMinimum
+    this.increaseTextSizeButton.disabled = this.textSize >= notesTextSizeMaximum
+  }
+
+  storeTextSize() {
+    try {
+      window.localStorage.setItem(notesTextSizeStorageKey, String(this.textSize))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
   }
 
   disconnectedCallback() {
-    document.removeEventListener('DOMContentLoaded', this.onDOMReady)
-    window.removeEventListener('slideNavigationFinished', this.onNavigationComplete)
     this.button?.removeEventListener('click', this.onToggle)
+    this.textSizeToolbar?.removeEventListener('click', this.onTextSizeClick)
     window.removeEventListener('resize', this.onWindowResize)
     this.resizeHandle?.removeEventListener('pointerdown', this.onResizeStart)
     this.resizeHandle?.removeEventListener('pointermove', this.onResizeMove)
@@ -2396,14 +2537,6 @@ class SlideNotes extends HTMLElement {
       // Local storage may be unavailable in restricted browsing contexts.
     }
   }
-
-//   onDOMReady() {
-//     this.updateNotes()
-//   }
-//
-//   onNavigationComplete() {
-//     this.updateNotes()
-//   }
 
   updateState() {
     const isOpen = this.hasAttribute('open')
@@ -2496,24 +2629,6 @@ class SlideNotes extends HTMLElement {
       // Local storage may be unavailable in restricted browsing contexts.
     }
   }
-
-//   updateNotes() {
-//     if (!this.content) {
-//       return
-//     }
-//
-//     const slide = document.querySelector('main > aside.is-focused')
-//     const notes = slide?.querySelectorAll(':scope > .grid > .content > aside') || []
-//     const copies = Array.from(notes, (note) => {
-//       const copy = note.cloneNode(true)
-//       copy.removeAttribute('id')
-//       for (const element of copy.querySelectorAll('[id]')) {
-//         element.removeAttribute('id')
-//       }
-//       return copy
-//     })
-//     this.content.replaceChildren(...copies)
-//   }
 }
 
 if (!customElements.get('slide-notes')) {
