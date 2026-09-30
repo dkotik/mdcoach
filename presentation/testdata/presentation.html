@@ -1717,15 +1717,12 @@ class TimerStartPause extends HTMLElement {
     super()
     this.timerElement = this.querySelector('presentation-timer')
     this.hasTimerElement = Boolean(this.timerElement)
-    this.sourceID = `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`
-    this.timerStateChannel = null
     this.timerStateTimeout = null
     this.pendingTimerState = null
     this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onCurtainToggle = this.onCurtainToggle.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
-    this.onTimerStateBroadcast = this.onTimerStateBroadcast.bind(this)
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
 
@@ -1742,9 +1739,6 @@ class TimerStartPause extends HTMLElement {
     window.clearTimeout(this.timerStateTimeout)
     this.timerStateTimeout = null
     this.pendingTimerState = null
-    this.timerStateChannel?.removeEventListener('message', this.onTimerStateBroadcast)
-    this.timerStateChannel?.close()
-    this.timerStateChannel = null
     this.isInitialized = false
   }
 
@@ -1758,13 +1752,6 @@ class TimerStartPause extends HTMLElement {
     }
 
     this.isInitialized = true
-    try {
-      this.timerStateChannel = new BroadcastChannel(`${documentID}TimerState`)
-      this.timerStateChannel.addEventListener('message', this.onTimerStateBroadcast)
-    } catch {
-      this.timerStateChannel = null
-    }
-
     this.timerStateObserver.observe(this, {
       attributes: true,
       subtree: true,
@@ -1812,36 +1799,6 @@ class TimerStartPause extends HTMLElement {
     this.setTimerState()
   }
 
-  onTimerStateBroadcast(event) {
-    const broadcast = event.data
-    if (!broadcast || broadcast.sourceID === this.sourceID) {
-      return
-    }
-
-    const currentState = this.getTimerState()
-    const state = broadcast.state
-    const duration = Number(state?.duration)
-    const remainingDuration = Number(state?.remainingDuration)
-    if (
-      broadcast.timerID !== currentState.timerID ||
-      !Number.isFinite(duration) || duration <= 0 ||
-      !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
-      remainingDuration > duration || typeof state.running !== 'boolean' ||
-      typeof state.expired !== 'boolean'
-    ) {
-      return
-    }
-
-    this.setTimerState({
-      duration,
-      remainingDuration,
-      running: state.running,
-      expired: state.expired,
-      capturedAt: performance.now(),
-      counting: state.running,
-    })
-  }
-
   setTimerState(state) {
     if (state) {
       const nextState = { ...state }
@@ -1867,7 +1824,6 @@ class TimerStartPause extends HTMLElement {
       if (!requestedState) {
         const currentState = this.getTimerState()
         this.storeTimerState(currentState)
-        this.broadcastTimerState(currentState)
         return
       }
 
@@ -1916,7 +1872,6 @@ class TimerStartPause extends HTMLElement {
 
       const updatedState = this.getTimerState()
       this.storeTimerState(updatedState)
-      this.broadcastTimerState(updatedState)
     }, 600)
   }
 
@@ -2005,22 +1960,6 @@ class TimerStartPause extends HTMLElement {
     }
   }
 
-  broadcastTimerState(state) {
-    try {
-      this.timerStateChannel?.postMessage({
-        sourceID: this.sourceID,
-        timerID: state.timerID,
-        state: {
-          duration: state.duration,
-          remainingDuration: state.remainingDuration,
-          running: state.running,
-          expired: state.expired,
-        },
-      })
-    } catch {
-      // Broadcast channels may be unavailable in restricted browsing contexts.
-    }
-  }
 }
 
 if (!customElements.get('timer-start-pause')) {
@@ -3543,9 +3482,61 @@ let isWindowFocused = document.hasFocus()
 const bodyElement = document.body
 bodyElement.classList.toggle('is-focused', isWindowFocused)
 
+const mainTimerSelector = 'presentation-timer#mainTimer'
+const getMainTimerState = () => {
+  const timer = document.querySelector(mainTimerSelector)
+  if (!timer) {
+    return null
+  }
+
+  const now = performance.now()
+  const duration = Number(timer.duration)
+  const elapsed = Number(timer.elapsed) + (
+    timer.running
+      ? now - Number(timer.startedAt)
+      : 0
+  )
+  const expired = timer.hasAttribute('expired') || elapsed >= duration
+
+  return {
+    timerID: timer.id,
+    duration,
+    remainingDuration: expired ? 0 : Math.max(0, duration - elapsed),
+    running: timer.running && !expired,
+    expired,
+  }
+}
+const setMainTimerState = (state) => {
+  const timer = document.querySelector(mainTimerSelector)
+  const duration = Number(state?.duration)
+  const remainingDuration = Number(state?.remainingDuration)
+  if (
+    !timer || state?.timerID !== timer.id ||
+    !Number.isFinite(duration) || duration <= 0 ||
+    !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
+    remainingDuration > duration || typeof state.running !== 'boolean' ||
+    typeof state.expired !== 'boolean'
+  ) {
+    return
+  }
+
+  const expired = state.expired || remainingDuration === 0
+  const boundedRemainingDuration = expired ? 0 : remainingDuration
+  const running = state.running && boundedRemainingDuration > 0 && !expired
+  timer.pause()
+  timer.duration = duration
+  timer.elapsed = duration - boundedRemainingDuration
+  timer.setExpired(expired)
+  timer.updateProgress(timer.elapsed)
+  timer.updateState()
+  if (running) {
+    timer.start()
+  }
+}
 const broadcastWindowState = () => channel.postMessage({
   slideIndex: navigationState.slideIndex,
   concealedListItemCount: navigationState.concealedListItemCount,
+  timerState: getMainTimerState(),
   window: windowID,
 })
 const setWindowFocused = (focused) => {
@@ -3573,6 +3564,8 @@ channel.addEventListener('message', (event) => {
     return
   }
   setWindowFocused(false)
+
+  setMainTimerState(broadcast.timerState)
 
   if (broadcast.slideIndex !== currentSlide) {
     navigate(broadcast.slideIndex)

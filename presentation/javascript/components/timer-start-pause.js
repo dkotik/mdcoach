@@ -5,15 +5,12 @@ class TimerStartPause extends HTMLElement {
     super()
     this.timerElement = this.querySelector('presentation-timer')
     this.hasTimerElement = Boolean(this.timerElement)
-    this.sourceID = `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`
-    this.timerStateChannel = null
     this.timerStateTimeout = null
     this.pendingTimerState = null
     this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onCurtainToggle = this.onCurtainToggle.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
-    this.onTimerStateBroadcast = this.onTimerStateBroadcast.bind(this)
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
 
@@ -30,9 +27,6 @@ class TimerStartPause extends HTMLElement {
     window.clearTimeout(this.timerStateTimeout)
     this.timerStateTimeout = null
     this.pendingTimerState = null
-    this.timerStateChannel?.removeEventListener('message', this.onTimerStateBroadcast)
-    this.timerStateChannel?.close()
-    this.timerStateChannel = null
     this.isInitialized = false
   }
 
@@ -46,13 +40,6 @@ class TimerStartPause extends HTMLElement {
     }
 
     this.isInitialized = true
-    try {
-      this.timerStateChannel = new BroadcastChannel(`${documentID}TimerState`)
-      this.timerStateChannel.addEventListener('message', this.onTimerStateBroadcast)
-    } catch {
-      this.timerStateChannel = null
-    }
-
     this.timerStateObserver.observe(this, {
       attributes: true,
       subtree: true,
@@ -100,36 +87,6 @@ class TimerStartPause extends HTMLElement {
     this.setTimerState()
   }
 
-  onTimerStateBroadcast(event) {
-    const broadcast = event.data
-    if (!broadcast || broadcast.sourceID === this.sourceID) {
-      return
-    }
-
-    const currentState = this.getTimerState()
-    const state = broadcast.state
-    const duration = Number(state?.duration)
-    const remainingDuration = Number(state?.remainingDuration)
-    if (
-      broadcast.timerID !== currentState.timerID ||
-      !Number.isFinite(duration) || duration <= 0 ||
-      !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
-      remainingDuration > duration || typeof state.running !== 'boolean' ||
-      typeof state.expired !== 'boolean'
-    ) {
-      return
-    }
-
-    this.setTimerState({
-      duration,
-      remainingDuration,
-      running: state.running,
-      expired: state.expired,
-      capturedAt: performance.now(),
-      counting: state.running,
-    })
-  }
-
   setTimerState(state) {
     if (state) {
       const nextState = { ...state }
@@ -155,7 +112,6 @@ class TimerStartPause extends HTMLElement {
       if (!requestedState) {
         const currentState = this.getTimerState()
         this.storeTimerState(currentState)
-        this.broadcastTimerState(currentState)
         return
       }
 
@@ -204,7 +160,6 @@ class TimerStartPause extends HTMLElement {
 
       const updatedState = this.getTimerState()
       this.storeTimerState(updatedState)
-      this.broadcastTimerState(updatedState)
     }, 600)
   }
 
@@ -293,22 +248,6 @@ class TimerStartPause extends HTMLElement {
     }
   }
 
-  broadcastTimerState(state) {
-    try {
-      this.timerStateChannel?.postMessage({
-        sourceID: this.sourceID,
-        timerID: state.timerID,
-        state: {
-          duration: state.duration,
-          remainingDuration: state.remainingDuration,
-          running: state.running,
-          expired: state.expired,
-        },
-      })
-    } catch {
-      // Broadcast channels may be unavailable in restricted browsing contexts.
-    }
-  }
 }
 
 if (!customElements.get('timer-start-pause')) {
