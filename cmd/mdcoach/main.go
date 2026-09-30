@@ -55,6 +55,11 @@ func main() {
 			reviewCmd(),
 		},
 		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "directory",
+				Aliases: []string{"C"},
+				Usage:   "change working directory before processing input files",
+			},
 			outputFlag,
 			openFlag,
 			overwriteFlag,
@@ -67,9 +72,15 @@ func main() {
 			}
 			args = args[1:] // the first one is the command name
 
-			cwd, err := os.Getwd() // TODO: should be flag -C
+			if directory := c.String("directory"); directory != "" {
+				if err := os.Chdir(directory); err != nil {
+					return fmt.Errorf("failed to change working directory to %q: %w", directory, err)
+				}
+			}
+
+			cwd, err := os.Getwd()
 			if err != nil {
-				return fmt.Errorf("cannot locate working directory: %w", err)
+				return fmt.Errorf("failed to locate working directory: %w", err)
 			}
 			output := c.String("output")
 
