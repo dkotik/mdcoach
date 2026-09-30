@@ -39,8 +39,6 @@ body.is-flashing {
 }
 
 presentation-menu {
-  background-color: red;
-
   svg {
     width: 3rem;
   }

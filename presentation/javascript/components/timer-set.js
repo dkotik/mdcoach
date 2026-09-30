@@ -27,6 +27,8 @@ class TimerSet extends HTMLElement {
     const style = document.createElement('style')
     style.textContent = `
       :host {
+        background: var(--color-menu-background, #eee);
+        border: 1px solid var(--color-body-subtext, #aaa);
         color: var(--color-body-text);
         display: inline-flex;
         max-width: 100%;
