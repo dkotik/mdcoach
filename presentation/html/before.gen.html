@@ -1141,9 +1141,33 @@ class PresentationTimer extends HTMLElement {
         stroke-opacity: 0.3;
       }
 
+      .expired-indicator {
+        fill: #ffd641;
+        opacity: 0;
+      }
+
+      :host([expired]) .expired-indicator {
+        animation: timer-expired-pulse 800ms ease-in-out infinite;
+        opacity: 1;
+      }
+
+      @keyframes timer-expired-pulse {
+        0%, 100% {
+          opacity: 0.15;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .progress {
           stroke-linecap: butt;
+        }
+
+        :host([expired]) .expired-indicator {
+          animation: none;
+          opacity: 1;
         }
       }
     `
@@ -1166,7 +1190,13 @@ class PresentationTimer extends HTMLElement {
       'stroke-dasharray': String(this.circumference),
       'stroke-dashoffset': String(this.circumference),
     })
-    this.svg.append(this.trackCircle, this.progressCircle)
+    this.expiredIndicator = element('circle', {
+      class: 'expired-indicator',
+      cx: '50',
+      cy: '50',
+      r: '34',
+    })
+    this.svg.append(this.trackCircle, this.progressCircle, this.expiredIndicator)
     this.shadowRoot.replaceChildren(style, this.svg)
 
     if (!this.hasAttribute('role')) {
@@ -1215,6 +1245,7 @@ class PresentationTimer extends HTMLElement {
     if (this.elapsed >= this.duration) {
       this.elapsed = 0
     }
+    this.removeAttribute('expired')
 
     this.startedAt = performance.now()
     this.lastDispatchedSecond = Math.floor(this.elapsed / 1000)
@@ -1254,6 +1285,7 @@ class PresentationTimer extends HTMLElement {
       }
       this.running = false
       this.frame = undefined
+      this.setAttribute('expired', '')
       this.updateProgress(this.elapsed)
       this.updateState()
       return
