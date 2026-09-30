@@ -47,7 +47,7 @@
     <mouse-proximity style="position: fixed; bottom: 0.75rem; right: 3.4rem; z-index: 77;" distance="20">
       <timer-set data-timer-id="mainTimer"></timer-set>
     </mouse-proximity>
-    <presentation-timer id="mainTimer" duration="{{ .Duration.Seconds }}"></presentation-timer>
+    <presentation-timer id="mainTimer" duration="{{ or .Duration.Seconds 1500 }}"></presentation-timer>
   </timer-start-pause>
   <keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>
   <presentation-progress></presentation-progress>

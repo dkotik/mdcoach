@@ -243,7 +243,7 @@ class TimerSet extends HTMLElement {
     } else {
       this.duration = Math.max(0, this.duration + Number(adjustment))
       // round up to the nearest minute
-      this.duration = Math.ceil(this.duration / 60) * 60
+      // this.duration = Math.ceil(this.duration / 60) * 60
     }
     this.updateTimerDuration()
     this.renderDuration()

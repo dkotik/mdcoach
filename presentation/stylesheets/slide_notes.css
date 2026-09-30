@@ -1,4 +1,16 @@
+.footnote-ref {
+  color: var(--color-body-background);
+  background-color: var(--color-marker-trail);
+  font-size: 12pt;
+  padding: 0rem 4pt;
+  border-radius: 50%;
+  cursor: help;
+  font-family: monospace;
+  margin-left: 4pt;
+}
+
 slide-notes {
+  font-size: 12pt;
   color: var(--color-body-subtext);
   margin-left: 10rem;
   font-size: 80%;
@@ -10,17 +22,19 @@ slide-notes {
 
   .footnote-ref {
     float: left;
-    font-size: 70%;
-    cursor: help;
     margin-top: 0.3rem;
-    margin-left: -1.5rem;
+    margin-left: -2rem;
+    color: var(--color-marker-background);
+    background-color: var(--color-body-background);
+    font-size: 12pt;
+    padding: 0rem 5.5pt;
 
-    &::after {
+    /*&::after {
       content: ": ";
       color: var(--color-body-subtext);
       margin-right: 0.3rem;
       margin-left: 0.1rem;
-    }
+    }*/
   }
 
   &::part(controls) {
