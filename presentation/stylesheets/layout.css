@@ -1,12 +1,27 @@
 /* =============== layout.css ================= */
 
+*[role="toolbar"] {
+  display: none;
+}
+
+body {
+  box-sizing: border-box;
+  margin: 1rem auto;
+  max-width: 40rem;
+}
+
 body.slides {
   color: var(--color-body-text);
   background-color: var(--color-body-background);
   transition: background-color 250ms ease;
   padding: 0;
   margin: 0;
+  max-width: 100%;
   overflow: hidden !important;
+
+  *[role="toolbar"] {
+    display: block;
+  }
 }
 
 timer-start-pause {

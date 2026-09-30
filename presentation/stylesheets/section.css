@@ -70,6 +70,10 @@ body.slides > main > section > .grid {
   }
 }
 
+/*section.is-focused {
+  border-left: 1px solid var(--color-marker-background);
+}*/
+
 body.slides > main > section {
   display: block;
   width: 100%;

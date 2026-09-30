@@ -39,6 +39,7 @@ const (
 // the first child of the corresponding Slide node.
 type Slide struct {
 	ast.BaseBlock
+	Index        int
 	HeadingLevel int
 	SlideLayout  SlideLayout
 }
@@ -175,6 +176,7 @@ func (*Slide) Kind() ast.NodeKind {
 // Dump dumps the slide and its children.
 func (s *Slide) Dump(_ []byte) *ast.NodeDump {
 	return ast.NewNodeDump(s, map[string]any{
+		"index":  s.Index,
 		"layout": s.SlideLayout,
 		// "headingLevel": s.HeadingLevel,
 		// "children":   s.Children(),
@@ -219,7 +221,7 @@ func (s *slideRenderer) Render(
 	w := writer.(util.BufWriter)
 	slide := node.(*Slide)
 	if entering {
-		_, _ = fmt.Fprintf(w, `<section data-heading-level="%d"`, slide.HeadingLevel)
+		_, _ = fmt.Fprintf(w, `<section id="slide-%d" data-heading-level="%d"`, slide.Index, slide.HeadingLevel)
 		renderSlideAttributes(w, source, slide)
 		_ = w.WriteByte('>')
 		_, _ = w.WriteString(`<div class="grid"><div class="content">`)
@@ -262,8 +264,10 @@ func (s *slideCutter) Transform(document *ast.Document, reader text.Reader, _ pa
 	footnoteReferences := getAllFootnoteReferences(document)
 	children := make([]ast.Node, 0, 12)
 	lastChild := document.FirstChild()
+	nextSlideIndex := 1
 	makeSlide := func() ast.Node {
-		slide := &Slide{}
+		slide := &Slide{Index: nextSlideIndex}
+		nextSlideIndex++
 		document.InsertAfter(lastChild, slide)
 		// for _, child := range children {
 		// 	document.RemoveChild(child)

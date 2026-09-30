@@ -27,6 +27,7 @@ var styleSheets = []string{
 	"links.css",
 	"slide_notes.css",
 	"pygments.css",
+	"print.css",
 }
 
 func makeStylesheet(w io.Writer) error {

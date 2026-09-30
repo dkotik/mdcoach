@@ -1,0 +1,18 @@
+
+@media print {
+  #mainTimer {
+    display: none;
+  }
+
+  presentation-progress {
+    display: none;
+  }
+
+  *[role="toolbar"] {
+    display: none;
+  }
+
+  li::after {
+    display: none;
+  }
+}

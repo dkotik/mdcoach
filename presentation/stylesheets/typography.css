@@ -11,20 +11,22 @@
   -webkit-text-size-adjust: 100%;
 }
 
-blockquote, p, h1, h2, h3, h4, h5, h6, h7, h8 {
-  max-width: 36rem;
-}
-
-p > strong:only-child {
-  display: inline-block;
-  width: 100%;
-  text-align: center;
-}
-
-li {
-  max-width: 36rem;
-}
-
-body {
+body.slides {
   font-size: 3.8vh;
+}
+
+body.slides > main > section > .grid > .content {
+  blockquote, p, h1, h2, h3, h4, h5, h6, h7, h8 {
+    max-width: 36rem;
+  }
+
+  p > strong:only-child {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+  }
+
+  li {
+    max-width: 36rem;
+  }
 }

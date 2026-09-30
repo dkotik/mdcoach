@@ -1,6 +1,6 @@
 /* =============== list_item.css ================= */
 
-body.slides > main > section > .grid > .content > ul {
+body > main > section > .grid > .content > ul {
 
   li {
     position: relative; /* Establishes a bounding box for the overlay */

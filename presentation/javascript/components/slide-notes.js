@@ -113,7 +113,7 @@ class SlideNotes extends HTMLElement {
       }
 
       button.notes-toggle {
-        background: var(--color-menu-background, #eee);
+        background: transparent;
         border: 1px solid var(--color-body-subtext, #aaa);
         border-radius: 0.5rem 0 0 0.5rem;
         border-right: 0;
@@ -200,6 +200,7 @@ class SlideNotes extends HTMLElement {
     this.content = document.createElement('div')
     this.textSizeToolbar = document.createElement('div')
     this.textSizeToolbar.className = 'text-size-toolbar'
+    this.textSizeToolbar.setAttribute('role', 'toolbar')
     this.decreaseTextSizeButton = this.createTextSizeButton(
       'Decrease font size',
       '－',

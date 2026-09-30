@@ -2,6 +2,7 @@ package mdcoach
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/dkotik/mdcoach/internal"
@@ -74,5 +75,72 @@ func TestSlideTransformerEmptyDocument(t *testing.T) {
 	(&slideCutter{}).Transform(document, nil, nil)
 	if document.ChildCount() != 0 {
 		t.Fatalf("got %d children, want 0", document.ChildCount())
+	}
+}
+
+func TestSlideIndexesAndRenderedIDs(t *testing.T) {
+	tests := []struct {
+		name        string
+		source      string
+		wantIndexes []int
+		wantIDs     []string
+	}{
+		{
+			name:        "multiple slides",
+			source:      "# First\n\nFirst content.\n\n## Second\n\nSecond content.\n\n# Third\n",
+			wantIndexes: []int{1, 2, 3},
+			wantIDs: []string{
+				`id="slide-1"`,
+				`id="slide-2"`,
+				`id="slide-3"`,
+			},
+		},
+		{
+			name:        "content before first heading",
+			source:      "Leading content.\n\n# First\n\nSlide content.\n",
+			wantIndexes: []int{1, 2},
+			wantIDs:     []string{`id="slide-1"`, `id="slide-2"`},
+		},
+		{
+			name:   "empty document",
+			source: "",
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			source := []byte(tt.source)
+			tree := NewParser().Parse(source)
+			var gotIndexes []int
+			for child := range tree.Children() {
+				slide, ok := child.(*Slide)
+				if !ok {
+					t.Fatalf("document child = %T, want *Slide", child)
+				}
+				gotIndexes = append(gotIndexes, slide.Index)
+			}
+
+			if len(gotIndexes) != len(tt.wantIndexes) {
+				t.Fatalf("slide indexes = %v, want %v", gotIndexes, tt.wantIndexes)
+			}
+			for i, index := range tt.wantIndexes {
+				if gotIndexes[i] != index {
+					t.Errorf("slide index %d = %d, want %d", i, gotIndexes[i], index)
+				}
+			}
+
+			var rendered bytes.Buffer
+			if err := NewRenderer(nil).Render(&rendered, source, tree); err != nil {
+				t.Fatal(err)
+			}
+			for _, id := range tt.wantIDs {
+				if !strings.Contains(rendered.String(), id) {
+					t.Errorf("rendered HTML does not contain %q: %s", id, rendered.String())
+				}
+			}
+		})
 	}
 }
