@@ -1,6 +1,6 @@
 slide-notes {
   color: var(--color-body-subtext);
-  margin-left: 5rem;
+  margin-left: 10rem;
   font-size: 80%;
 
   .footnote-definition {
@@ -32,10 +32,22 @@ slide-notes > *:first-child {
 body.slides > main > section > .grid > .content > slide-notes {
   margin-left: 0;
   font-size: 100%;
-  display: block;
   max-width: 80vw;
   height: 100vh;
   position: fixed;
   right: 0;
   top: 0;
+  box-sizing: border-box;
+  color: var(--color-menu-text);
+  z-index: 9999;
+
+  &::part(content) {
+    background: var(--color-menu-background);
+    box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
+    box-sizing: border-box;
+    height: 100%;
+    margin-left: 1.3rem;
+    overflow: auto;
+    padding: 1rem 1.25rem;
+  }
 }

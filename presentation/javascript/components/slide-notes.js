@@ -57,28 +57,11 @@ class SlideNotes extends HTMLElement {
     const style = document.createElement('style')
     style.textContent = `
       :host {
-        box-sizing: border-box;
-        color: var(--color-menu-text, #666);
-        display: block;
-        height: 100vh;
-        position: fixed;
-        right: 0;
-        top: 0;
         transform: translateX(calc(100% - 1.3rem));
         transition: transform 250ms ease;
         width: var(--notes-panel-width, calc(36vw + 1.3rem));
-        z-index: 9999;
       }
 
-      .dock {
-        background: var(--color-menu-background, #eee);
-        box-shadow: 0 0 1rem rgb(0 0 0 / 20%);
-        box-sizing: border-box;
-        height: 100%;
-        margin-left: 1.3rem;
-        overflow: auto;
-        padding: 1rem 1.25rem;
-      }
 
       :host([open]) {
         transform: translateX(0);
@@ -212,7 +195,7 @@ class SlideNotes extends HTMLElement {
     const style = this.createStyleElement()
 
     this.dock = document.createElement('aside')
-    this.dock.className = 'dock'
+    this.dock.setAttribute('part', 'content')
     this.dock.setAttribute('aria-label', 'Speaker notes')
     this.content = document.createElement('div')
     this.textSizeToolbar = document.createElement('div')
