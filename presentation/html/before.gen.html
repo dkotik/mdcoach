@@ -2456,6 +2456,7 @@ class SlideNotes extends HTMLElement {
     this.button.className = 'notes-toggle'
     this.button.setAttribute('part', 'controls')
     this.button.type = 'button'
+    this.button.setAttribute('role', 'toolbar')
     this.button.textContent = this.getAttribute('label') ?? 'Notes'
 
     this.resizeHandle = document.createElement('div')

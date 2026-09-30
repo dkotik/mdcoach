@@ -8,7 +8,7 @@ The executable is named `mdcoach`. Run `mdcoach --help` or `mdcoach <command> --
 ## Compile Markdown slides
 
 ```sh
-mdcoach compile [flags] file.md [more-files.md ...]
+mdcoach [flags] file.md [more-files.md ...]
 ```
 
 For one combined presentation, provide an HTML output path:
@@ -23,7 +23,7 @@ If `--output` names an existing directory, each input is compiled to a separate 
 
 ```sh
 mkdir -p ./public
-mdcoach compile --output ./public ./talks/intro.md ./talks/results.md
+mdcoach --output ./public ./talks/intro.md ./talks/results.md
 ```
 
 `--output` also has the short form `-o`. Its default is the system temporary directory. Use `--open` (or `-p`) to open the generated HTML in the default browser. Relative input and output paths are resolved from the current working directory.

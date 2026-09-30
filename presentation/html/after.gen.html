@@ -361,30 +361,44 @@ const documentID = document.querySelector("html").dataset.id ||
 const channel = new BroadcastChannel(documentID)
 const windowID = documentID + '|' + Math.random().toString(36) + '|' + Date.now()
 
+let navigationState = {
+  slideIndex: currentSlide,
+  concealedListItemCount: getCurrentConcealedListItems().length,
+}
+let isWindowFocused = document.hasFocus()
+const bodyElement = document.body
+bodyElement.classList.toggle('is-focused', isWindowFocused)
+
+const broadcastWindowState = () => channel.postMessage({
+  slideIndex: navigationState.slideIndex,
+  concealedListItemCount: navigationState.concealedListItemCount,
+  window: windowID,
+})
+const setWindowFocused = (focused) => {
+  isWindowFocused = focused
+  bodyElement.classList.toggle('is-focused', focused)
+}
+
 window.addEventListener(navigationCompleteEventType, (event) => {
-  const navigationComplete = event.detail
-  channel.postMessage({
-    slideIndex: navigationComplete.slideIndex,
-    concealedListItemCount: navigationComplete.concealedListItemCount,
-    window: windowID
-  });
+  navigationState = event.detail
+  broadcastWindowState()
+})
+window.addEventListener('focus', () => {
+  setWindowFocused(true)
+  broadcastWindowState()
+})
+window.addEventListener('blur', () => {
+  setWindowFocused(false)
+  broadcastWindowState()
 })
 
-let isWindowFocused = true
 channel.addEventListener('message', (event) => {
   const broadcast = event.data
   if (broadcast.window === windowID) {
-    if (!isWindowFocused) {
-      isWindowFocused = true
-      document.documentElement.querySelector("body").classList.add("is-focused")
-    }
+    setWindowFocused(broadcast.focused === true)
     return
   }
-
-  if (isWindowFocused) {
-    isWindowFocused = false
-    document.documentElement.querySelector("body").classList.remove("is-focused")
-  }
+  setWindowFocused(false)
 
   if (broadcast.slideIndex !== currentSlide) {
     navigate(broadcast.slideIndex)
@@ -399,4 +413,6 @@ channel.addEventListener('message', (event) => {
     revealCount--
   }
 });
+
+broadcastWindowState()
 </script>

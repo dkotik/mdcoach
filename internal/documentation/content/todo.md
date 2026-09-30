@@ -3,6 +3,7 @@ title: "Development"
 weight: 60
 ---
 
+- [ ] hide controls role=toolbar on secondary windows
 - [ ] Safari sizing is off.
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)

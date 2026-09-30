@@ -20,7 +20,7 @@
     {{- end}}
   </head>
 <body class="is-focused slides">
-  <presentation-menu>
+  <presentation-menu role="toolbar">
     <fullscreen-toggle class="icon" title="Fullscreen">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" aria-hidden="true" focusable="false">
         <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
@@ -40,6 +40,17 @@
     </curtain-toggle>
     <!--<presentation-play></presentation-play>-->
   </presentation-menu>
+  <presentation-curtain></presentation-curtain>
+
+<div role="toolbar">
+  <timer-start-pause>
+    <mouse-proximity style="position: fixed; bottom: 0.75rem; right: 3.4rem; z-index: 77;" distance="20">
+      <timer-set data-timer-id="mainTimer"></timer-set>
+    </mouse-proximity>
+    <presentation-timer id="mainTimer" duration="{{ .Duration.Seconds }}"></presentation-timer>
+  </timer-start-pause>
+  <keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>
+  <presentation-progress></presentation-progress>
   <presentation-side-button side="left" onclick="previous(event)">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" aria-hidden="true" focusable="false">
       <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
@@ -50,13 +61,4 @@
       <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" />
     </svg>
   </presentation-side-button>
-  <presentation-curtain></presentation-curtain>
-
-<timer-start-pause>
-  <mouse-proximity style="position: fixed; bottom: 0.75rem; right: 3.4rem; z-index: 77;" distance="20">
-    <timer-set data-timer-id="mainTimer"></timer-set>
-  </mouse-proximity>
-  <presentation-timer id="mainTimer" duration="{{ .Duration.Seconds }}"></presentation-timer>
-</timer-start-pause>
-<keystroke-combo id="slideJump" filter="^\d+"></keystroke-combo>
-<presentation-progress></presentation-progress>
+</div>

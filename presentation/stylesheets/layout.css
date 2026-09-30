@@ -4,6 +4,12 @@
   display: none;
 }
 
+body.slides.is-focused {
+  *[role="toolbar"] {
+    display: block;
+  }
+}
+
 body {
   box-sizing: border-box;
   margin: 1rem auto;
@@ -18,10 +24,6 @@ body.slides {
   margin: 0;
   max-width: 100%;
   overflow: hidden !important;
-
-  *[role="toolbar"] {
-    display: block;
-  }
 }
 
 timer-start-pause {
