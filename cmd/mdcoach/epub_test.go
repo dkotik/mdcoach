@@ -96,6 +96,68 @@ func TestWriteEPUB(t *testing.T) {
 	}
 }
 
+func TestWriteEPUBStripsUnmarkedScriptAndStyleElements(t *testing.T) {
+	tests := []struct {
+		name string
+		page string
+		want string
+	}{
+		{
+			name: "removes unmarked script and style elements",
+			page: `<p>keep</p><script>drop()</script><style>.hidden { display: none }</style>`,
+			want: `<p>keep</p>`,
+		},
+		{
+			name: "preserves elements with role attributes",
+			page: `<script role="application/json">{"key":"value"}</script><style role="presentation">p { color: red }</style>`,
+			want: `<script role="application/json">{"key":"value"}</script><style role="presentation">p { color: red }</style>`,
+		},
+		{
+			name: "does not mistake role text in another attribute for a role attribute",
+			page: `<script data-label="role">drop()</script><style class="role">drop</style><script data-role="main">drop()</script>`,
+			want: ``,
+		},
+		{
+			name: "handles mixed case and multiline elements",
+			page: `<ScRiPt
+ TYPE="module"
+ ROLE="application/javascript">
+keep()
+</sCrIpT>
+<StYlE
+media="screen">
+drop
+</STYLE>`,
+			want: `<ScRiPt
+ TYPE="module"
+ ROLE="application/javascript">
+keep()
+</sCrIpT>
+`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var output bytes.Buffer
+			if err := writeEPUB(&output, []byte(tt.page), presentation.Frontmatter{}); err != nil {
+				t.Fatal(err)
+			}
+
+			archive, err := zip.NewReader(bytes.NewReader(output.Bytes()), int64(output.Len()))
+			if err != nil {
+				t.Fatalf("open EPUB archive: %v", err)
+			}
+			page := readEPUBEntry(t, archive.File[len(archive.File)-1])
+			if string(page) != tt.want {
+				t.Errorf("packaged page = %q, want %q", page, tt.want)
+			}
+		})
+	}
+}
+
 func TestCompileMarkdownToEPUB(t *testing.T) {
 	tests := []struct {
 		name        string

@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"hash/crc32"
 	"io"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/dkotik/mdcoach/presentation"
@@ -16,7 +18,16 @@ import (
 
 const epubMimetype = "application/epub+zip"
 
+var (
+	scriptElementPattern  = regexp.MustCompile(`(?is)<script\b(?:[^>"']|"[^"]*"|'[^']*')*>.*?</script\s*>`)
+	styleElementPattern   = regexp.MustCompile(`(?is)<style\b(?:[^>"']|"[^"]*"|'[^']*')*>.*?</style\s*>`)
+	openingElementPattern = regexp.MustCompile(`(?is)^<(?:script|style)\b(?:[^>"']|"[^"]*"|'[^']*')*>`)
+	elementNamePattern    = regexp.MustCompile(`(?is)^<(?:script|style)\b`)
+	attributePattern      = regexp.MustCompile(`(?is)([^\s=/>]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?`)
+)
+
 func writeEPUB(w io.Writer, htmlPage []byte, metadata presentation.Frontmatter) error {
+	htmlPage = stripUnmarkedScriptAndStyleTags(htmlPage)
 	archive := zip.NewWriter(w)
 
 	mimetype := []byte(epubMimetype)
@@ -109,6 +120,36 @@ func writeEPUB(w io.Writer, htmlPage []byte, metadata presentation.Frontmatter) 
 		return fmt.Errorf("finish EPUB archive: %w", err)
 	}
 	return nil
+}
+
+func stripUnmarkedScriptAndStyleTags(htmlPage []byte) []byte {
+	stripElements := func(page []byte, pattern *regexp.Regexp) []byte {
+		return pattern.ReplaceAllFunc(page, func(element []byte) []byte {
+			openingTag := openingElementPattern.Find(element)
+			if hasRoleAttribute(openingTag) {
+				return element
+			}
+			return nil
+		})
+	}
+
+	htmlPage = stripElements(htmlPage, scriptElementPattern)
+	return stripElements(htmlPage, styleElementPattern)
+}
+
+func hasRoleAttribute(openingTag []byte) bool {
+	nameEnd := elementNamePattern.FindIndex(openingTag)
+	tagEnd := bytes.LastIndexByte(openingTag, '>')
+	if nameEnd == nil || tagEnd < nameEnd[1] {
+		return false
+	}
+
+	for _, attribute := range attributePattern.FindAllSubmatch(openingTag[nameEnd[1]:tagEnd], -1) {
+		if strings.EqualFold(string(attribute[1]), "role") {
+			return true
+		}
+	}
+	return false
 }
 
 func epubIdentifier(htmlPage []byte) string {

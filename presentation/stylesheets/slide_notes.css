@@ -1,9 +1,8 @@
-slide-notes > *:first-child {
-  padding-top: 0;
-  margin-top: 0;
-}
-
 slide-notes {
+  color: var(--color-body-subtext);
+  margin-left: 5rem;
+  font-size: 80%;
+
   .footnote-definition {
     /*text-indent: -1rem;*/
     padding-left: 2rem;
@@ -13,6 +12,7 @@ slide-notes {
     float: left;
     font-size: 70%;
     cursor: help;
+    margin-top: 0.3rem;
     margin-left: -1.5rem;
 
     &::after {
@@ -22,4 +22,20 @@ slide-notes {
       margin-left: 0.1rem;
     }
   }
+}
+
+slide-notes > *:first-child {
+  padding-top: 0;
+  margin-top: 0;
+}
+
+body.slides > main > section > .grid > .content > slide-notes {
+  margin-left: 0;
+  font-size: 100%;
+  display: block;
+  max-width: 80vw;
+  height: 100vh;
+  position: fixed;
+  right: 0;
+  top: 0;
 }

@@ -28,12 +28,6 @@ class SlideNotes extends HTMLElement {
     style.textContent = `
       :host {
         color: var(--color-menu-text, #666);
-        display: block;
-        height: 100vh;
-        max-width: 80vw;
-        position: fixed;
-        right: 0;
-        top: 0;
         transform: translateX(calc(100% - 1.3rem));
         transition: transform 250ms ease;
         width: var(--notes-panel-width, calc(36vw + 1.3rem));

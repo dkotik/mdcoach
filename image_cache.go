@@ -18,7 +18,7 @@ var imageDataTemplateCSS = template.Must(template.New("").Funcs(template.FuncMap
 		return template.CSS(s)
 	},
 }).Parse(`
-<style>
+<style role="complementary">
 	{{ range . }}
 	  {{ safeCSS (printf "/* %s */" .Location) }}
 		.` + ImageContentClassPrefix + `{{ .Hash }} {
