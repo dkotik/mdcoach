@@ -144,7 +144,7 @@ body.slides > main > section {
 }
 
 /* section layout */
-section[data-layout="splash"] > .grid > .content {
+body.slides > main > section[data-layout="splash"] > .grid > .content {
   figure {
     position: fixed;
     margin: 0;
@@ -189,7 +189,7 @@ section[data-layout="splash"] > .grid > .content {
   }
 }
 
-section[data-layout="left-aside"] > .grid > .content {
+body.slides > main > section[data-layout="left-aside"] > .grid > .content {
   padding-left: 40vw;
 
   figure {
@@ -235,7 +235,7 @@ section[data-layout="left-aside"] > .grid > .content {
   }
 }
 
-section[data-layout="right-aside"] > .grid > .content {
+body.slides > main > section[data-layout="right-aside"] > .grid > .content {
   padding-right: 40vw;
 
   figure {
@@ -279,13 +279,4 @@ section[data-layout="right-aside"] > .grid > .content {
       text-align: right;
     }
   }
-}
-
-hr {
-  border-width: 1pt 0 0 0;
-  border-color: var(--color-body-subtext);
-  border-style: solid;
-  margin: 2rem auto 1rem auto;
-  max-width: 66%;
-  min-width: 10em;
 }

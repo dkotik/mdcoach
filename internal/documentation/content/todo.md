@@ -4,7 +4,6 @@ weight: 60
 ---
 
 - [ ] Safari sizing is off.
-- [ ] before.gen.html should be scripts.gen.js
 - [x] add body[class="is-focused"] that toggles based on logic in synchronize.js
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] Support EPUB notes output: https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$ - it is just a ZIP bundle of HTML files with CSS and images
@@ -40,6 +39,7 @@ weight: 60
 - Add more output formats, including EPUB.
 - Add optional progress indicators and presentation controls.
 - Extend review sheets with additional layout and question-selection options.
+- Wrap presentations into executable Wails app.
 
 ## How to contribute
 

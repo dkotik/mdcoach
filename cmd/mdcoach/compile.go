@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -44,17 +45,47 @@ func compileMarkdownToHTML(
 	return nil
 }
 
+func compileMarkdownToEPUB(
+	ctx context.Context,
+	output string,
+	sources []string,
+	force bool,
+) (err error) {
+	if err = confirmOverwrite(output, force); err != nil {
+		if errors.Is(err, errSkip) {
+			return nil
+		}
+		return err
+	}
+
+	var htmlPage bytes.Buffer
+	if err := presentation.New(ctx, &htmlPage, sources); err != nil {
+		return fmt.Errorf("compile presentation: %w", err)
+	}
+
+	w, err := os.Create(output)
+	if err != nil {
+		return fmt.Errorf("create EPUB output %q: %w", output, err)
+	}
+	defer w.Close()
+
+	if err := writeEPUB(w, htmlPage.Bytes()); err != nil {
+		return fmt.Errorf("write EPUB: %w", err)
+	}
+	return nil
+}
+
 func compileCmd() *cli.Command {
 	return &cli.Command{
 		Name:  "compile",
-		Usage: "convert Markdown to an HTML presentation",
+		Usage: "convert Markdown to an HTML presentation or EPUB book",
 		Flags: []cli.Flag{
 			outputFlag,
 			openFlag,
 			overwriteFlag,
 			silentFlag,
 		},
-		Action: func(_ context.Context, c *cli.Command) (err error) {
+		Action: func(ctx context.Context, c *cli.Command) (err error) {
 			// TODO: use c.IsSet("open") instead of output value!
 			// if outputFlagValue == nil {
 			// 	return errors.New("output flag is required")
@@ -82,16 +113,26 @@ func compileCmd() *cli.Command {
 					}
 				}
 
-				if !strings.HasSuffix(output, ".html") {
-					output = output + ".html"
+				if filepath.Ext(output) == ".epub" {
+					err = compileMarkdownToEPUB(
+						ctx,
+						output,
+						args,
+						c.Bool("force"),
+					)
+				} else {
+					if !strings.HasSuffix(output, ".html") {
+						output = output + ".html"
+					}
+					err = compileMarkdownToHTML(
+						// TODO: add notify context to respond to Ctrl+C signal and others.
+						ctx,
+						output,
+						args,
+						c.Bool("force"),
+					)
 				}
-				if err = compileMarkdownToHTML(
-					// TODO: add notify context to respond to Ctrl+C signal and others.
-					context.TODO(),
-					output,
-					args,
-					c.Bool("force"),
-				); err != nil {
+				if err != nil {
 					return err
 				}
 				if c.IsSet("open") {
@@ -101,7 +142,7 @@ func compileCmd() *cli.Command {
 			}
 
 			// TODO: add notify context to respond to Ctrl+C signal and others.
-			g, ctx := errgroup.WithContext(context.TODO())
+			g, ctx := errgroup.WithContext(ctx)
 			for _, p := range args {
 				p := p // golang.org/doc/faq#closures_and_goroutines
 				// if len(p) > 0 && p[0] != filepath.Separator {
@@ -109,7 +150,6 @@ func compileCmd() *cli.Command {
 					p = filepath.Join(cwd, p)
 				}
 				g.Go(func() (err error) {
-
 					destination := filepath.Join(output, strings.TrimSuffix(filepath.Base(p), ".md")+".html")
 					if err = compileMarkdownToHTML(
 						ctx,

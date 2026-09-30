@@ -55,3 +55,12 @@ presentation-menu:hover, presentation-side-button:hover {
     stroke: purple;
   }
 }
+
+hr {
+  border-width: 1pt 0 0 0;
+  border-color: var(--color-body-subtext);
+  border-style: solid;
+  margin: 2rem auto 1rem auto;
+  max-width: 66%;
+  min-width: 10em;
+}
