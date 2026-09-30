@@ -90,6 +90,9 @@ class TimerStartPause extends HTMLElement {
     if (!this.timerElement) {
       return
     }
+    // if (shouldRun && this.timerElement.hasAttribute('expired')) {
+    //   return
+    // }
 
     if (shouldRun && this.timerElement.hasAttribute('paused')) {
       this.timerElement.start()

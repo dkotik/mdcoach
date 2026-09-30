@@ -123,6 +123,7 @@ class PresentationTimer extends HTMLElement {
     this.setAttribute('aria-label', `${this.duration / 1000} second timer`)
     this.addEventListener('click', this.onClick)
     this.addEventListener('keydown', this.onKeyDown)
+    this.restoreExpirationState()
     this.updateProgress(this.elapsed)
     this.updateState()
   }
@@ -133,6 +134,47 @@ class PresentationTimer extends HTMLElement {
     this.removeEventListener('keydown', this.onKeyDown)
   }
 
+  getExpirationStorageKey() {
+    const presentationID = document.documentElement?.dataset.id
+    if (!presentationID) {
+      return null
+    }
+
+    return `${presentationID}:timer:${this.id || 'default'}:expired`
+  }
+
+  restoreExpirationState() {
+    const key = this.getExpirationStorageKey()
+    if (!key) {
+      return
+    }
+
+    try {
+      this.toggleAttribute('expired', window.localStorage.getItem(key) === 'true')
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
+  }
+
+  setExpired(isExpired) {
+    this.toggleAttribute('expired', isExpired)
+
+    const key = this.getExpirationStorageKey()
+    if (!key) {
+      return
+    }
+
+    try {
+      if (isExpired) {
+        window.localStorage.setItem(key, 'true')
+      } else {
+        window.localStorage.removeItem(key)
+      }
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
+    }
+  }
+
   getDuration() {
     const seconds = Number(this.getAttribute('duration'))
     return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 60_000
@@ -141,9 +183,12 @@ class PresentationTimer extends HTMLElement {
   onClick() {
     if (this.running) {
       this.pause()
+    } else if (this.hasAttribute('expired')) {
+      this.setExpired(false)
     } else {
       this.start()
     }
+    this.dispatchElapsedSeconds(this.elapsed)
   }
 
   onKeyDown(event) {
@@ -159,7 +204,7 @@ class PresentationTimer extends HTMLElement {
     if (this.elapsed >= this.duration) {
       this.elapsed = 0
     }
-    this.removeAttribute('expired')
+    this.setExpired(false)
 
     this.startedAt = performance.now()
     this.lastDispatchedSecond = Math.floor(this.elapsed / 1000)
@@ -199,7 +244,7 @@ class PresentationTimer extends HTMLElement {
       }
       this.running = false
       this.frame = undefined
-      this.setAttribute('expired', '')
+      this.setExpired(true)
       this.updateProgress(this.elapsed)
       this.updateState()
       return
