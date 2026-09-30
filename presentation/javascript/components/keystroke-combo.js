@@ -101,7 +101,12 @@ class KeystrokeCombo extends HTMLElement {
   }
 
   onKeyDown(event) {
-    if (event.repeat || event.isComposing || !this.matchesFilter(event.key)) {
+    const isInputFocused = event.composedPath().some((target) =>
+      target instanceof HTMLElement && (
+        target.matches('input, textarea, select') || target.isContentEditable
+      )
+    )
+    if (isInputFocused || event.repeat || event.isComposing || !this.matchesFilter(event.key)) {
       return
     }
 

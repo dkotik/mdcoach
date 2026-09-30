@@ -22,6 +22,10 @@ slide-notes {
       margin-left: 0.1rem;
     }
   }
+
+  &::part(controls) {
+    display: none;
+  }
 }
 
 slide-notes > *:first-child {
@@ -49,5 +53,9 @@ body.slides > main > section > .grid > .content > slide-notes {
     margin-left: 1.3rem;
     overflow: auto;
     padding: 1rem 1.25rem;
+  }
+
+  &::part(controls) {
+    display: block;
   }
 }

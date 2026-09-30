@@ -172,6 +172,9 @@ class TimerSet extends HTMLElement {
     }
 
     this.duration = duration
+    if (this.timerElement) {
+      this.timerElement.elapsed = 0
+    }
     this.updateTimerDuration()
   }
 
@@ -180,13 +183,13 @@ class TimerSet extends HTMLElement {
   }
 
   parseDuration(value) {
-    const match = /^(\d+):([0-5]?\d)$/.exec(value.trim())
+    const match = /^(\d+)(?:\s*[\:\-\.]\s*(\d+))?$/.exec(value.trim())
     if (!match) {
       return null
     }
 
     const minutes = Number(match[1])
-    const seconds = Number(match[2])
+    const seconds = Number(match[2] ?? 0)
     const duration = minutes * 60 + seconds
     return Number.isSafeInteger(duration) ? duration : null
   }

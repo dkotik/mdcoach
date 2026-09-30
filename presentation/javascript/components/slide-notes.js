@@ -74,7 +74,7 @@ class SlideNotes extends HTMLElement {
       }
 
       .text-size-toolbar button {
-        background: var(--color-menu-background, #eee);
+        background: transparent;
         border: 0;
         color: inherit;
         cursor: pointer;
@@ -200,6 +200,7 @@ class SlideNotes extends HTMLElement {
     this.content = document.createElement('div')
     this.textSizeToolbar = document.createElement('div')
     this.textSizeToolbar.className = 'text-size-toolbar'
+    // this.textSizeToolbar.setAttribute('part', 'controls')
     this.textSizeToolbar.setAttribute('role', 'toolbar')
     this.decreaseTextSizeButton = this.createTextSizeButton(
       'Decrease font size',
@@ -231,11 +232,13 @@ class SlideNotes extends HTMLElement {
 
     this.button = document.createElement('button')
     this.button.className = 'notes-toggle'
+    this.button.setAttribute('part', 'controls')
     this.button.type = 'button'
     this.button.textContent = this.getAttribute('label') ?? 'Notes'
 
     this.resizeHandle = document.createElement('div')
     this.resizeHandle.className = 'resize-handle'
+    this.resizeHandle.setAttribute('part', 'controls')
     this.resizeHandle.setAttribute('role', 'separator')
     this.resizeHandle.setAttribute('aria-label', 'Resize notes panel')
     this.resizeHandle.setAttribute('aria-orientation', 'vertical')
