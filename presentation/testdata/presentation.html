@@ -6,13 +6,13 @@
     <meta name="keywords" content="mdcoach demo">
     <meta name="author" content="Дима Котик">
     <meta name="created" content="2017-01-01T00:00:00Z">
-      <style>html{overscroll-behavior:none}:root{--color-body-text:black;--color-body-subtext:#aaa;--color-body-background:white;--color-menu-background:#eee;--color-menu-text:#666;--color-button-background:#fff;--color-marker-background:#006eff;--color-marker-trail:#003eaf}html[data-theme=dark]{--color-body-text:white;--color-body-subtext:#4a4a4a;--color-body-background:black;--color-menu-background:#161623;--color-menu-text:#333;--color-button-background:#999;--color-marker-background:#006eff;--color-marker-trail:#003eaf}body.is-flashing{section > .grid{background-color:rgb(from var(--color-marker-trail) r g b/.2);border-color:#ff1493;transition-duration:240ms}}presentation-menu{background-color:red;svg{width:3rem}}presentation-side-button>svg{height:12rem}presentation-menu:hover,presentation-side-button:hover{svg path{stroke:purple}}hr{border-width:1pt 0 0;border-color:var(--color-body-subtext);border-style:solid;margin:2rem auto 1rem;max-width:66%;min-width:10em}*[role=toolbar],slide-notes{display:none}body.slides.is-focused{*[role="toolbar"] { display: block; } slide-notes { display: block; }}body{box-sizing:border-box;margin:1rem auto;max-width:40rem}body.slides{color:var(--color-body-text);background-color:var(--color-body-background);transition:background-color 250ms ease;padding:0;margin:0;max-width:100%;overflow:hidden!important}timer-start-pause{max-width:2rem;max-height:2rem;position:fixed;bottom:1rem;right:1rem;z-index:1200}keystroke-combo{position:fixed;right:1rem;top:1rem;z-index:888;display:none;&[recording]{display:block}}body.slides>main>section>.grid{& > .content[data-scale="90"]{font-size:90%}& > .content[data-scale="80"]{font-size:80%}& > .content[data-scale="70"]{font-size:70%}& > .content[data-scale="60"]{font-size:65%;.mdcoachImage{max-width:90%}}& > .content[data-scale="50"]{font-size:60%;.mdcoachImage{max-width:80%}}& > .content[data-scale="40"]{font-size:55%;.mdcoachImage{max-width:70%}}& > .content[data-scale="30"]{font-size:50%;.mdcoachImage{max-width:50%;max-height:20vh}}& > .content[data-scale="20"]{font-size:40%;.mdcoachImage{float:right;margin-left:1rem;max-width:30%;max-height:15vh}}& > .content[data-scale="10"]{font-size:30%;.mdcoachImage{float:right;margin-left:1rem;max-width:15rem;max-height:15rem}}}body.slides>main>section{display:block;width:100%;max-height:100vh;aspect-ratio:4/3;transform-origin:50% 0%;box-sizing:border-box;padding:1rem;position:absolute;z-index:-100;visibility:hidden;opacity:0;translate:20vw 0;transition:visibility,opacity,translate;transition-duration:900ms;transition-behavior:allow-discrete;&.is-focused{visibility:visible;opacity:1;translate:0 0;z-index:1;@starting-style{opacity: 0;
+      <style>html{overscroll-behavior:none}:root{--color-body-text:black;--color-body-subtext:#aaa;--color-body-background:white;--color-menu-background:#eee;--color-menu-text:#666;--color-button-background:#fff;--color-marker-background:#006eff;--color-marker-trail:#003eaf}html[data-theme=dark]{--color-body-text:white;--color-body-subtext:#4a4a4a;--color-body-background:black;--color-menu-background:#161623;--color-menu-text:#333;--color-button-background:#999;--color-marker-background:#006eff;--color-marker-trail:#003eaf}body.is-flashing{section > .grid{background-color:rgb(from var(--color-marker-trail) r g b/.2);border-color:#ff1493;transition-duration:240ms}}presentation-menu{background-color:red;svg{width:3rem}}presentation-side-button>svg{height:12rem}presentation-menu:hover,presentation-side-button:hover{svg path{stroke:purple}}hr{border-width:1pt 0 0;border-color:var(--color-body-subtext);border-style:solid;margin:2rem auto 1rem;max-width:66%;min-width:10em}*[role=toolbar],slide-notes{display:none}body.slides.is-focused{*[role="toolbar"] { display: block; } slide-notes { display: block; }}body{box-sizing:border-box;margin:1rem auto;padding:1rem 2rem;max-width:40rem}body.slides{color:var(--color-body-text);background-color:var(--color-body-background);transition:background-color 250ms ease;padding:0;margin:0;max-width:100%;overflow:hidden!important}timer-start-pause{max-width:2rem;max-height:2rem;position:fixed;bottom:1rem;right:1rem;z-index:1200}keystroke-combo{position:fixed;right:1rem;top:1rem;z-index:888;display:none;&[recording]{display:block}}body.slides>main>section>.grid{& > .content[data-scale="90"]{font-size:90%}& > .content[data-scale="80"]{font-size:80%}& > .content[data-scale="70"]{font-size:70%}& > .content[data-scale="60"]{font-size:65%;.mdcoachImage{max-width:90%}}& > .content[data-scale="50"]{font-size:60%;.mdcoachImage{max-width:80%}}& > .content[data-scale="40"]{font-size:55%;.mdcoachImage{max-width:70%}}& > .content[data-scale="30"]{font-size:50%;.mdcoachImage{max-width:50%;max-height:20vh}}& > .content[data-scale="20"]{font-size:40%;.mdcoachImage{float:right;margin-left:1rem;max-width:30%;max-height:15vh}}& > .content[data-scale="10"]{font-size:30%;.mdcoachImage{float:right;margin-left:1rem;max-width:15rem;max-height:15rem}}}body.slides>main>section{display:block;width:100%;max-height:100vh;aspect-ratio:4/3;transform-origin:50% 0%;box-sizing:border-box;padding:1rem;position:absolute;z-index:-100;visibility:hidden;opacity:0;translate:20vw 0;transition:visibility,opacity,translate;transition-duration:900ms;transition-behavior:allow-discrete;&.is-focused{visibility:visible;opacity:1;translate:0 0;z-index:1;@starting-style{opacity: 0;
       translate: -20vw 0;
     }.grid{border-color:transparent}}&.reverse{translate:-20vw 0;&.is-focused{translate:0 0;border-color:#000;@starting-style{translate: 20vw 0;
       }}}& > .grid{display:grid;align-items:center;justify-content:center;vertical-align:middle;width:100%;height:100%;border-radius:2rem;padding:1rem;border:1px solid red;transition:border-color,background-color;transition-duration:1900ms;box-sizing:border-box;& > .content{margin-bottom:30%}}}body.slides>main>section[data-layout=splash]>.grid>.content{figure{position:fixed;margin:0;top:0;left:0;width:100vw;height:100vh;box-sizing:border-box;overflow:hidden;z-index:-1;.mdcoachImage{width:100%;max-width:100%!important;max-height:100%!important;height:100%;background-size:cover;box-sizing:border-box}figcaption{position:absolute;bottom:0;color:#fff;background-color:rgba(.1,.1,.1,.3);background:linear-gradient( to top,#000 0%,rgba(0,0,0,.73) 18%,rgba(0,0,0,.47) 38%,rgba(0,0,0,.25) 59%,rgba(0,0,0,9%) 80%,transparent 100% )no-repeat;padding:12% 1rem 1rem;margin:0;width:100%;box-sizing:border-box}}}body.slides>main>section[data-layout=left-aside]>.grid>.content{padding-left:40vw;figure{position:fixed;margin:0;top:0;left:0;width:38vw;height:100vh;box-sizing:border-box;overflow:hidden;.mdcoachImage{width:100%;max-width:100%!important;max-height:100%!important;height:100%;background-size:cover;box-sizing:border-box}figcaption{position:absolute;bottom:0;color:#fff;background-color:rgba(.1,.1,.1,.3);background:linear-gradient( to top,#000 0%,rgba(0,0,0,.73) 18%,rgba(0,0,0,.47) 38%,rgba(0,0,0,.25) 59%,rgba(0,0,0,9%) 80%,transparent 100% )no-repeat;padding:20% 1rem 1rem;margin:0;width:100%;box-sizing:border-box}}}body.slides>main>section[data-layout=right-aside]>.grid>.content{padding-right:40vw;figure{position:fixed;margin:0;top:0;right:0;width:38vw;height:100vh;box-sizing:border-box;overflow:hidden;.mdcoachImage{width:100%;height:100%;max-width:100%!important;max-height:100%!important;background-size:cover;box-sizing:border-box}figcaption{position:absolute;bottom:0;color:#fff;background-color:rgba(.1,.1,.1,.3);background:linear-gradient( to top,#000 0%,rgba(0,0,0,.73) 18%,rgba(0,0,0,.47) 38%,rgba(0,0,0,.25) 59%,rgba(0,0,0,9%) 80%,transparent 100% )no-repeat;padding:20% 1rem 1rem;margin:0;width:100%;box-sizing:border-box;text-align:right}}}:root{font-family:Inter,system-ui,Avenir,Helvetica,Arial,sans-serif;line-height:1.5;font-weight:400;color-scheme:light dark;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-text-size-adjust:100%}body.slides{font-size:3.8vh}body.slides>main>section>.grid>.content{blockquote, p, h1, h2, h3, h4, h5, h6, h7, h8{max-width:36rem}p > strong:only-child{display:inline-block;width:100%;text-align:center}li{max-width:36rem}}body.slides>main>section>.grid>.content{h1{font-size:220%;text-align:center;max-width:20em;margin:0 auto;text-shadow:-1px -1px 0 var(--color-body-background),1px -1px 0 var(--color-body-background),-1px 1px 0 var(--color-body-background),1px 1px 0 var(--color-body-background);padding:4rem 4rem 1rem}h2{text-align:left;font-size:180%;max-width:40em;margin:0;text-shadow:0 0 2.5rem var(--color-body-background)}h3{text-align:left;max-width:40em;margin:0;text-shadow:0 0 1.5rem var(--color-body-background)}h4{text-align:left;max-width:40em;margin:0;text-shadow:0 0 .5rem var(--color-body-background)}}body.slides>main{section[data-layout=splash] .content h1{color:#fff;background:linear-gradient( to bottom,transparent,rgba(0,0,0,.3),rgba(0,0,0,.4),rgba(0,0,0,.6),rgba(0,0,0,.5),transparent );width:100vw}}.content>blockquote{border-left:.5rem solid var(--color-marker-background);background-color:var(--color-menu-background);padding:.6rem 1.3rem .6rem 1rem;& > *:first-child{margin-top:0}& > *:last-child{margin-bottom:0}}.content>blockquote>p+footer{display:block;font-family:sans-serif;margin-right:.4rem;margin-bottom:-1rem;margin-top:.8rem;text-align:right;font-size:80%;color:var(--color-body-subtext)}.content>blockquote>p+footer:before{color:var(--color-body-subtext);content:"\2013\00A0"}.content pre,code{white-space:pre-wrap;overflow-wrap:break-word;background-color:var(--color-alt);padding:1rem 1rem 1rem 4rem;margin:1rem 1.5rem 1rem 3rem}body>main>section>.grid>.content>ul{li{position:relative;display:list-item}li::marker{color:var(--color-marker-background);content:'•  ';font-weight:bolder;font-size:120%}& > li::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-left:.7rem solid var(--color-marker-background);background-color:var(--color-marker-trail);color:var(--color-marker-background);z-index:10;padding-bottom:.2rem}& > li.is-revealed::after{display:none}}.content>ul>li+li{margin-top:.6em}dl>dt{font-weight:700}dl>dd{margin-top:1em;margin-left:1em}dl>dd:before{content:"\2013\00A0"}table{border:0;border-spacing:0;font-family:sans-serif;width:100%;font-size:60%}table tr:last-child td{border-bottom-width:.2rem;border-color:var(--color-menu-background);border-bottom-style:solid}table td,th{padding:1rem 2rem}table thead th{text-align:center;background-color:var(--color-menu-background);border-width:0 0 1px;border-color:var(--color-marker-background);border-bottom-style:dashed;padding-bottom:.8rem}table tr:nth-child(even){background-color:var(--color-menu-background)}td:first-child{border-left-width:.2rem;border-color:var(--color-menu-background);border-left-style:solid}td:last-child{border-right-width:.2rem;border-color:var(--color-menu-background);border-right-style:solid}.mdcoachImage{min-height:1.5rem;min-width:1.5rem;background-repeat:no-repeat;background-position:50%;background-size:contain;aspect-ratio:attr(data-aspect-ratio type(<number>))}.icon{min-height:1.5rem;min-width:1.5rem;max-height:5rem;max-width:5rem;padding:0 .2rem;display:inline-block;vertical-align:-12%}.icon>svg{width:100%}a{font-weight:500;color:#646cff;text-decoration:inherit}a:hover{color:#535bf2}button{border-radius:8px;border:1px solid transparent;padding:.6em 1.2em;font-size:1em;font-weight:500;font-family:inherit;background-color:#1a1a1a;cursor:pointer;transition:border-color .25s}button:hover{border-color:#646cff}button:focus,button:focus-visible{outline:4px auto -webkit-focus-ring-color}slide-notes{color:var(--color-body-subtext);margin-left:10rem;font-size:80%;.footnote-definition{padding-left:2rem}.footnote-ref{float:left;font-size:70%;cursor:help;margin-top:.3rem;margin-left:-1.5rem;&::after{content:": ";color:var(--color-body-subtext);margin-right:.3rem;margin-left:.1rem}}&::part(controls){display:none}}slide-notes>*:first-child{padding-top:0;margin-top:0}body.slides>main>section>.grid>.content>slide-notes{margin-left:0;font-size:100%;max-width:80vw;height:100vh;position:fixed;right:0;top:0;box-sizing:border-box;color:var(--color-menu-text);z-index:9999;&::part(content){background:var(--color-menu-background);box-shadow:0 0 1rem rgb(0 0 0/.2);box-sizing:border-box;height:100%;margin-left:1.3rem;overflow:auto;padding:1rem 1.25rem}&::part(controls){display:block}}.highlight .c{color:#8e908c}.highlight .err{color:#c82829}.highlight .k{color:#8959a8}.highlight .l{color:#f5871f}.highlight .n{color:#4d4d4c}.highlight .o{color:#3e999f}.highlight .p{color:#4d4d4c}.highlight .cm{color:#8e908c}.highlight .cp{color:#8e908c}.highlight .c1{color:#8e908c}.highlight .cs{color:#8e908c}.highlight .gd{color:#c82829}.highlight .ge{font-style:italic}.highlight .gh{color:#4d4d4c;font-weight:700}.highlight .gi{color:#718c00}.highlight .gp{color:#8e908c;font-weight:700}.highlight .gs{font-weight:700}.highlight .gu{color:#3e999f;font-weight:700}.highlight .kc{color:#8959a8}.highlight .kd{color:#8959a8}.highlight .kn{color:#3e999f}.highlight .kp{color:#8959a8}.highlight .kr{color:#8959a8}.highlight .kt{color:#eab700}.highlight .ld{color:#718c00}.highlight .m{color:#f5871f}.highlight .s{color:#718c00}.highlight .na{color:#4271ae}.highlight .nb{color:#4d4d4c}.highlight .nc{color:#eab700}.highlight .no{color:#c82829}.highlight .nd{color:#3e999f}.highlight .ni{color:#4d4d4c}.highlight .ne{color:#c82829}.highlight .nf{color:#4271ae}.highlight .nl{color:#4d4d4c}.highlight .nn{color:#eab700}.highlight .nx{color:#4271ae}.highlight .py{color:#4d4d4c}.highlight .nt{color:#3e999f}.highlight .nv{color:#c82829}.highlight .ow{color:#3e999f}.highlight .w{color:#4d4d4c}.highlight .mf{color:#f5871f}.highlight .mh{color:#f5871f}.highlight .mi{color:#f5871f}.highlight .mo{color:#f5871f}.highlight .sb{color:#718c00}.highlight .sc{color:#4d4d4c}.highlight .sd{color:#8e908c}.highlight .s2{color:#718c00}.highlight .se{color:#f5871f}.highlight .sh{color:#718c00}.highlight .si{color:#f5871f}.highlight .sx{color:#718c00}.highlight .sr{color:#718c00}.highlight .s1{color:#718c00}.highlight .ss{color:#718c00}.highlight .bp{color:#4d4d4c}.highlight .vc{color:#c82829}.highlight .vg{color:#c82829}.highlight .vi{color:#c82829}.highlight .il{color:#f5871f}@media print{#mainTimer{display:none}presentation-progress{display:none}*[role=toolbar]{display:none}li::after{display:none}}</style>
   </head>
 <body class="is-focused slides">
-  <presentation-menu role="toolbar">
+  <presentation-menu>
     <fullscreen-toggle class="icon" title="Fullscreen">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em" fill="none" aria-hidden="true" focusable="false">
         <path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
@@ -1713,91 +1713,92 @@ if (!customElements.get('timer-set')) {
 class TimerStartPause extends HTMLElement {
   constructor() {
     super()
-    // critical! otherwise "this" will refer to event context
-    // and the timerElement will be <null>
-    this.onDOMReady = this.onDOMReady.bind(this)
+    this.timerElement = this.querySelector('presentation-timer')
+    this.hasTimerElement = Boolean(this.timerElement)
+    this.sourceID = `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`
+    this.timerStateChannel = null
+    this.timerStateTimeout = null
+    this.pendingTimerState = null
+    this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onCurtainToggle = this.onCurtainToggle.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
-    this.onTimerTick = this.onTimerTick.bind(this)
     this.onTimerStateBroadcast = this.onTimerStateBroadcast.bind(this)
-    this.sourceID = `${Math.random().toString(36).slice(2)}-${Date.now().toString(36)}`
-    this.timerElement = null
-    this.timerStateChannel = null
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
 
   connectedCallback() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
-      return
-    }
-
     this.initialize()
   }
 
   disconnectedCallback() {
-    document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
     window.removeEventListener(curtainToggleEventType, this.onCurtainToggle)
-    this.timerElement?.removeEventListener('presentation-timer-tick', this.onTimerTick)
+    this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
+    this.removeEventListener('click', this.onTimerStateChange)
+    this.timerStateObserver.disconnect()
+    window.clearTimeout(this.timerStateTimeout)
+    this.timerStateTimeout = null
+    this.pendingTimerState = null
     this.timerStateChannel?.removeEventListener('message', this.onTimerStateBroadcast)
     this.timerStateChannel?.close()
     this.timerStateChannel = null
-    this.timerStateObserver.disconnect()
-    this.timerElement = null
-  }
-
-  onDOMReady() {
-    this.initialize()
+    this.isInitialized = false
   }
 
   initialize() {
-    this.timerElement = this.querySelector('presentation-timer')
-    if (!this.timerElement) {
+    if (this.isInitialized) {
+      return
+    }
+    if (!this.hasTimerElement) {
       console.error('timer-start-pause requires a presentation-timer child')
       return
     }
 
-    this.timerElement.addEventListener('presentation-timer-tick', this.onTimerTick)
-    this.timerStateChannel = new BroadcastChannel(`${documentID}TimerState`)
-    this.timerStateChannel.addEventListener('message', this.onTimerStateBroadcast)
-    this.restoreTimerState()
-    this.timerStateObserver.observe(this.timerElement, {
+    this.isInitialized = true
+    try {
+      this.timerStateChannel = new BroadcastChannel(`${documentID}TimerState`)
+      this.timerStateChannel.addEventListener('message', this.onTimerStateBroadcast)
+    } catch {
+      this.timerStateChannel = null
+    }
+
+    this.timerStateObserver.observe(this, {
       attributes: true,
+      subtree: true,
       attributeFilter: ['paused', 'expired'],
     })
+    this.addEventListener('presentation-timer-tick', this.onTimerStateChange)
+    this.addEventListener('click', this.onTimerStateChange)
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
     window.addEventListener(curtainToggleEventType, this.onCurtainToggle)
-    this.syncTimerWithCurtain()
-    this.onTimerStateChange()
+
+    const currentState = this.getTimerState()
+    const storedState = this.readStoredTimerState(currentState.timerID)
+    const initialState = {
+      ...currentState,
+      ...(storedState && !currentState.expired ? storedState : {}),
+    }
+    const curtain = document.querySelector('presentation-curtain')
+    if (curtain && !initialState.expired) {
+      initialState.running = !curtain.hasAttribute('open')
+    }
+    this.setTimerState(initialState)
   }
 
   onNavigationComplete(event) {
-    if (!this.timerElement) {
-      return
-    }
-
     const slideIndex = event.detail?.slideIndex
-    this.setTimerRunning(slideIndex !== 0 && !this.isCurtainOpen())
+    this.setTimerState({
+      running: slideIndex !== 0 && !this.isCurtainOpen(),
+    })
   }
 
   onCurtainToggle(event) {
-    if (
-      !this.timerElement ||
-      event.target !== document.querySelector('presentation-curtain')
-    ) {
+    if (event.target !== document.querySelector('presentation-curtain')) {
       return
     }
 
-    this.setTimerRunning(event.detail?.open !== true)
-  }
-
-  syncTimerWithCurtain() {
-    const curtain = document.querySelector('presentation-curtain')
-    if (curtain) {
-      this.setTimerRunning(!curtain.hasAttribute('open'))
-    }
+    this.setTimerState({ running: event.detail?.open !== true })
   }
 
   isCurtainOpen() {
@@ -1805,170 +1806,164 @@ class TimerStartPause extends HTMLElement {
     return Boolean(curtain?.hasAttribute('open'))
   }
 
-  setTimerRunning(shouldRun) {
-    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
-      return
-    }
-
-    if (shouldRun && this.timerElement.hasAttribute('paused')) {
-      this.timerElement.start()
-    } else if (!shouldRun && !this.timerElement.hasAttribute('paused')) {
-      this.timerElement.pause()
-    }
-    this.onTimerStateChange()
+  onTimerStateChange() {
+    this.setTimerState()
   }
 
   onTimerStateBroadcast(event) {
     const broadcast = event.data
-    if (
-      !this.timerElement ||
-      !broadcast ||
-      broadcast.sourceID === this.sourceID
-    ) {
+    if (!broadcast || broadcast.sourceID === this.sourceID) {
       return
     }
 
+    const currentState = this.getTimerState()
     const state = broadcast.state
     const duration = Number(state?.duration)
     const remainingDuration = Number(state?.remainingDuration)
     if (
+      broadcast.timerID !== currentState.timerID ||
       !Number.isFinite(duration) || duration <= 0 ||
       !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
-      remainingDuration > duration || typeof state?.running !== 'boolean' ||
+      remainingDuration > duration || typeof state.running !== 'boolean' ||
       typeof state.expired !== 'boolean'
     ) {
       return
     }
 
-    this.applyTimerState({
+    this.setTimerState({
       duration,
       remainingDuration,
       running: state.running,
       expired: state.expired,
+      capturedAt: performance.now(),
+      counting: state.running,
     })
   }
 
-  applyTimerState(state) {
-    if (!this.timerElement) {
-      return
+  setTimerState(state) {
+    if (state) {
+      const nextState = { ...state }
+      if (
+        Number.isFinite(nextState.remainingDuration) &&
+        !Number.isFinite(nextState.capturedAt)
+      ) {
+        nextState.capturedAt = performance.now()
+        nextState.counting = nextState.running === true
+      }
+      this.pendingTimerState = {
+        ...this.pendingTimerState,
+        ...nextState,
+      }
     }
 
-    this.timerStateObserver.disconnect()
-    try {
-      this.timerElement.pause()
-      this.timerElement.duration = state.duration
-      this.timerElement.elapsed = state.duration - state.remainingDuration
-      this.timerElement.updateProgress(this.timerElement.elapsed)
-      if (state.expired) {
-        this.timerElement.setExpired(true)
+    window.clearTimeout(this.timerStateTimeout)
+    this.timerStateTimeout = window.setTimeout(() => {
+      this.timerStateTimeout = null
+      const requestedState = this.pendingTimerState
+      this.pendingTimerState = null
+
+      if (!requestedState) {
+        const currentState = this.getTimerState()
+        this.storeTimerState(currentState)
+        this.broadcastTimerState(currentState)
+        return
       }
-      this.timerElement.updateState()
-      if (state.running && state.remainingDuration > 0 && !state.expired) {
-        this.timerElement.start()
+
+      const currentState = this.getTimerState()
+      const targetState = { ...currentState, ...requestedState }
+      const duration = Number(targetState.duration)
+      let remainingDuration = Number(targetState.remainingDuration)
+      if (targetState.counting === true && Number.isFinite(targetState.capturedAt)) {
+        remainingDuration -= performance.now() - targetState.capturedAt
       }
-    } finally {
-      if (this.timerElement) {
-        this.timerStateObserver.observe(this.timerElement, {
-          attributes: true,
-          attributeFilter: ['paused', 'expired'],
-        })
+      if (
+        !Number.isFinite(duration) || duration <= 0 ||
+        !Number.isFinite(remainingDuration)
+      ) {
+        return
       }
-    }
+
+      if (targetState.expired === true) {
+        remainingDuration = 0
+      }
+      remainingDuration = Math.min(duration, Math.max(0, remainingDuration))
+      const expired = targetState.expired === true || remainingDuration === 0
+      const running = targetState.running === true && remainingDuration > 0 && !expired
+      const timer = this.timerElement
+
+      this.timerStateObserver.disconnect()
+      try {
+        timer.pause()
+        timer.duration = duration
+        timer.elapsed = duration - remainingDuration
+        timer.setExpired(expired)
+        timer.updateProgress(timer.elapsed)
+        timer.updateState()
+        if (running) {
+          timer.start()
+        }
+      } finally {
+        if (this.isConnected) {
+          this.timerStateObserver.observe(this, {
+            attributes: true,
+            subtree: true,
+            attributeFilter: ['paused', 'expired'],
+          })
+        }
+      }
+
+      const updatedState = this.getTimerState()
+      this.storeTimerState(updatedState)
+      this.broadcastTimerState(updatedState)
+    }, 600)
   }
 
-  onTimerTick(event) {
-    if (
-      !this.timerElement ||
-      event.currentTarget !== this.timerElement ||
-      this.timerElement.hasAttribute('expired')
-    ) {
-      return
-    }
-
-    const duration = Number(event.detail?.totalDuration)
-    const remainingDuration = Number(event.detail?.remainingDuration)
-    if (
-      !Number.isFinite(duration) || duration <= 0 ||
-      !Number.isFinite(remainingDuration) || remainingDuration < 0
-    ) {
-      return
-    }
-
-    this.storeTimerState({
-      duration,
-      remainingDuration: Math.min(remainingDuration, duration),
-      running: remainingDuration > 0 && this.timerElement.running,
-    })
-  }
-
-  onTimerStateChange() {
-    if (!this.timerElement) {
-      return
-    }
-
-    if (this.timerElement.hasAttribute('expired')) {
-      this.broadcastTimerState({
-        duration: this.timerElement.duration,
-        remainingDuration: 0,
-        running: false,
-        expired: true,
-      })
-      return
-    }
-
-    const duration = this.timerElement.duration
-    const elapsed = this.timerElement.elapsed + (
-      this.timerElement.running
-        ? performance.now() - this.timerElement.startedAt
+  getTimerState() {
+    const timer = this.timerElement
+    const now = performance.now()
+    const duration = Number(timer.duration)
+    const elapsed = Number(timer.elapsed) + (
+      timer.running
+        ? now - Number(timer.startedAt)
         : 0
     )
-    this.storeTimerState({
-      duration,
-      remainingDuration: Math.max(0, duration - elapsed),
-      running: this.timerElement.running && elapsed < duration,
-    })
-  }
+    const expired = timer.hasAttribute('expired') || elapsed >= duration
 
-  broadcastTimerState(state) {
-    try {
-      this.timerStateChannel?.postMessage({
-        sourceID: this.sourceID,
-        timerID: this.timerElement?.id || 'default',
-        state,
-      })
-    } catch {
-      // Broadcast channels may be unavailable in restricted browsing contexts.
+    return {
+      timerID: timer.id || 'default',
+      duration,
+      remainingDuration: expired ? 0 : Math.max(0, duration - elapsed),
+      running: timer.running && !expired,
+      expired,
+      capturedAt: now,
+      counting: timer.running && !expired,
     }
   }
 
-  getStorageKey() {
+  getStorageKey(timerID) {
     const presentationID = document.querySelector('html')?.dataset.id
-    if (!presentationID || !this.timerElement) {
+    if (!presentationID || !timerID) {
       return null
     }
 
-    return `${presentationID}:timer:${this.timerElement.id || 'default'}`
+    return `${presentationID}:timer:${timerID}`
   }
 
-  restoreTimerState() {
-    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
-      return
-    }
-
-    const key = this.getStorageKey()
+  readStoredTimerState(timerID) {
+    const key = this.getStorageKey(timerID)
     if (!key) {
-      return
+      return null
     }
 
     let state
     try {
       const storedState = window.localStorage.getItem(key)
       if (!storedState) {
-        return
+        return null
       }
       state = JSON.parse(storedState)
     } catch {
-      return
+      return null
     }
 
     const duration = Number(state?.duration)
@@ -1976,39 +1971,53 @@ class TimerStartPause extends HTMLElement {
     if (
       !Number.isFinite(duration) || duration <= 0 ||
       !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
-      remainingDuration > duration || typeof state.running !== 'boolean'
+      remainingDuration > duration || typeof state.running !== 'boolean' ||
+      (state.expired !== undefined && typeof state.expired !== 'boolean')
     ) {
-      return
+      return null
     }
 
-    this.timerElement.pause()
-    this.timerElement.duration = duration
-    this.timerElement.elapsed = duration - remainingDuration
-    this.timerElement.updateProgress(this.timerElement.elapsed)
-    this.timerElement.updateState()
-    if (state.running && remainingDuration > 0) {
-      this.timerElement.start()
+    return {
+      duration,
+      remainingDuration,
+      running: state.running,
+      expired: state.expired === true,
     }
   }
 
   storeTimerState(state) {
-    if (!this.timerElement || this.timerElement.hasAttribute('expired')) {
+    const key = this.getStorageKey(state.timerID)
+    if (!key) {
       return
     }
 
-    const key = this.getStorageKey()
-    if (key) {
-      try {
-        window.localStorage.setItem(key, JSON.stringify(state))
-      } catch {
-        // Local storage may be unavailable in restricted browsing contexts.
-      }
+    try {
+      window.localStorage.setItem(key, JSON.stringify({
+        duration: state.duration,
+        remainingDuration: state.remainingDuration,
+        running: state.running,
+        expired: state.expired,
+      }))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
     }
+  }
 
-    this.broadcastTimerState({
-      ...state,
-      expired: false,
-    })
+  broadcastTimerState(state) {
+    try {
+      this.timerStateChannel?.postMessage({
+        sourceID: this.sourceID,
+        timerID: state.timerID,
+        state: {
+          duration: state.duration,
+          remainingDuration: state.remainingDuration,
+          running: state.running,
+          expired: state.expired,
+        },
+      })
+    } catch {
+      // Broadcast channels may be unavailable in restricted browsing contexts.
+    }
   }
 }
 

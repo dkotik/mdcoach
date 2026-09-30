@@ -4,7 +4,8 @@ weight: 60
 ---
 
 - [ ] timer-start-pause should also sync state changes across windows
-- [ ] Fix notes tab text label
+- [ ] timer-start-pause should be refactors to presentation-timer
+- [ ] timer-start-pause should have background behind all the controls when mouse is close for accessibility.
 - [ ] Safari sizing is off.
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)
