@@ -56,8 +56,13 @@
         margin: 1.5rem 0;
       }
       #presentations a {
+        display: inline-block;
         color: var(--index-link);
-        font-size: 1.25rem;
+        text-decoration: none;
+        border-bottom: 1px dotted lightblue;
+        padding-bottom: 0.2rem;
+        margin-bottom: 0.6rem;
+        font-size: 1.35rem;
         font-weight: 600;
       }
       #presentations small {
@@ -70,18 +75,18 @@
     </style>
   </head>
   <body>
+    <script>
+      {{.DarkLightToggleScript}}
+    </script>
     <header class="index-header">
-      <dark-light-toggle aria-label="Toggle color theme" title="Toggle color theme">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2" />
-          <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
-        </svg>
-      </dark-light-toggle>
     </header>
+    <dark-light-toggle aria-label="Toggle color theme" title="Toggle color theme" style="float: right; margin: 1rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+        <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+      </svg>
+    </dark-light-toggle>
     <ul id="presentations">
     </ul>
-    <script>
-__DARK_LIGHT_TOGGLE_SCRIPT__
-    </script>
   </body>
 </html>
