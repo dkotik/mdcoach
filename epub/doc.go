@@ -6,4 +6,8 @@
 // Commonly supported HTML tags include a, article, aside, blockquote, br, code,
 // div, em, figure, h1-h6, hr, img, li, ol, p, pre, section, span, strong, table,
 // and ul.
+//
+// ## Considerations
+//
+// - <https://willcrichton.net/notes/portable-epubs/#epub-content%2FEPUB%2Findex.xhtml$>
 package epub
