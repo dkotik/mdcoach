@@ -60,7 +60,13 @@ class PresentationTimer extends HTMLElement {
         opacity: 0;
       }
 
-      :host([expired]) .expired-indicator {
+      .expired-indicator-square {
+        fill: #ff4500;
+        opacity: 0;
+      }
+
+      :host([expired]) .expired-indicator,
+      :host([expired]) .expired-indicator-square {
         animation: timer-expired-pulse 800ms ease-in-out infinite;
         opacity: 1;
       }
@@ -79,7 +85,8 @@ class PresentationTimer extends HTMLElement {
           stroke-linecap: butt;
         }
 
-        :host([expired]) .expired-indicator {
+        :host([expired]) .expired-indicator,
+        :host([expired]) .expired-indicator-square {
           animation: none;
           opacity: 1;
         }
@@ -104,13 +111,26 @@ class PresentationTimer extends HTMLElement {
       'stroke-dasharray': String(this.circumference),
       'stroke-dashoffset': String(this.circumference),
     })
-    this.expiredIndicator = element('circle', {
+    this.expiredIndicatorBackground = element('circle', {
       class: 'expired-indicator',
       cx: '50',
       cy: '50',
       r: '34',
     })
-    this.svg.append(this.trackCircle, this.progressCircle, this.expiredIndicator)
+    this.expiredIndicator = element('rect', {
+      class: 'expired-indicator-square',
+      x: '35',
+      y: '35',
+      width: '30',
+      height: '30',
+    })
+    this.svg.append(
+      this.trackCircle,
+      this.progressCircle,
+      this.expiredIndicatorBackground,
+      this.expiredIndicator,
+    )
+
     this.shadowRoot.replaceChildren(style, this.svg)
 
     if (!this.hasAttribute('role')) {
