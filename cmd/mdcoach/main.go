@@ -62,6 +62,7 @@ func main() {
 			},
 			outputFlag,
 			openFlag,
+			indexFlag,
 			overwriteFlag,
 			silentFlag,
 		},
@@ -101,6 +102,7 @@ func main() {
 						output,
 						args[1:], // TODO: why is this?
 						c.Bool("force"),
+						c.Bool("index"),
 					)
 				} else {
 					if !strings.HasSuffix(output, ".html") {
@@ -112,6 +114,7 @@ func main() {
 						output,
 						args,
 						c.Bool("force"),
+						c.Bool("index"),
 					)
 				}
 				if err != nil {
@@ -138,6 +141,7 @@ func main() {
 						destination,
 						[]string{p},
 						c.Bool("force"),
+						c.Bool("index"),
 					); err != nil {
 						return err
 					}

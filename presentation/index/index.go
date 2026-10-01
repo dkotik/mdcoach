@@ -96,7 +96,7 @@ type entry struct {
 }
 
 // New creates an empty index page at indexPath. It fails with an error that
-// wraps [fs.ErrExist] when the file already exists, so a populated index is
+// wraps [os.ErrExist] when the file already exists, so a populated index is
 // never discarded; remove the file first to start over.
 func New(indexPath string) error {
 	file, err := os.OpenFile(indexPath, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
@@ -116,7 +116,7 @@ func New(indexPath string) error {
 
 // Add links the presentation file at presentationPath from the index page at
 // indexPath, which must already exist (see New); a missing index yields an
-// error that wraps [fs.ErrNotExist]. Relative paths are resolved against the
+// error that wraps [os.ErrNotExist]. Relative paths are resolved against the
 // current directory. The entry links to the presentation relative to the
 // index file and records that relative path in its data-path attribute. An
 // existing entry with the same data-path is replaced in place; otherwise the
@@ -298,7 +298,7 @@ func locate(document []byte, relativePath string) (*span, int, error) {
 			switch tagName {
 			case "li":
 				if inEntry && entryLists == 0 {
-					entry.end, inEntry = tagStart, false
+					entry.end, inEntry = implicitEntryEnd(document, tagStart), false
 				}
 			case "ul", "ol":
 				if inEntry {
@@ -337,7 +337,7 @@ func locate(document []byte, relativePath string) (*span, int, error) {
 			case "ul", "ol":
 				if inEntry {
 					if entryLists == 0 {
-						entry.end, inEntry = start, false
+						entry.end, inEntry = implicitEntryEnd(document, start), false
 					} else {
 						entryLists--
 					}
@@ -352,6 +352,23 @@ func locate(document []byte, relativePath string) (*span, int, error) {
 			}
 		}
 	}
+}
+
+// implicitEntryEnd preserves the line break before a following list item or
+// list end tag when an HTML list item omits its explicit closing tag.
+func implicitEntryEnd(document []byte, tagStart int) int {
+	_, atLineStart := lineIndent(document, tagStart)
+	if !atLineStart {
+		return tagStart
+	}
+	lineBreak := bytes.LastIndexByte(document[:tagStart], '\n')
+	if lineBreak < 0 {
+		return tagStart
+	}
+	if lineBreak > 0 && document[lineBreak-1] == '\r' {
+		return lineBreak - 1
+	}
+	return lineBreak
 }
 
 // attributeValue unquotes and unescapes a raw attribute value from the lexer.

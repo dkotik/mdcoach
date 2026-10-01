@@ -35,7 +35,7 @@ func TestCompileMarkdownToEPUB(t *testing.T) {
 				t.Fatal(err)
 			}
 			output := filepath.Join(directory, "slides.epub")
-			if err := compileMarkdownToEPUB(context.Background(), output, []string{source}, true); err != nil {
+			if err := compileMarkdownToEPUB(context.Background(), output, []string{source}, true, false); err != nil {
 				t.Fatal(err)
 			}
 
@@ -76,7 +76,7 @@ func TestCompileMarkdownToEPUBCombinesSources(t *testing.T) {
 	}
 
 	output := filepath.Join(directory, "slides.epub")
-	if err := compileMarkdownToEPUB(context.Background(), output, []string{firstSource, secondSource}, true); err != nil {
+	if err := compileMarkdownToEPUB(context.Background(), output, []string{firstSource, secondSource}, true, false); err != nil {
 		t.Fatal(err)
 	}
 	data, err := os.ReadFile(output)

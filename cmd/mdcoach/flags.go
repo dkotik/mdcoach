@@ -30,6 +30,11 @@ var (
 		Usage:       "open created files in system browser",
 	}
 
+	indexFlag = &cli.BoolFlag{
+		Name:  "index",
+		Usage: "add created presentations to an index.html in the output directory",
+	}
+
 	confirmOverwriteMutex = &sync.Mutex{}
 	errSkip               = errors.New("skip file, do not overwrite")
 	overwriteFlag         = &cli.BoolFlag{
