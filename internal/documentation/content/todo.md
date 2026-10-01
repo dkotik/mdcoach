@@ -3,6 +3,7 @@ title: "Development"
 weight: 60
 ---
 
+- [ ] Add index file generation to which new entries are added. presentation/index package.
 - [ ] Add video figure renderer - probably requires a local video cache to avoid all the headaches of content security policy and such.
 - [ ] Safari sizing is off.
 - [ ] There is root image loader and another one in the epub package. Those two should be refactored to one and placed into internal package.

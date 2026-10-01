@@ -1,12 +1,35 @@
-// Derrived color vars based on primary inputs:
+@font-face
+  font-family: 'Corbel'
+  // src: url('fonts/choc.ttf')
+  // src: url('fonts/B612-Bold.ttf'), url('fonts/B612-BoldItalic.ttf'), url('fonts/B612-Regular.ttf')
+  src: url('fonts/corbel/corbel.ttf'), url('fonts/corbel/corbel-bold.ttf'), url('fonts/corbel/corbel-italic.ttf'), url('fonts/corbel/corbel-bold-italic.ttf')
+
+body
+  font-family: Corbel, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif
+  font-size: 6vh
+  margin: 0
+
+blockquote.language-greek
+  font-family: Bible Works Greek
+  line-height: 160%
+
+@font-face
+  font-family: Shlomo
+  src: url('fonts/SBL_Hbrw.ttf')
+
+blockquote.language-hebrew
+  font-family: Shlomo
+  text-align: right
+  line-height: 180%
+  font-size: 160%
+  sup.ref
+    padding: 0 0 0 0.3em
+    font-size: 50%
 
 body
   background-color: var(--color-canvas)
   color: var(--color-text)
   cursor: default
-
-img
-  vertical-align: middle
 
 a
   cursor: pointer
@@ -49,24 +72,3 @@ a
   #{--color-muted}: mix($canvas, $action, 30%)
   #{--color-faded}: mix($canvas, $text, 30%)
   #{--color-alt}: mix($canvas, $text, 90%)
-
-body,div,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,select,textarea,p,blockquote,th,td
-  box-sizing: border-box
-  word-wrap: break-word
-  overflow-wrap: break-word
-
-figure, figcaption
-  margin: 0
-  padding: 0
-  border: 0
-  box-sizing: border-box
-  word-wrap: break-word
-  overflow-wrap: break-word
-  -webkit-margin-before: 0em
-  -webkit-margin-after: 0em
-  -webkit-margin-start: 0em
-  -webkit-margin-end: 0em
-
-// without this, tables glitch like crazy!
-table, tr
-  width: 100%
