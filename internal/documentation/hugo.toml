@@ -18,7 +18,7 @@ uglyURLs = true
     weight = 10
   [[menu.main]]
     name = 'Installation'
-    pageRef = '/intallation'
+    pageRef = '/installation'
     weight = 20
   [[menu.main]]
     name = 'Library'
@@ -44,3 +44,7 @@ uglyURLs = true
     name = 'Roadmap'
     pageRef = '/todo'
     weight = 80
+  [[menu.main]]
+    name = 'Presentation Index'
+    pageRef = '/index'
+    weight = 90

@@ -3,6 +3,10 @@ title: "Development"
 weight: 60
 ---
 
+- [ ] Fix goreleaser Homebrew issue:
+  Warning: Calling `postflight` is deprecated! Use `postflight_steps` instead.
+  Please report this issue to the dkotik/homebrew-tap tap (not Homebrew/* repositories), or even better, submit a PR to fix it:
+    /opt/homebrew/Library/Taps/dkotik/homebrew-tap/Casks/mdcoach.rb:40
 - [ ] Add video figure renderer - probably requires a local video cache to avoid all the headaches of content security policy and such.
 - [ ] Safari sizing is off.
 - [ ] There is root image loader and another one in the epub package. Those two should be refactored to one and placed into internal package.
