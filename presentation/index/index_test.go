@@ -75,6 +75,10 @@ func TestNew(t *testing.T) {
 			}
 			for _, want := range []string{
 				"<!DOCTYPE html>",
+				`<html lang="en" data-theme="dark">`,
+				`<dark-light-toggle aria-label="Toggle color theme"`,
+				"customElements.define('dark-light-toggle', DarkLightToggle)",
+				"this.darkMode = window.localStorage.getItem('darkMode') !== 'false'",
 				`<meta charset="utf-8">`,
 				"<title>Presentations</title>",
 				`<ul id="` + ListID + `">` + "\n    </ul>",
@@ -126,8 +130,7 @@ func TestAdd(t *testing.T) {
         <small>Ada Lovelace · <time datetime="2024-03-05">March 5, 2024</time></small>
         <p>Where it all begins.</p>
       </li>
-    </ul>
-  </body>`},
+    </ul>`},
 		},
 		{
 			name:      "falls back to the file name as the title",

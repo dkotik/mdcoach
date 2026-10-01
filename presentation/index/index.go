@@ -11,6 +11,7 @@ package index
 
 import (
 	"bytes"
+	_ "embed"
 	"errors"
 	"fmt"
 	"html"
@@ -31,22 +32,58 @@ import (
 // stylesheet.
 const ListID = "presentations"
 
+//go:embed dark-light-toggle.js
+var darkLightToggleScript string
+
 const emptyIndex = `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Presentations</title>
     <style>
       :root {
-        color-scheme: light dark;
+        color-scheme: dark;
         font-family: system-ui, sans-serif;
         line-height: 1.5;
+        --index-background: #111;
+        --index-text: #eee;
+        --index-muted: #aaa;
+        --index-link: #8ab4f8;
+      }
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --index-background: #fff;
+        --index-text: #222;
+        --index-muted: #666;
+        --index-link: #1558b0;
       }
       body {
+        background: var(--index-background);
+        color: var(--index-text);
         margin: 2rem auto;
         max-width: 40rem;
         padding: 0 1rem;
+      }
+      .index-header {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
+      .index-header h1 {
+        margin: 0;
+      }
+      dark-light-toggle {
+        color: inherit;
+        font-size: 1.5rem;
+      }
+      dark-light-toggle:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 3px;
+      }
+      dark-light-toggle svg {
+        height: 1em;
+        width: 1em;
       }
       #presentations {
         list-style: none;
@@ -56,12 +93,13 @@ const emptyIndex = `<!DOCTYPE html>
         margin: 1.5rem 0;
       }
       #presentations a {
+        color: var(--index-link);
         font-size: 1.25rem;
         font-weight: 600;
       }
       #presentations small {
+        color: var(--index-muted);
         display: block;
-        opacity: 0.7;
       }
       #presentations p {
         margin: 0.25rem 0 0;
@@ -69,9 +107,20 @@ const emptyIndex = `<!DOCTYPE html>
     </style>
   </head>
   <body>
-    <h1>Presentations</h1>
+    <header class="index-header">
+      <h1>Presentations</h1>
+      <dark-light-toggle aria-label="Toggle color theme" title="Toggle color theme">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2" />
+          <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" />
+        </svg>
+      </dark-light-toggle>
+    </header>
     <ul id="presentations">
     </ul>
+    <script>
+{{darkLightToggleScript}}
+    </script>
   </body>
 </html>
 `
@@ -103,7 +152,8 @@ func New(indexPath string) error {
 	if err != nil {
 		return fmt.Errorf("create presentation index: %w", err)
 	}
-	_, writeErr := io.WriteString(file, emptyIndex)
+	page := strings.Replace(emptyIndex, "{{darkLightToggleScript}}", darkLightToggleScript, 1)
+	_, writeErr := io.WriteString(file, page)
 	closeErr := file.Close()
 	if writeErr != nil {
 		return fmt.Errorf("write presentation index %q: %w", indexPath, writeErr)
