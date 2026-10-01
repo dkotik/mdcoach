@@ -99,7 +99,7 @@ func main() {
 					err = compileMarkdownToEPUB(
 						ctx,
 						output,
-						args,
+						args[1:], // TODO: why is this?
 						c.Bool("force"),
 					)
 				} else {

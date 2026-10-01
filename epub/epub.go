@@ -17,12 +17,6 @@ import (
 
 const epubMimetype = "application/epub+zip"
 
-// Write creates an EPUB 3 archive containing the provided rendered HTML page.
-// It is the low-level archive writer; use New to render an AST and package its assets.
-func Write(w io.Writer, htmlPage []byte, metadata presentation.Frontmatter) error {
-	return writePublication(w, htmlPage, metadata, nil, nil)
-}
-
 func writePublication(w io.Writer, htmlPage []byte, metadata presentation.Frontmatter, stylesheet []byte, images []*Image) error {
 	if metadata.Title == "" {
 		metadata.Title = "Presentation"

@@ -199,6 +199,28 @@ Speaker notes.
 	}
 }
 
+func TestNewArchiveStartsWithUncompressedMimetype(t *testing.T) {
+	source := []byte("# EPUB\n")
+	node := mdcoach.NewParser().Parse(source)
+	var output bytes.Buffer
+	if err := New(context.Background(), &output, source, node); err != nil {
+		t.Fatal(err)
+	}
+	archive, err := zip.NewReader(bytes.NewReader(output.Bytes()), int64(output.Len()))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(archive.File) == 0 || archive.File[0].Name != "mimetype" {
+		t.Fatalf("first EPUB entry = %v, want mimetype", archive.File)
+	}
+	if archive.File[0].Method != zip.Store {
+		t.Errorf("mimetype compression method = %d, want zip.Store", archive.File[0].Method)
+	}
+	if got := string(readEPUBEntry(t, archive.File[0])); got != epubMimetype {
+		t.Errorf("mimetype = %q, want %q", got, epubMimetype)
+	}
+}
+
 func TestNewUsesFrontmatterMetadata(t *testing.T) {
 	source := []byte("---\ntitle: Story title\nauthor: Ada\n---\n# Chapter\n")
 	node := mdcoach.NewParser().Parse(source)

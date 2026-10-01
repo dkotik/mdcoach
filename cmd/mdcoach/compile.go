@@ -1,11 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/dkotik/mdcoach/epub"
 	"github.com/dkotik/mdcoach/presentation"
@@ -58,19 +58,28 @@ func compileMarkdownToEPUB(
 		return fmt.Errorf("parse presentation: %w", err)
 	}
 
-	var htmlPage bytes.Buffer
-	if err := presentation.Render(ctx, &htmlPage, parsedSources, metadata); err != nil {
-		return fmt.Errorf("render presentation: %w", err)
-	}
-
 	w, err := os.Create(output)
 	if err != nil {
 		return fmt.Errorf("create EPUB output %q: %w", output, err)
 	}
 	defer w.Close()
 
-	if err := epub.Write(w, htmlPage.Bytes(), metadata); err != nil {
-		return fmt.Errorf("write EPUB: %w", err)
+	var renderErr error
+	if len(parsedSources) == 1 {
+		source := parsedSources[0]
+		renderErr = epub.New(
+			ctx,
+			w,
+			source.Source,
+			source.Presentation,
+			epub.WithMetadata(metadata),
+			epub.WithMediaOptions(epub.MediaOptions{Path: filepath.Dir(source.Path)}),
+		)
+	} else {
+		renderErr = epub.NewSources(ctx, w, parsedSources, epub.WithMetadata(metadata))
+	}
+	if renderErr != nil {
+		return fmt.Errorf("render EPUB: %w", renderErr)
 	}
 	return nil
 }

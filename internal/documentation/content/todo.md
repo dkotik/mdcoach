@@ -4,7 +4,6 @@ weight: 60
 ---
 
 - [ ] Add video figure renderer.
-- [ ] Complete EPUB rendering by stripping scripts and styles | Support EPUB notes output: it is just a ZIP bundle of HTML files with CSS and images
 - [ ] Safari sizing is off.
 - [ ] There is root image loader and another one in the epub package. Those two should be refactored to one and placed into internal package.
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?

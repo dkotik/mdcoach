@@ -47,7 +47,7 @@ func TestCompileMarkdownToEPUB(t *testing.T) {
 			if err != nil {
 				t.Fatalf("open compiled EPUB: %v", err)
 			}
-			page := readCompiledEPUBEntry(t, archive.File[len(archive.File)-1])
+			page := readCompiledEPUBEntry(t, archive.File[4])
 			if !bytes.Contains(page, []byte(tt.wantText)) {
 				t.Errorf("EPUB page = %q, want it to contain %q", page, tt.wantText)
 			}
@@ -59,6 +59,39 @@ func TestCompileMarkdownToEPUB(t *testing.T) {
 				t.Errorf("EPUB package does not contain creator %q: %s", tt.wantCreator, packageDocument)
 			}
 		})
+	}
+}
+
+func TestCompileMarkdownToEPUBCombinesSources(t *testing.T) {
+	directory := t.TempDir()
+	firstSource := filepath.Join(directory, "first.md")
+	secondSource := filepath.Join(directory, "second.md")
+	for source, content := range map[string]string{
+		firstSource:  "# First slide\n\nFirst source.\n",
+		secondSource: "# Second slide\n\nSecond source.\n",
+	} {
+		if err := os.WriteFile(source, []byte(content), 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	output := filepath.Join(directory, "slides.epub")
+	if err := compileMarkdownToEPUB(context.Background(), output, []string{firstSource, secondSource}, true); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(output)
+	if err != nil {
+		t.Fatal(err)
+	}
+	archive, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		t.Fatalf("open compiled EPUB: %v", err)
+	}
+	page := readCompiledEPUBEntry(t, archive.File[4])
+	for _, expected := range []string{"First slide", "First source.", "Second slide", "Second source."} {
+		if !bytes.Contains(page, []byte(expected)) {
+			t.Errorf("EPUB page does not contain %q: %s", expected, page)
+		}
 	}
 }
 
