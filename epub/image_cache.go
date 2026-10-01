@@ -5,6 +5,7 @@ import (
 	"fmt"
 	stdImage "image"
 	"image/png"
+	"sort"
 	"sync"
 
 	"github.com/OneOfOne/xxhash"
@@ -81,4 +82,18 @@ func (c *ImageCache) Set(image *Image) {
 
 	c.images[image.Hash] = image
 	c.hashes[image.Location] = image.Hash
+}
+
+func (c *ImageCache) all() []*Image {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	images := make([]*Image, 0, len(c.images))
+	for _, image := range c.images {
+		images = append(images, image)
+	}
+	sort.Slice(images, func(i, j int) bool {
+		return images[i].Hash < images[j].Hash
+	})
+	return images
 }
