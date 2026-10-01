@@ -2,6 +2,7 @@ default:
 	cd v1 && go test ./...
 generate:
 	cd presentation && go generate . && go test . -update
+	cd presentation/index && go generate .
 	go generate . && go test . -update
 install:
 	# go test ./...

@@ -9,7 +9,11 @@ class DarkLightToggle extends HTMLElement {
   }
 
   connectedCallback() {
-    this.darkMode = window.localStorage.getItem('darkMode') === 'true'
+    try {
+      this.darkMode = window.localStorage.getItem('darkMode') !== 'false'
+    } catch {
+      this.darkMode = true
+    }
     this.applyTheme()
 
     const style = document.createElement('style')
@@ -75,10 +79,10 @@ class DarkLightToggle extends HTMLElement {
 
   toggle() {
     this.darkMode = !this.darkMode
-    if (this.darkMode) {
-      window.localStorage.setItem('darkMode', 'true')
-    } else {
-      window.localStorage.removeItem('darkMode')
+    try {
+      window.localStorage.setItem('darkMode', String(this.darkMode))
+    } catch {
+      // Local storage may be unavailable in restricted browsing contexts.
     }
     this.applyTheme()
     this.updatePressedState()

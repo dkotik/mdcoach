@@ -3,7 +3,6 @@ title: "Development"
 weight: 60
 ---
 
-- [ ] "dark-light-toggle.js" is duplicate in index and javascript folder. Reconcile it.
 - [ ] Add video figure renderer - probably requires a local video cache to avoid all the headaches of content security policy and such.
 - [ ] Safari sizing is off.
 - [ ] There is root image loader and another one in the epub package. Those two should be refactored to one and placed into internal package.
