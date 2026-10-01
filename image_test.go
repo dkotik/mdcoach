@@ -38,6 +38,13 @@ func renderImagesOnly(writer io.Writer, source []byte, tree ast.Node) error {
 		if node.Kind() != ast.KindImage {
 			return ast.WalkContinue, nil
 		}
+		imageNode, ok := node.(*ast.Image)
+		if !ok {
+			return ast.WalkContinue, nil
+		}
+		if _, isVideo := videoPlayerForDestination(imageNode.Destination.Value(source)); isVideo {
+			return ast.WalkSkipChildren, nil
+		}
 
 		if err := renderer.Render(writer, source, node); err != nil {
 			renderErr = err

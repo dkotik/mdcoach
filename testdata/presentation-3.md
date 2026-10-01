@@ -42,8 +42,6 @@ footer: What would you change for the course?
 
 just a regular paragraph
 
-<!-- - - -
-![youtube vid test](https://www.youtube.com/watch?v=r8AYLGJuyvw) -->
 - - -
 hmmm ![luth](https://i.stack.imgur.com/El2F7.png "weee sdf sd fsdfsd fsd fsdf sd fsd fsd fsd fsadf asdf dfsdf")
 

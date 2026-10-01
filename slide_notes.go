@@ -46,6 +46,8 @@ func NewSlideNotesRenderer() html.NodeRenderer {
 	return &slideNotesRenderer{}
 }
 
+const slideNotesFootnoteLabelDigits = `❶❷❸❹❺❻❼❽❾`
+
 func newSlideNotesLabel(n ast.Node) string {
 	if n == nil || n.ChildCount() == 0 {
 		return ""

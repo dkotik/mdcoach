@@ -1,5 +1,5 @@
 Document: MdCoach Demo {
-  [id="d7bdcabcda7eabea"]
+  [id="0d003f0a5c2dff94"]
   MetaBlock
   Slide: MdCoach Demo {
     [data-heading-level="1"]
@@ -192,6 +192,19 @@ Document: MdCoach Demo {
             Text: $1
           }
         }
+      }
+    }
+  }
+  Slide: Video Rendering {
+    [data-heading-level="2"]
+    [data-layout="normal"]
+    Heading: Video Rendering {
+      Text: Video
+      Text: Rendering
+    }
+    Figure: youtube vid test {
+      Image: youtube vid test {
+        Text: youtube vid test
       }
     }
   }

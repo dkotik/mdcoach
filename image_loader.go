@@ -139,6 +139,9 @@ func (l *ImageLoader) LoadImages(ctx context.Context, source []byte, tree ast.No
 			return ast.WalkContinue, nil
 		}
 		location := imageNode.Destination.Value(source)
+		if _, isVideo := videoPlayerForDestination(location); isVideo {
+			return ast.WalkSkipChildren, nil
+		}
 		group.Go(func() error {
 			image, err := l.loadImage(ctx, location)
 			if err != nil {

@@ -82,6 +82,10 @@ Notes and footnotes to go the side into a collapsible notes container.
 | col 2 is      | ~~centered~~  |   $12 |
 | zebra stripes | are neat      |    $1 |
 
+## Video Rendering
+
+![youtube vid test](https://www.youtube.com/watch?v=r8AYLGJuyvw)
+
 # Presentation Title1
 
 :) :checkbox: \:cat: :salad: \;) \!\[slashes\]\(in brackets\) \\:cat: \\\ hmm:-)
