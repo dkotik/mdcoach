@@ -1,4 +1,4 @@
-package main
+package epub
 
 import (
 	"archive/zip"
@@ -26,7 +26,8 @@ var (
 	attributePattern      = regexp.MustCompile(`(?is)([^\s=/>]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+))?`)
 )
 
-func writeEPUB(w io.Writer, htmlPage []byte, metadata presentation.Frontmatter) error {
+// Write creates an EPUB 3 archive containing the rendered HTML page.
+func Write(w io.Writer, htmlPage []byte, metadata presentation.Frontmatter) error {
 	htmlPage = stripUnmarkedScriptAndStyleTags(htmlPage)
 	archive := zip.NewWriter(w)
 

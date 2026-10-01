@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/dkotik/mdcoach/epub"
 	"github.com/dkotik/mdcoach/presentation"
 )
 
@@ -68,7 +69,7 @@ func compileMarkdownToEPUB(
 	}
 	defer w.Close()
 
-	if err := writeEPUB(w, htmlPage.Bytes(), metadata); err != nil {
+	if err := epub.Write(w, htmlPage.Bytes(), metadata); err != nil {
 		return fmt.Errorf("write EPUB: %w", err)
 	}
 	return nil
