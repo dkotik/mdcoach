@@ -2766,26 +2766,6 @@ class SlideNotes extends HTMLElement {
       this.resizeHandle.inert = !isOpen
       this.resizeHandle.setAttribute('aria-hidden', String(!isOpen))
     }
-    this.updateMainMargin()
-  }
-
-  updateMainMargin() {
-    // const container = document.querySelector('body.slides')
-    const container = document.querySelector('section.is-focused > .grid > .content')
-    if (!container) {
-      return
-    }
-
-    const panelWidth = this.style.getPropertyValue('--notes-panel-width')
-    // if (panelWidth) {
-    //   main.style.setProperty('--notes-panel-width', panelWidth)
-    // }
-
-    if (this.hasAttribute('open') && panelWidth) {
-      container.style.paddingRight = panelWidth
-    } else {
-      container.style.removeProperty('padding-right')
-    }
   }
 
   onWindowResize() {
@@ -2836,14 +2816,13 @@ class SlideNotes extends HTMLElement {
   }
 
   setPanelWidth(width, persist = false) {
-    const maxWidth = window.innerWidth * 0.8
+    const maxWidth = Math.round(window.innerWidth * 0.8)
     const minWidth = Math.min(240, maxWidth)
     const boundedWidth = Math.min(maxWidth, Math.max(minWidth, width))
-    this.style.setProperty('--notes-panel-width', `${boundedWidth}px`)
-    this.updateMainMargin()
-    this.resizeHandle?.setAttribute('aria-valuemin', String(Math.round(minWidth)))
-    this.resizeHandle?.setAttribute('aria-valuemax', String(Math.round(maxWidth)))
-    this.resizeHandle?.setAttribute('aria-valuenow', String(Math.round(boundedWidth)))
+    document.body.style.setProperty('--notes-panel-width', `${boundedWidth}px`)
+    this.resizeHandle?.setAttribute('aria-valuemin', String(minWidth))
+    this.resizeHandle?.setAttribute('aria-valuemax', String(maxWidth))
+    this.resizeHandle?.setAttribute('aria-valuenow', String(boundedWidth))
     if (persist) {
       this.storePanelWidth(boundedWidth)
     }

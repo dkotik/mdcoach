@@ -22,6 +22,7 @@ body {
   color: var(--color-body-text);
   background-color: var(--color-body-background);
   transition: background-color 250ms ease;
+  --notes-panel-width: 0px;
 }
 
 body.slides {
@@ -29,6 +30,10 @@ body.slides {
   margin: 0;
   max-width: 100%;
   overflow: hidden !important;
+
+  & > main > section > .grid > .content:has(slide-notes[open]) {
+    padding-right: var(--notes-panel-width);
+  }
 }
 
 timer-start-pause {
