@@ -4,6 +4,7 @@ table {
   font-family: sans-serif;
   width: 100%;
   font-size: 60%;
+  min-width: 40rem;
 }
 
 table tr:last-child td {

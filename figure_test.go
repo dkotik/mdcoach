@@ -48,6 +48,47 @@ func TestFigureRenderer(t *testing.T) {
 	goldie.New(t).Assert(t, "figure_html", rendered.Bytes())
 }
 
+func TestFigureRendererUsesImageTitleForCaption(t *testing.T) {
+	tests := []struct {
+		name     string
+		markdown string
+		want     string
+		wantNot  string
+	}{
+		{
+			name:     "renders the image title instead of alt text and escapes it",
+			markdown: `![alternative text](media/cat.jpg "Title & <caption>")`,
+			want:     `<figcaption>Title &amp; &lt;caption&gt;</figcaption>`,
+			wantNot:  `<figcaption>alternative text</figcaption>`,
+		},
+		{
+			name:     "does not render a caption without an image title",
+			markdown: `![alternative text](media/cat.jpg)`,
+			wantNot:  `<figcaption>`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			source := []byte(tt.markdown)
+			tree := NewParser().Parse(source)
+			var rendered bytes.Buffer
+			if err := NewRenderer(NewImageCache()).Render(&rendered, source, tree); err != nil {
+				t.Fatal(err)
+			}
+			output := rendered.String()
+			if tt.want != "" && !strings.Contains(output, tt.want) {
+				t.Errorf("rendered output does not contain %q:\n%s", tt.want, output)
+			}
+			if tt.wantNot != "" && strings.Contains(output, tt.wantNot) {
+				t.Errorf("rendered output unexpectedly contains %q:\n%s", tt.wantNot, output)
+			}
+		})
+	}
+}
+
 func TestFigureRendererRecognizesVideoDestinations(t *testing.T) {
 	tests := []struct {
 		name        string
@@ -83,7 +124,7 @@ func TestFigureRendererRecognizesVideoDestinations(t *testing.T) {
 		{
 			name:        "ordinary image falls back to figure rendering",
 			markdown:    "![cat](media/cat.jpg)",
-			want:        `<figure><div data-src="media/cat.jpg" data-alt="cat"></div><figcaption>cat</figcaption></figure>`,
+			want:        `<figure><div data-src="media/cat.jpg" data-alt="cat"></div></figure>`,
 			wantNoVideo: true,
 		},
 	}

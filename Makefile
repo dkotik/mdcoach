@@ -4,7 +4,7 @@ generate:
 	cd presentation && go generate . && go test . -update
 	cd presentation/index && go generate .
 	go generate . && go test . -update
-install:
+install: generate
 	# go test ./...
 	go generate ./...
 	go install ./cmd/mdcoach

@@ -3,13 +3,15 @@ title: "Development"
 weight: 60
 ---
 
+- [ ] Add presentation icon to --index
+- [ ] There is root image loader and another one in the epub package. Those two should be refactored to one and placed into internal package.
+- [ ] Add SVG support to the image loader.
 - [ ] Fix goreleaser Homebrew issue:
   Warning: Calling `postflight` is deprecated! Use `postflight_steps` instead.
   Please report this issue to the dkotik/homebrew-tap tap (not Homebrew/* repositories), or even better, submit a PR to fix it:
     /opt/homebrew/Library/Taps/dkotik/homebrew-tap/Casks/mdcoach.rb:40
 - [ ] Add video figure renderer - probably requires a local video cache to avoid all the headaches of content security policy and such.
 - [ ] Safari sizing is off.
-- [ ] There is root image loader and another one in the epub package. Those two should be refactored to one and placed into internal package.
 - [ ] https://github.com/gpdf-dev/gpdf for PDF generation // there is already a goldmark-pdf extension - try that first?
 - [ ] External PDF to Markdown coverter: https://github.com/VikParuchuri/marker (also nougat)
 

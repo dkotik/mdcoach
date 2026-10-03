@@ -1,5 +1,9 @@
 /* =============== image.css ================= */
 
+figure {
+  min-width: 40rem;
+}
+
 .mdcoachImage {
 	min-height: 1.5rem;
 	min-width: 1.5rem;

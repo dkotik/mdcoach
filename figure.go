@@ -232,24 +232,16 @@ func (*figureRenderer) Render(
 		return ast.WalkContinue, nil
 	}
 
-	firstChild := node.FirstChild()
-	if firstChild != nil {
+	image, ok := node.FirstChild().(*ast.Image)
+	if ok && !image.Title.IsEmpty() {
 		_, _ = w.WriteString("<figcaption>")
-		renderFigureText(w, source, firstChild, rc)
+		if _, err := image.Title.WriteTo(html.ContextTextWriter(rc), source); err != nil {
+			return ast.WalkStop, err
+		}
 		_, _ = w.WriteString("</figcaption>")
 	}
 	_, _ = w.WriteString("</figure>")
 	return ast.WalkContinue, nil
-}
-
-func renderFigureText(w util.BufWriter, source []byte, node ast.Node, rc renderer.Context) {
-	if textNode, ok := node.(*ast.Text); ok {
-		_, _ = textNode.Value.WriteTo(html.ContextTextWriter(rc), source)
-		return
-	}
-	for child := node.FirstChild(); child != nil; child = child.NextSibling() {
-		renderFigureText(w, source, child, rc)
-	}
 }
 
 // figureTransformer replaces top-level paragraphs containing only one image
