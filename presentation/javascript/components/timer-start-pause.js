@@ -104,7 +104,7 @@ class TimerStartPause extends HTMLElement {
 
   onCurtainChange(event) {
     if (event.detail) {
-      this.#timer.stop()
+      this.#timer.pause()
     } else {
       this.#timer.start()
     }

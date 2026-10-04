@@ -158,14 +158,16 @@ class PresentationTimer extends HTMLElement {
   }
 
   setExpired(isExpired) {
-    this.toggleAttribute('expired', isExpired)
+    if (isExpired) {
+      this.setAttribute('expired', '')
+    } else {
+      this.removeAttribute('expired')
+    }
   }
 
   setDuration(elapsed, utmost) {
-    this.pause()
     this.ElapsedDuration = elapsed
     this.UtmostDuration = utmost
-    this.setExpired(elapsed >= utmost)
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
     this.dispatchEvent(new CustomEvent('change', {
@@ -183,8 +185,6 @@ class PresentationTimer extends HTMLElement {
   onClick() {
     if (this.IsRunning) {
       this.pause()
-    } else if (this.hasAttribute('expired')) {
-      this.setExpired(false)
     } else {
       this.start()
     }
@@ -207,13 +207,8 @@ class PresentationTimer extends HTMLElement {
   start() {
     const now = performance.now()
     if (this.IsRunning) {
-      this.ElapsedDuration = Math.min(
-        this.UtmostDuration,
-        this.ElapsedDuration + Math.max(0, now - this.#lastTickTimestamp),
-      )
+      return
     }
-    window.clearTimeout(this.#tickTimeoutID)
-    this.#tickTimeoutID = undefined
 
     if (this.ElapsedDuration >= this.UtmostDuration) {
       this.ElapsedDuration = 0
@@ -224,6 +219,8 @@ class PresentationTimer extends HTMLElement {
     this.IsRunning = true
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
+    window.clearTimeout(this.#tickTimeoutID)
+    this.#tickTimeoutID = undefined
     this.#tickTimeoutID = window.setTimeout(
       this.tick,
       Math.min(1000, this.UtmostDuration - this.ElapsedDuration),
