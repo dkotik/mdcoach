@@ -18,7 +18,6 @@ class Synchronizer {
   Curtain
   MainTimer
   Channel
-  State
 
   constructor() {
     this.DocumentID = document.querySelector("html").dataset.id ||
@@ -27,9 +26,6 @@ class Synchronizer {
     this.Curtain = document.querySelector('presentation-curtain')
     this.MainTimer = document.querySelector('presentation-timer#mainTimer')
     this.Channel = new BroadcastChannel(this.DocumentID)
-    this.State = new WindowState()
-    this.State.DocumentID = this.DocumentID
-    this.State.WindowID = this.WindowID
 
     this.broadcastWindowState = debounce(this.broadcastWindowState.bind(this), 120)
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
@@ -47,32 +43,6 @@ class Synchronizer {
     this.broadcastWindowState()
   }
 
-  updateWindowState(reloading = false) {
-    this.State.SlideIndex = currentSlide
-    this.State.ConcealedListItemCount = getCurrentConcealedListItems().length
-    this.State.IsCurtainDown = Boolean(this.Curtain?.hasAttribute('open'))
-    this.State.IsReloading = reloading === true
-
-    const timer = this.MainTimer
-    const duration = Number(timer?.duration)
-    const elapsed = Number(timer?.elapsed) + (
-      timer?.running
-        ? performance.now() - Number(timer.startedAt)
-        : 0
-    )
-    if (timer && Number.isFinite(duration) && duration > 0 && Number.isFinite(elapsed)) {
-      const expired = timer.hasAttribute('expired') || elapsed >= duration
-      this.State.TimerElapsedDuration = expired
-        ? duration
-        : Math.max(0, Math.min(duration, elapsed))
-      this.State.TimerUtmostDuration = duration
-      this.State.IsTimerRunning = timer.running && !expired
-    } else {
-      this.State.TimerElapsedDuration = 0
-      this.State.TimerUtmostDuration = 0
-      this.State.IsTimerRunning = false
-    }
-  }
 
   setMainTimerState(state) {
     const timer = this.MainTimer
@@ -107,8 +77,35 @@ class Synchronizer {
   }
 
   broadcastWindowState(reloading = false) {
-    this.updateWindowState(reloading)
-    this.Channel.postMessage(this.State)
+    const state = new WindowState()
+    state.DocumentID = this.DocumentID
+    state.WindowID = this.WindowID
+    state.SlideIndex = currentSlide
+    state.ConcealedListItemCount = getCurrentConcealedListItems().length
+    state.IsCurtainDown = Boolean(this.Curtain?.hasAttribute('open'))
+    state.IsReloading = reloading === true
+
+    const timer = this.MainTimer
+    const duration = Number(timer?.duration)
+    const elapsed = Number(timer?.elapsed) + (
+      timer?.running
+        ? performance.now() - Number(timer.startedAt)
+        : 0
+    )
+    if (timer && Number.isFinite(duration) && duration > 0 && Number.isFinite(elapsed)) {
+      const expired = timer.hasAttribute('expired') || elapsed >= duration
+      state.TimerElapsedDuration = expired
+        ? duration
+        : Math.max(0, Math.min(duration, elapsed))
+      state.TimerUtmostDuration = duration
+      state.IsTimerRunning = timer.running && !expired
+    } else {
+      state.TimerElapsedDuration = 0
+      state.TimerUtmostDuration = 0
+      state.IsTimerRunning = false
+    }
+
+    this.Channel.postMessage(state)
   }
 
   setWindowFocused(focused) {
@@ -138,6 +135,9 @@ class Synchronizer {
 
   onMessage(event) {
     const broadcast = event.data
+    this.setMainCurtainState(broadcast)
+    this.setMainTimerState(broadcast)
+    this.setWindowFocused(false)
     if (!broadcast || broadcast.DocumentID !== this.DocumentID) {
       return
     }
@@ -148,10 +148,6 @@ class Synchronizer {
     if (broadcast.WindowID === this.WindowID) {
       return
     }
-    this.setWindowFocused(false)
-
-    this.setMainCurtainState(broadcast)
-    this.setMainTimerState(broadcast)
 
     if (broadcast.SlideIndex !== currentSlide) {
       navigate(broadcast.SlideIndex)
