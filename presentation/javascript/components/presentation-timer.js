@@ -6,6 +6,8 @@ class PresentationTimer extends HTMLElement {
   ElapsedDuration
   UtmostDuration
   TimerRunning
+  #tickTimeoutID
+  #lastTickTimestamp
 
   constructor() {
     super()
@@ -13,8 +15,6 @@ class PresentationTimer extends HTMLElement {
     this.ElapsedDuration = 0
     this.UtmostDuration = 0
     this.TimerRunning = false
-    this.frame = undefined
-    this.lastFrameTimestamp = undefined
     this.onClick = this.onClick.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.tick = this.tick.bind(this)
@@ -224,83 +224,87 @@ class PresentationTimer extends HTMLElement {
   }
 
   start() {
+    const now = performance.now()
+    if (this.TimerRunning) {
+      this.ElapsedDuration = Math.min(
+        this.UtmostDuration,
+        this.ElapsedDuration + Math.max(0, now - this.#lastTickTimestamp),
+      )
+    }
+    window.clearTimeout(this.#tickTimeoutID)
+    this.#tickTimeoutID = undefined
+
     if (this.ElapsedDuration >= this.UtmostDuration) {
       this.ElapsedDuration = 0
     }
     this.setExpired(false)
 
-    this.lastFrameTimestamp = performance.now()
+    this.#lastTickTimestamp = now
     this.TimerRunning = true
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
-    this.frame = window.requestAnimationFrame(this.tick)
+    this.#tickTimeoutID = window.setTimeout(
+      this.tick,
+      Math.min(1000, this.UtmostDuration - this.ElapsedDuration),
+    )
   }
 
   pause() {
+    window.clearTimeout(this.#tickTimeoutID)
+    this.#tickTimeoutID = undefined
     if (!this.TimerRunning) {
       return
     }
 
-    const previousElapsed = this.ElapsedDuration
     this.ElapsedDuration = Math.min(
       this.UtmostDuration,
-      this.ElapsedDuration + Math.max(0, performance.now() - this.lastFrameTimestamp),
+      this.ElapsedDuration + Math.max(0, performance.now() - this.#lastTickTimestamp),
     )
-    this.dispatchElapsedSeconds(previousElapsed, this.ElapsedDuration)
     this.TimerRunning = false
-    window.cancelAnimationFrame(this.frame)
-    this.frame = undefined
-    this.lastFrameTimestamp = undefined
+    this.#lastTickTimestamp = undefined
+    if (this.ElapsedDuration >= this.UtmostDuration) {
+      this.setExpired(true)
+    }
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
   }
 
-  tick(timestamp) {
+  tick() {
+    this.#tickTimeoutID = undefined
     if (!this.TimerRunning) {
       return
     }
 
-    const previousElapsed = this.ElapsedDuration
+    const now = performance.now()
     this.ElapsedDuration = Math.min(
       this.UtmostDuration,
-      this.ElapsedDuration + Math.max(0, timestamp - this.lastFrameTimestamp),
+      this.ElapsedDuration + Math.max(0, now - this.#lastTickTimestamp),
     )
-    this.lastFrameTimestamp = timestamp
-    this.dispatchElapsedSeconds(previousElapsed, this.ElapsedDuration)
-    if (this.ElapsedDuration >= this.UtmostDuration) {
-      if (this.UtmostDuration % 1000 !== 0) {
-        this.dispatchTimerTick(this.UtmostDuration)
-      }
+    this.#lastTickTimestamp = now
+    const expired = this.ElapsedDuration >= this.UtmostDuration
+    if (expired) {
+      this.ElapsedDuration = this.UtmostDuration
       this.TimerRunning = false
-      this.frame = undefined
-      this.lastFrameTimestamp = undefined
+      this.#lastTickTimestamp = undefined
       this.setExpired(true)
-      this.updateProgress(this.ElapsedDuration)
-      this.updateState()
-      return
     }
-
     this.updateProgress(this.ElapsedDuration)
-    this.frame = window.requestAnimationFrame(this.tick)
-  }
-
-  dispatchElapsedSeconds(previousElapsed, elapsed) {
-    const previousSecond = Math.floor(previousElapsed / 1000)
-    const elapsedSecond = Math.floor(elapsed / 1000)
-    for (let second = previousSecond + 1; second <= elapsedSecond; second++) {
-      this.dispatchTimerTick(Math.min(second * 1000, this.UtmostDuration))
-    }
-  }
-
-  dispatchTimerTick(elapsed) {
+    this.updateState()
     this.dispatchEvent(new CustomEvent(presentationTimerTickEventType, {
       bubbles: true,
       composed: true,
       detail: {
         totalDuration: this.UtmostDuration,
-        remainingDuration: Math.max(0, this.UtmostDuration - elapsed),
+        remainingDuration: Math.max(0, this.UtmostDuration - this.ElapsedDuration),
       },
     }))
+
+    if (this.ElapsedDuration < this.UtmostDuration) {
+      this.#tickTimeoutID = window.setTimeout(
+        this.tick,
+        Math.min(1000, this.UtmostDuration - this.ElapsedDuration),
+      )
+    }
   }
 
   updateProgress(elapsed) {

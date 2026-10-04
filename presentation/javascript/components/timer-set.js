@@ -175,6 +175,7 @@ class TimerSet extends HTMLElement {
 
     this.duration = duration
     if (this.timerElement) {
+      this.timerElement.pause()
       this.timerElement.ElapsedDuration = 0
     }
     this.updateTimerDuration()
