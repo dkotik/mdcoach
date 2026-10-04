@@ -1,16 +1,19 @@
 // use as <timer-start-pause><presentation-timer></presentation-timer></timer-start-pause>
 
 class TimerStartPause extends HTMLElement {
+  #timer
+  #curtain
+
   constructor() {
     super()
-    this.timerElement = this.querySelector('presentation-timer')
-    this.hasTimerElement = Boolean(this.timerElement)
+    this.#timer = this.querySelector('presentation-timer')
+    this.#curtain = document.querySelector('presentation-curtain')
     this.timerStateTimeout = null
     this.pendingTimerState = null
     this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onDOMReady = this.onDOMReady.bind(this)
-    this.onCurtainToggle = this.onCurtainToggle.bind(this)
+    this.onCurtainChange = this.onCurtainChange.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
@@ -22,7 +25,7 @@ class TimerStartPause extends HTMLElement {
   disconnectedCallback() {
     document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
-    window.removeEventListener(curtainToggleEventType, this.onCurtainToggle)
+    window.removeEventListener('change', this.onCurtainChange)
     this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.removeEventListener('click', this.onTimerStateChange)
     this.timerStateObserver.disconnect()
@@ -36,11 +39,13 @@ class TimerStartPause extends HTMLElement {
     if (this.isInitialized) {
       return
     }
-    if (!this.hasTimerElement) {
+    this.#timer ??= this.querySelector('presentation-timer')
+    if (!this.#timer) {
       console.error('timer-start-pause requires a presentation-timer child')
       return
     }
 
+    this.#curtain = document.querySelector('presentation-curtain')
     this.isInitialized = true
     this.timerStateObserver.observe(this, {
       attributes: true,
@@ -50,7 +55,7 @@ class TimerStartPause extends HTMLElement {
     this.addEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.addEventListener('click', this.onTimerStateChange)
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
-    window.addEventListener(curtainToggleEventType, this.onCurtainToggle)
+    window.addEventListener('change', this.onCurtainChange)
 
     const currentState = this.getTimerState()
     const storedState = this.readStoredTimerState(currentState.timerID)
@@ -61,9 +66,8 @@ class TimerStartPause extends HTMLElement {
         running: false,
       }),
     }
-    const curtain = document.querySelector('presentation-curtain')
-    if (curtain && !initialState.expired) {
-      initialState.running = !curtain.hasAttribute('open')
+    if (this.#curtain && !initialState.expired) {
+      initialState.running = !this.#curtain.IsDown()
     }
     this.setTimerState(initialState)
 
@@ -75,6 +79,7 @@ class TimerStartPause extends HTMLElement {
   }
 
   onDOMReady() {
+    this.#curtain = document.querySelector('presentation-curtain')
     if (typeof currentSlide !== 'number') {
       return
     }
@@ -84,21 +89,23 @@ class TimerStartPause extends HTMLElement {
   onNavigationComplete(event) {
     const slideIndex = event.detail?.slideIndex
     this.setTimerState({
-      running: slideIndex !== 0 && !this.isCurtainOpen(),
+      running: slideIndex !== 0 && !this.isCurtainDown(),
     })
   }
 
-  onCurtainToggle(event) {
-    if (event.target !== document.querySelector('presentation-curtain')) {
-      return
+  onCurtainChange(event) {
+    if (event.target !== this.#curtain) {
+      this.#curtain = document.querySelector('presentation-curtain')
+      if (event.target !== this.#curtain) {
+        return
+      }
     }
 
-    this.setTimerState({ running: event.detail?.open !== true })
+    this.setTimerState({ running: !this.#curtain.IsDown() })
   }
 
-  isCurtainOpen() {
-    const curtain = document.querySelector('presentation-curtain')
-    return Boolean(curtain?.hasAttribute('open'))
+  isCurtainDown() {
+    return Boolean(this.#curtain?.IsDown())
   }
 
   onTimerStateChange() {
@@ -153,7 +160,7 @@ class TimerStartPause extends HTMLElement {
       remainingDuration = Math.min(duration, Math.max(0, remainingDuration))
       const expired = targetState.expired === true || remainingDuration === 0
       const running = targetState.running === true && remainingDuration > 0 && !expired
-      const timer = this.timerElement
+      const timer = this.#timer
 
       this.timerStateObserver.disconnect()
       try {
@@ -182,7 +189,7 @@ class TimerStartPause extends HTMLElement {
   }
 
   getTimerState() {
-    const timer = this.timerElement
+    const timer = this.#timer
     const now = performance.now()
     const duration = Number(timer.UtmostDuration)
     const elapsed = Number(timer.ElapsedDuration)

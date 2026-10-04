@@ -8,7 +8,6 @@ class CurtainToggle extends HTMLElement {
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onDOMReady = this.onDOMReady.bind(this)
     this.updateState = this.updateState.bind(this)
-    this.curtainObserver = new MutationObserver(this.updateState)
     this.curtainElement = null
   }
 
@@ -52,8 +51,7 @@ class CurtainToggle extends HTMLElement {
   disconnectedCallback() {
     document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     this.removeEventListener('click', this.onClick)
-    this.removeEventListener('keydown', this.onKeyDown)
-    this.curtainObserver.disconnect()
+    this.curtainElement?.removeEventListener('change', this.updateState)
     this.curtainElement = null
   }
 
@@ -67,8 +65,11 @@ class CurtainToggle extends HTMLElement {
       return
     }
 
-    curtain.toggleAttribute('open')
-    this.updateState()
+    if (curtain.IsDown()) {
+      curtain.Up()
+    } else {
+      curtain.Down()
+    }
   }
 
   onKeyDown(event) {
@@ -83,17 +84,12 @@ class CurtainToggle extends HTMLElement {
   updateState() {
     const curtain = document.querySelector('presentation-curtain')
     if (curtain !== this.curtainElement) {
-      this.curtainObserver.disconnect()
+      this.curtainElement?.removeEventListener('change', this.updateState)
       this.curtainElement = curtain
-      if (curtain) {
-        this.curtainObserver.observe(curtain, {
-          attributes: true,
-          attributeFilter: ['open'],
-        })
-      }
+      this.curtainElement?.addEventListener('change', this.updateState)
     }
 
-    const isOpen = Boolean(curtain?.hasAttribute('open'))
+    const isOpen = Boolean(curtain?.IsDown())
     this.setAttribute('aria-pressed', String(isOpen))
     this.setAttribute('aria-label', isOpen ? 'Close presentation curtain' : 'Open presentation curtain')
   }

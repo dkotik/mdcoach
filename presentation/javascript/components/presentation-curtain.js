@@ -1,7 +1,6 @@
 // use as custom element <presentation-curtain> for a full-screen pause cover
 
 const curtainOpenStorageKey = 'presentationCurtainOpen'
-const curtainToggleEventType = 'presentationCurtainToggle'
 
 class PresentationCurtain extends HTMLElement {
   constructor() {
@@ -79,9 +78,11 @@ class PresentationCurtain extends HTMLElement {
     }
 
     if (storedOpenState === null) {
-      this.storeOpenState(this.hasAttribute('open'))
+      this.storeOpenState(this.IsDown())
+    } else if (storedOpenState) {
+      this.Down()
     } else {
-      this.toggleAttribute('open', storedOpenState)
+      this.Up()
     }
     this.updateState()
     window.addEventListener('keyup', this.onKeyUp)
@@ -98,14 +99,28 @@ class PresentationCurtain extends HTMLElement {
 
     this.updateState()
     if (this.isConnected) {
-      const isOpen = newValue !== null
-      this.storeOpenState(isOpen)
-      this.dispatchEvent(new CustomEvent(curtainToggleEventType, {
-        bubbles: true,
-        composed: true,
-        detail: { open: isOpen },
-      }))
+      this.storeOpenState(this.IsDown())
     }
+  }
+
+  Down() {
+    if (this.IsDown()) {
+      return
+    }
+    this.setAttribute('open', '')
+    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }))
+  }
+
+  Up() {
+    if (!this.IsDown()) {
+      return
+    }
+    this.removeAttribute('open')
+    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }))
+  }
+
+  IsDown() {
+    return this.hasAttribute('open')
   }
 
   onKeyUp(event) {
@@ -114,7 +129,11 @@ class PresentationCurtain extends HTMLElement {
     }
 
     event.preventDefault()
-    this.toggleAttribute('open')
+    if (this.IsDown()) {
+      this.Up()
+    } else {
+      this.Down()
+    }
   }
 
   readOpenState() {
@@ -141,7 +160,7 @@ class PresentationCurtain extends HTMLElement {
   }
 
   updateState() {
-    const isOpen = this.hasAttribute('open')
+    const isOpen = this.IsDown()
     this.setAttribute('aria-hidden', String(!isOpen))
     this.inert = !isOpen
   }

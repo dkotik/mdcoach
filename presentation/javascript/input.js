@@ -27,7 +27,7 @@ document.addEventListener(
         target.matches('input, textarea, select') || target.isContentEditable
       )
     )
-    if (isEditing || document.querySelector('presentation-curtain[open]')) {
+    if (isEditing || document.querySelector('presentation-curtain')?.IsDown()) {
       return
     }
 

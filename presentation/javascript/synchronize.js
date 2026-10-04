@@ -29,14 +29,14 @@ class Synchronizer {
 
     this.broadcastWindowState = debounce(this.broadcastWindowState.bind(this), 120)
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
-    this.onCurtainToggle = this.onCurtainToggle.bind(this)
+    this.onCurtainChange = this.onCurtainChange.bind(this)
     this.onFocus = this.onFocus.bind(this)
     this.onBlur = this.onBlur.bind(this)
     this.onMessage = this.onMessage.bind(this)
 
     this.setWindowFocused(document.hasFocus())
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
-    window.addEventListener(curtainToggleEventType, this.onCurtainToggle)
+    window.addEventListener('change', this.onCurtainChange)
     window.addEventListener('focus', this.onFocus)
     window.addEventListener('blur', this.onBlur)
     this.Channel.addEventListener('message', this.onMessage)
@@ -71,8 +71,15 @@ class Synchronizer {
   }
 
   setMainCurtainState(state) {
-    if (this.Curtain && typeof state?.IsCurtainDown === 'boolean') {
-      this.Curtain.toggleAttribute('open', state.IsCurtainDown)
+    if (
+      this.Curtain && typeof state?.IsCurtainDown === 'boolean' &&
+      this.Curtain.IsDown() !== state.IsCurtainDown
+    ) {
+      if (state.IsCurtainDown) {
+        this.Curtain.Down()
+      } else {
+        this.Curtain.Up()
+      }
     }
   }
 
@@ -82,7 +89,7 @@ class Synchronizer {
     state.WindowID = this.WindowID
     state.SlideIndex = currentSlide
     state.ConcealedListItemCount = getCurrentConcealedListItems().length
-    state.IsCurtainDown = Boolean(this.Curtain?.hasAttribute('open'))
+    state.IsCurtainDown = Boolean(this.Curtain?.IsDown())
     state.IsReloading = reloading === true
 
     const timer = this.MainTimer
@@ -112,7 +119,7 @@ class Synchronizer {
     this.broadcastWindowState()
   }
 
-  onCurtainToggle(event) {
+  onCurtainChange(event) {
     if (event.target !== this.Curtain) {
       return
     }
@@ -131,9 +138,6 @@ class Synchronizer {
 
   onMessage(event) {
     const broadcast = event.data
-    this.setMainCurtainState(broadcast)
-    this.setMainTimerState(broadcast)
-    this.setWindowFocused(false)
     if (!broadcast || broadcast.DocumentID !== this.DocumentID) {
       return
     }
@@ -144,6 +148,9 @@ class Synchronizer {
     if (broadcast.WindowID === this.WindowID) {
       return
     }
+    this.setMainCurtainState(broadcast)
+    this.setMainTimerState(broadcast)
+    this.setWindowFocused(false)
 
     if (broadcast.SlideIndex !== currentSlide) {
       navigate(broadcast.SlideIndex)
