@@ -84,7 +84,6 @@ const element = (name, attributes = {}) => {
 // use as custom element <presentation-curtain> for a full-screen pause cover
 
 const curtainOpenStorageKey = 'presentationCurtainOpen'
-const curtainToggleEventType = 'presentationCurtainToggle'
 
 class PresentationCurtain extends HTMLElement {
   constructor() {
@@ -162,9 +161,11 @@ class PresentationCurtain extends HTMLElement {
     }
 
     if (storedOpenState === null) {
-      this.storeOpenState(this.hasAttribute('open'))
+      this.storeOpenState(this.IsDown())
+    } else if (storedOpenState) {
+      this.Down()
     } else {
-      this.toggleAttribute('open', storedOpenState)
+      this.Up()
     }
     this.updateState()
     window.addEventListener('keyup', this.onKeyUp)
@@ -181,14 +182,36 @@ class PresentationCurtain extends HTMLElement {
 
     this.updateState()
     if (this.isConnected) {
-      const isOpen = newValue !== null
-      this.storeOpenState(isOpen)
-      this.dispatchEvent(new CustomEvent(curtainToggleEventType, {
-        bubbles: true,
-        composed: true,
-        detail: { open: isOpen },
-      }))
+      this.storeOpenState(this.IsDown())
     }
+  }
+
+  Down() {
+    if (this.IsDown()) {
+      return
+    }
+    this.setAttribute('open', '')
+    this.dispatchOnChange(true)
+  }
+
+  Up() {
+    if (!this.IsDown()) {
+      return
+    }
+    this.removeAttribute('open')
+    this.dispatchOnChange(false)
+  }
+
+  IsDown() {
+    return this.hasAttribute('open')
+  }
+
+  dispatchOnChange(isDown) {
+    this.dispatchEvent(new CustomEvent('change', {
+      bubbles: true,
+      composed: true,
+      detail: { isDown },
+    }))
   }
 
   onKeyUp(event) {
@@ -197,7 +220,11 @@ class PresentationCurtain extends HTMLElement {
     }
 
     event.preventDefault()
-    this.toggleAttribute('open')
+    if (this.IsDown()) {
+      this.Up()
+    } else {
+      this.Down()
+    }
   }
 
   readOpenState() {
@@ -224,7 +251,7 @@ class PresentationCurtain extends HTMLElement {
   }
 
   updateState() {
-    const isOpen = this.hasAttribute('open')
+    const isOpen = this.IsDown()
     this.setAttribute('aria-hidden', String(!isOpen))
     this.inert = !isOpen
   }
@@ -964,7 +991,6 @@ class CurtainToggle extends HTMLElement {
     this.onKeyDown = this.onKeyDown.bind(this)
     this.onDOMReady = this.onDOMReady.bind(this)
     this.updateState = this.updateState.bind(this)
-    this.curtainObserver = new MutationObserver(this.updateState)
     this.curtainElement = null
   }
 
@@ -1008,8 +1034,7 @@ class CurtainToggle extends HTMLElement {
   disconnectedCallback() {
     document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     this.removeEventListener('click', this.onClick)
-    this.removeEventListener('keydown', this.onKeyDown)
-    this.curtainObserver.disconnect()
+    this.curtainElement?.removeEventListener('change', this.updateState)
     this.curtainElement = null
   }
 
@@ -1023,8 +1048,11 @@ class CurtainToggle extends HTMLElement {
       return
     }
 
-    curtain.toggleAttribute('open')
-    this.updateState()
+    if (curtain.IsDown()) {
+      curtain.Up()
+    } else {
+      curtain.Down()
+    }
   }
 
   onKeyDown(event) {
@@ -1039,17 +1067,12 @@ class CurtainToggle extends HTMLElement {
   updateState() {
     const curtain = document.querySelector('presentation-curtain')
     if (curtain !== this.curtainElement) {
-      this.curtainObserver.disconnect()
+      this.curtainElement?.removeEventListener('change', this.updateState)
       this.curtainElement = curtain
-      if (curtain) {
-        this.curtainObserver.observe(curtain, {
-          attributes: true,
-          attributeFilter: ['open'],
-        })
-      }
+      this.curtainElement?.addEventListener('change', this.updateState)
     }
 
-    const isOpen = Boolean(curtain?.hasAttribute('open'))
+    const isOpen = Boolean(curtain?.IsDown())
     this.setAttribute('aria-pressed', String(isOpen))
     this.setAttribute('aria-label', isOpen ? 'Close presentation curtain' : 'Open presentation curtain')
   }
@@ -1151,14 +1174,18 @@ if (!customElements.get('presentation-clock')) {
 const presentationTimerTickEventType = 'presentation-timer-tick'
 
 class PresentationTimer extends HTMLElement {
+  ElapsedDuration
+  UtmostDuration
+  TimerRunning
+  #tickTimeoutID
+  #lastTickTimestamp
+
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.elapsed = 0
-    this.running = false
-    this.frame = undefined
-    this.startedAt = 0
-    this.lastDispatchedSecond = 0
+    this.ElapsedDuration = 0
+    this.UtmostDuration = 0
+    this.TimerRunning = false
     this.onClick = this.onClick.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.tick = this.tick.bind(this)
@@ -1241,7 +1268,7 @@ class PresentationTimer extends HTMLElement {
       }
     `
 
-    this.duration = this.getDuration()
+    this.UtmostDuration = this.getDuration()
     this.circumference = 2 * Math.PI * 42
     this.svg = element('svg', { viewBox: '0 0 100 100', 'aria-hidden': 'true' })
     this.trackCircle = element('circle', {
@@ -1288,11 +1315,10 @@ class PresentationTimer extends HTMLElement {
       this.setAttribute('tabindex', '0')
     }
 
-    this.setAttribute('aria-label', `${this.duration / 1000} second timer`)
+    this.setAttribute('aria-label', `${this.UtmostDuration / 1000} second timer`)
     this.addEventListener('click', this.onClick)
     this.addEventListener('keydown', this.onKeyDown)
-    this.restoreExpirationState()
-    this.updateProgress(this.elapsed)
+    this.updateProgress(this.ElapsedDuration)
     this.updateState()
   }
 
@@ -1302,45 +1328,22 @@ class PresentationTimer extends HTMLElement {
     this.removeEventListener('keydown', this.onKeyDown)
   }
 
-  getExpirationStorageKey() {
-    const presentationID = document.documentElement?.dataset.id
-    if (!presentationID) {
-      return null
-    }
-
-    return `${presentationID}:timer:${this.id || 'default'}:expired`
-  }
-
-  restoreExpirationState() {
-    const key = this.getExpirationStorageKey()
-    if (!key) {
-      return
-    }
-
-    try {
-      this.toggleAttribute('expired', window.localStorage.getItem(key) === 'true')
-    } catch {
-      // Local storage may be unavailable in restricted browsing contexts.
-    }
-  }
-
   setExpired(isExpired) {
     this.toggleAttribute('expired', isExpired)
+  }
 
-    const key = this.getExpirationStorageKey()
-    if (!key) {
-      return
-    }
-
-    try {
-      if (isExpired) {
-        window.localStorage.setItem(key, 'true')
-      } else {
-        window.localStorage.removeItem(key)
-      }
-    } catch {
-      // Local storage may be unavailable in restricted browsing contexts.
-    }
+  setDuration(elapsed, utmost) {
+    this.pause()
+    this.ElapsedDuration = elapsed
+    this.UtmostDuration = utmost
+    this.setExpired(elapsed >= utmost)
+    this.updateProgress(this.ElapsedDuration)
+    this.updateState()
+    this.dispatchEvent(new CustomEvent('change', {
+      bubbles: true,
+      composed: true,
+      detail: this,
+    }))
   }
 
   getDuration() {
@@ -1349,14 +1352,13 @@ class PresentationTimer extends HTMLElement {
   }
 
   onClick() {
-    if (this.running) {
+    if (this.TimerRunning) {
       this.pause()
     } else if (this.hasAttribute('expired')) {
       this.setExpired(false)
     } else {
       this.start()
     }
-    this.dispatchElapsedSeconds(this.elapsed)
   }
 
   onKeyDown(event) {
@@ -1369,80 +1371,88 @@ class PresentationTimer extends HTMLElement {
   }
 
   start() {
-    if (this.elapsed >= this.duration) {
-      this.elapsed = 0
+    const now = performance.now()
+    if (this.TimerRunning) {
+      this.ElapsedDuration = Math.min(
+        this.UtmostDuration,
+        this.ElapsedDuration + Math.max(0, now - this.#lastTickTimestamp),
+      )
+    }
+    window.clearTimeout(this.#tickTimeoutID)
+    this.#tickTimeoutID = undefined
+
+    if (this.ElapsedDuration >= this.UtmostDuration) {
+      this.ElapsedDuration = 0
     }
     this.setExpired(false)
 
-    this.startedAt = performance.now()
-    this.lastDispatchedSecond = Math.floor(this.elapsed / 1000)
-    this.running = true
-    this.updateProgress(this.elapsed)
+    this.#lastTickTimestamp = now
+    this.TimerRunning = true
+    this.updateProgress(this.ElapsedDuration)
     this.updateState()
-    this.frame = window.requestAnimationFrame(this.tick)
+    this.#tickTimeoutID = window.setTimeout(
+      this.tick,
+      Math.min(1000, this.UtmostDuration - this.ElapsedDuration),
+    )
   }
 
   pause() {
-    if (!this.running) {
+    window.clearTimeout(this.#tickTimeoutID)
+    this.#tickTimeoutID = undefined
+    if (!this.TimerRunning) {
       return
     }
 
-    this.elapsed = Math.min(
-      this.duration,
-      this.elapsed + performance.now() - this.startedAt,
+    this.ElapsedDuration = Math.min(
+      this.UtmostDuration,
+      this.ElapsedDuration + Math.max(0, performance.now() - this.#lastTickTimestamp),
     )
-    this.running = false
-    window.cancelAnimationFrame(this.frame)
-    this.frame = undefined
-    this.updateProgress(this.elapsed)
+    this.TimerRunning = false
+    this.#lastTickTimestamp = undefined
+    if (this.ElapsedDuration >= this.UtmostDuration) {
+      this.setExpired(true)
+    }
+    this.updateProgress(this.ElapsedDuration)
     this.updateState()
   }
 
-  tick(timestamp) {
-    if (!this.running) {
+  tick() {
+    this.#tickTimeoutID = undefined
+    if (!this.TimerRunning) {
       return
     }
 
-    const elapsed = this.elapsed + timestamp - this.startedAt
-    this.dispatchElapsedSeconds(elapsed)
-    if (elapsed >= this.duration) {
-      this.elapsed = this.duration
-      if (this.duration % 1000 !== 0) {
-        this.dispatchTimerTick(this.duration)
-      }
-      this.running = false
-      this.frame = undefined
+    const now = performance.now()
+    this.ElapsedDuration = Math.min(
+      this.UtmostDuration,
+      this.ElapsedDuration + Math.max(0, now - this.#lastTickTimestamp),
+    )
+    this.#lastTickTimestamp = now
+    const expired = this.ElapsedDuration >= this.UtmostDuration
+    if (expired) {
+      this.ElapsedDuration = this.UtmostDuration
+      this.TimerRunning = false
+      this.#lastTickTimestamp = undefined
       this.setExpired(true)
-      this.updateProgress(this.elapsed)
-      this.updateState()
-      return
     }
-
-    this.updateProgress(elapsed)
-    this.frame = window.requestAnimationFrame(this.tick)
-  }
-
-  dispatchElapsedSeconds(elapsed) {
-    const elapsedSeconds = Math.floor(elapsed / 1000)
-    while (this.lastDispatchedSecond < elapsedSeconds) {
-      this.lastDispatchedSecond++
-      this.dispatchTimerTick(Math.min(this.lastDispatchedSecond * 1000, this.duration))
-    }
-  }
-
-  dispatchTimerTick(elapsed) {
+    this.updateProgress(this.ElapsedDuration)
+    this.updateState()
     this.dispatchEvent(new CustomEvent(presentationTimerTickEventType, {
       bubbles: true,
       composed: true,
-      detail: {
-        totalDuration: this.duration,
-        remainingDuration: Math.max(0, this.duration - elapsed),
-      },
+      detail: this,
     }))
+
+    if (this.ElapsedDuration < this.UtmostDuration) {
+      this.#tickTimeoutID = window.setTimeout(
+        this.tick,
+        Math.min(1000, this.UtmostDuration - this.ElapsedDuration),
+      )
+    }
   }
 
   updateProgress(elapsed) {
-    const progress = Math.min(elapsed / this.duration, 1)
+    const progress = Math.min(elapsed / this.UtmostDuration, 1)
     this.progressCircle.setAttribute(
       'stroke-dashoffset',
       String(this.circumference * (1 - progress)),
@@ -1450,11 +1460,11 @@ class PresentationTimer extends HTMLElement {
   }
 
   updateState() {
-    this.toggleAttribute('paused', !this.running)
-    this.setAttribute('aria-pressed', String(this.running))
+    this.toggleAttribute('paused', !this.TimerRunning)
+    this.setAttribute('aria-pressed', String(this.TimerRunning))
     this.setAttribute(
       'aria-label',
-      `${this.running ? 'Pause' : 'Start'} ${this.duration / 1000} second timer`,
+      `${this.TimerRunning ? 'Pause' : 'Start'} ${this.UtmostDuration / 1000} second timer`,
     )
   }
 }
@@ -1638,10 +1648,7 @@ class TimerSet extends HTMLElement {
     }
 
     this.duration = duration
-    if (this.timerElement) {
-      this.timerElement.elapsed = 0
-    }
-    this.updateTimerDuration()
+    this.updateTimerDuration(0)
   }
 
   onInputBlur() {
@@ -1661,11 +1668,12 @@ class TimerSet extends HTMLElement {
   }
 
   onTimerTick(event) {
-    if (event.currentTarget !== this.timerElement) {
+    const timer = event.detail
+    if (event.currentTarget !== this.timerElement || timer !== this.timerElement) {
       return
     }
 
-    const remainingDuration = Number(event.detail?.remainingDuration)
+    const remainingDuration = Number(timer.UtmostDuration - timer.ElapsedDuration)
     if (!Number.isFinite(remainingDuration) || remainingDuration < 0) {
       return
     }
@@ -1676,7 +1684,7 @@ class TimerSet extends HTMLElement {
 
   getDurationAttribute() {
     if (this.timerElement) {
-      const timerDuration = Number(this.timerElement.duration)
+      const timerDuration = Number(this.timerElement.UtmostDuration)
       if (Number.isFinite(timerDuration) && timerDuration >= 0) {
         return Math.floor(timerDuration / 1000)
       }
@@ -1713,10 +1721,16 @@ class TimerSet extends HTMLElement {
     this.renderDuration()
   }
 
-  updateTimerDuration() {
+  updateTimerDuration(elapsed) {
     if (this.timerElement) {
-      this.timerElement.duration = this.duration * 1000
-      this.timerElement.start()
+      this.timerElement.pause()
+      this.timerElement.setDuration(
+        elapsed ?? this.timerElement.ElapsedDuration,
+        this.duration * 1000,
+      )
+      if (!this.timerElement.hasAttribute('expired')) {
+        this.timerElement.start()
+      }
     }
   }
 
@@ -1738,16 +1752,19 @@ if (!customElements.get('timer-set')) {
 // use as <timer-start-pause><presentation-timer></presentation-timer></timer-start-pause>
 
 class TimerStartPause extends HTMLElement {
+  #timer
+  #curtain
+
   constructor() {
     super()
-    this.timerElement = this.querySelector('presentation-timer')
-    this.hasTimerElement = Boolean(this.timerElement)
+    this.#timer = this.querySelector('presentation-timer')
+    this.#curtain = document.querySelector('presentation-curtain')
     this.timerStateTimeout = null
     this.pendingTimerState = null
     this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onDOMReady = this.onDOMReady.bind(this)
-    this.onCurtainToggle = this.onCurtainToggle.bind(this)
+    this.onCurtainChange = this.onCurtainChange.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
@@ -1759,7 +1776,7 @@ class TimerStartPause extends HTMLElement {
   disconnectedCallback() {
     document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
-    window.removeEventListener(curtainToggleEventType, this.onCurtainToggle)
+    window.removeEventListener('change', this.onCurtainChange)
     this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.removeEventListener('click', this.onTimerStateChange)
     this.timerStateObserver.disconnect()
@@ -1773,11 +1790,13 @@ class TimerStartPause extends HTMLElement {
     if (this.isInitialized) {
       return
     }
-    if (!this.hasTimerElement) {
+    this.#timer ??= this.querySelector('presentation-timer')
+    if (!this.#timer) {
       console.error('timer-start-pause requires a presentation-timer child')
       return
     }
 
+    this.#curtain = document.querySelector('presentation-curtain')
     this.isInitialized = true
     this.timerStateObserver.observe(this, {
       attributes: true,
@@ -1787,7 +1806,7 @@ class TimerStartPause extends HTMLElement {
     this.addEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.addEventListener('click', this.onTimerStateChange)
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
-    window.addEventListener(curtainToggleEventType, this.onCurtainToggle)
+    window.addEventListener('change', this.onCurtainChange)
 
     const currentState = this.getTimerState()
     const storedState = this.readStoredTimerState(currentState.timerID)
@@ -1798,9 +1817,8 @@ class TimerStartPause extends HTMLElement {
         running: false,
       }),
     }
-    const curtain = document.querySelector('presentation-curtain')
-    if (curtain && !initialState.expired) {
-      initialState.running = !curtain.hasAttribute('open')
+    if (this.#curtain && !initialState.expired) {
+      initialState.running = !this.#curtain.IsDown()
     }
     this.setTimerState(initialState)
 
@@ -1812,6 +1830,7 @@ class TimerStartPause extends HTMLElement {
   }
 
   onDOMReady() {
+    this.#curtain = document.querySelector('presentation-curtain')
     if (typeof currentSlide !== 'number') {
       return
     }
@@ -1821,21 +1840,23 @@ class TimerStartPause extends HTMLElement {
   onNavigationComplete(event) {
     const slideIndex = event.detail?.slideIndex
     this.setTimerState({
-      running: slideIndex !== 0 && !this.isCurtainOpen(),
+      running: slideIndex !== 0 && !this.isCurtainDown(),
     })
   }
 
-  onCurtainToggle(event) {
-    if (event.target !== document.querySelector('presentation-curtain')) {
-      return
+  onCurtainChange(event) {
+    if (event.target !== this.#curtain) {
+      this.#curtain = document.querySelector('presentation-curtain')
+      if (event.target !== this.#curtain) {
+        return
+      }
     }
 
-    this.setTimerState({ running: event.detail?.open !== true })
+    this.setTimerState({ running: !this.#curtain.IsDown() })
   }
 
-  isCurtainOpen() {
-    const curtain = document.querySelector('presentation-curtain')
-    return Boolean(curtain?.hasAttribute('open'))
+  isCurtainDown() {
+    return Boolean(this.#curtain?.IsDown())
   }
 
   onTimerStateChange() {
@@ -1890,16 +1911,11 @@ class TimerStartPause extends HTMLElement {
       remainingDuration = Math.min(duration, Math.max(0, remainingDuration))
       const expired = targetState.expired === true || remainingDuration === 0
       const running = targetState.running === true && remainingDuration > 0 && !expired
-      const timer = this.timerElement
+      const timer = this.#timer
 
       this.timerStateObserver.disconnect()
       try {
-        timer.pause()
-        timer.duration = duration
-        timer.elapsed = duration - remainingDuration
-        timer.setExpired(expired)
-        timer.updateProgress(timer.elapsed)
-        timer.updateState()
+        timer.setDuration(duration - remainingDuration, duration)
         if (running) {
           timer.start()
         }
@@ -1919,24 +1935,20 @@ class TimerStartPause extends HTMLElement {
   }
 
   getTimerState() {
-    const timer = this.timerElement
+    const timer = this.#timer
     const now = performance.now()
-    const duration = Number(timer.duration)
-    const elapsed = Number(timer.elapsed) + (
-      timer.running
-        ? now - Number(timer.startedAt)
-        : 0
-    )
+    const duration = Number(timer.UtmostDuration)
+    const elapsed = Number(timer.ElapsedDuration)
     const expired = timer.hasAttribute('expired') || elapsed >= duration
 
     return {
       timerID: timer.id || 'default',
       duration,
       remainingDuration: expired ? 0 : Math.max(0, duration - elapsed),
-      running: timer.running && !expired,
+      running: timer.TimerRunning && !expired,
       expired,
       capturedAt: now,
-      counting: timer.running && !expired,
+      counting: timer.TimerRunning && !expired,
     }
   }
 
@@ -3255,7 +3267,7 @@ document.addEventListener(
         target.matches('input, textarea, select') || target.isContentEditable
       )
     )
-    if (isEditing || document.querySelector('presentation-curtain[open]')) {
+    if (isEditing || document.querySelector('presentation-curtain')?.IsDown()) {
       return
     }
 
@@ -3281,7 +3293,7 @@ document.addEventListener(
         window.open(window.location.href, '_blank')
         return
       case 'KeyR':
-        broadcastWindowState(true)
+        synchronizer.broadcastWindowState(true)
         window.location.reload()
         return
     }
@@ -3540,124 +3552,180 @@ const scaleThenCenter = async () => {
 
 */
 // ============== synchronize.js =====================
-const documentID = document.querySelector("html").dataset.id ||
-  "random"+Math.random().toString(36) + Date.now().toString(36)
-const channel = new BroadcastChannel(documentID)
-const windowID = documentID + '|' + Math.random().toString(36) + '|' + Date.now()
 
-let navigationState = {
-  slideIndex: currentSlide,
-  concealedListItemCount: getCurrentConcealedListItems().length,
-}
-let isWindowFocused = document.hasFocus()
-const bodyElement = document.body
-bodyElement.classList.toggle('is-focused', isWindowFocused)
-
-const mainTimerSelector = 'presentation-timer#mainTimer'
-const getMainTimerState = () => {
-  const timer = document.querySelector(mainTimerSelector)
-  if (!timer) {
-    return null
-  }
-
-  const now = performance.now()
-  const duration = Number(timer.duration)
-  const elapsed = Number(timer.elapsed) + (
-    timer.running
-      ? now - Number(timer.startedAt)
-      : 0
-  )
-  const expired = timer.hasAttribute('expired') || elapsed >= duration
-
-  return {
-    timerID: timer.id,
-    duration,
-    remainingDuration: expired ? 0 : Math.max(0, duration - elapsed),
-    running: timer.running && !expired,
-    expired,
-  }
-}
-const setMainTimerState = (state) => {
-  const timer = document.querySelector(mainTimerSelector)
-  const duration = Number(state?.duration)
-  const remainingDuration = Number(state?.remainingDuration)
-  if (
-    !timer || state?.timerID !== timer.id ||
-    !Number.isFinite(duration) || duration <= 0 ||
-    !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
-    remainingDuration > duration || typeof state.running !== 'boolean' ||
-    typeof state.expired !== 'boolean'
-  ) {
-    return
-  }
-
-  const expired = state.expired || remainingDuration === 0
-  const boundedRemainingDuration = expired ? 0 : remainingDuration
-  const running = state.running && boundedRemainingDuration > 0 && !expired
-  timer.pause()
-  timer.duration = duration
-  timer.elapsed = duration - boundedRemainingDuration
-  timer.setExpired(expired)
-  timer.updateProgress(timer.elapsed)
-  timer.updateState()
-  if (running) {
-    timer.start()
-  }
-}
-const broadcastWindowState = debounce((reload = false) => channel.postMessage({
-  slideIndex: navigationState.slideIndex,
-  concealedListItemCount: navigationState.concealedListItemCount,
-  timerState: getMainTimerState(),
-  reload: reload === true,
-  window: windowID,
-}), 120)
-const setWindowFocused = (focused) => {
-  isWindowFocused = focused
-  bodyElement.classList.toggle('is-focused', focused)
+class WindowState {
+  DocumentID
+  WindowID
+  SlideIndex
+  ConcealedListItemCount
+  TimerElapsedDuration
+  TimerUtmostDuration
+  IsTimerRunning
+  IsCurtainDown
+  IsReloading
 }
 
-window.addEventListener(navigationCompleteEventType, (event) => {
-  navigationState = event.detail
-  broadcastWindowState()
-})
-window.addEventListener('focus', () => {
-  setWindowFocused(true)
-  broadcastWindowState()
-})
-window.addEventListener('blur', () => {
-  setWindowFocused(false)
-  broadcastWindowState()
-})
+class Synchronizer {
+  DocumentID
+  WindowID
+  Curtain
+  MainTimer
+  Channel
+  #isApplyingBroadcast = false
 
-channel.addEventListener('message', (event) => {
-  const broadcast = event.data
-  if (broadcast.reload === true) {
-    window.location.reload()
-    return
-  }
-  if (broadcast.window === windowID) {
-    setWindowFocused(broadcast.focused === true)
-    return
-  }
-  setWindowFocused(false)
+  constructor() {
+    this.DocumentID = document.querySelector("html").dataset.id ||
+      "random"+Math.random().toString(36) + Date.now().toString(36)
+    this.WindowID = Math.random().toString(36) + '|' + Date.now()
+    this.Curtain = document.querySelector('presentation-curtain')
+    this.MainTimer = document.querySelector('presentation-timer#mainTimer')
+    this.Channel = new BroadcastChannel(this.DocumentID)
 
-  setMainTimerState(broadcast.timerState)
+    this.debouncedBroadcastWindowState = debounce(this.broadcastWindowState.bind(this), 120)
+    this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    this.onStateChange = this.onStateChange.bind(this)
+    this.onFocus = this.onFocus.bind(this)
+    this.onBlur = this.onBlur.bind(this)
+    this.onMessage = this.onMessage.bind(this)
 
-  if (broadcast.slideIndex !== currentSlide) {
-    navigate(broadcast.slideIndex)
+    this.setWindowFocused(document.hasFocus())
+    window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    this.Curtain?.addEventListener('change', this.onStateChange)
+    this.MainTimer?.addEventListener('change', this.onStateChange)
+    window.addEventListener('focus', this.onFocus)
+    window.addEventListener('blur', this.onBlur)
+    this.Channel.addEventListener('message', this.onMessage)
+    this.broadcastWindowState()
   }
-  const concealedListItems = getCurrentConcealedListItems()
-  let revealCount = concealedListItems.length - broadcast.concealedListItemCount
-  for (const element of concealedListItems) {
-    if (revealCount === 0) {
+
+
+  setMainTimerState(state) {
+    const timer = this.MainTimer
+    const duration = Number(state?.TimerUtmostDuration)
+    const elapsed = Number(state?.TimerElapsedDuration)
+    if (
+      !timer || state?.DocumentID !== this.DocumentID ||
+      !Number.isFinite(duration) || duration <= 0 ||
+      !Number.isFinite(elapsed) || elapsed < 0 || elapsed > duration ||
+      typeof state.IsTimerRunning !== 'boolean'
+    ) {
       return
     }
-    element.classList.add("is-revealed")
-    revealCount--
-  }
-});
 
-broadcastWindowState()
+    const expired = elapsed >= duration
+    const running = state.IsTimerRunning && !expired && state.IsCurtainDown !== true
+    timer.setDuration(elapsed, duration)
+    if (running) {
+      timer.start()
+    }
+  }
+
+  setMainCurtainState(state) {
+    if (
+      this.Curtain && typeof state?.IsCurtainDown === 'boolean' &&
+      this.Curtain.IsDown() !== state.IsCurtainDown
+    ) {
+      if (state.IsCurtainDown) {
+        this.Curtain.Down()
+      } else {
+        this.Curtain.Up()
+      }
+    }
+  }
+
+  broadcastWindowState(reloading = false) {
+    const state = new WindowState()
+    state.DocumentID = this.DocumentID
+    state.WindowID = this.WindowID
+    state.SlideIndex = currentSlide
+    state.ConcealedListItemCount = getCurrentConcealedListItems().length
+    state.IsCurtainDown = Boolean(this.Curtain?.IsDown())
+    state.IsReloading = reloading === true
+
+    const timer = this.MainTimer
+    const duration = Number(timer?.UtmostDuration)
+    const elapsed = Number(timer?.ElapsedDuration)
+    if (timer && Number.isFinite(duration) && duration > 0 && Number.isFinite(elapsed)) {
+      const expired = timer.hasAttribute('expired') || elapsed >= duration
+      state.TimerElapsedDuration = expired
+        ? duration
+        : Math.max(0, Math.min(duration, elapsed))
+      state.TimerUtmostDuration = duration
+      state.IsTimerRunning = timer.TimerRunning && !expired
+    } else {
+      state.TimerElapsedDuration = 0
+      state.TimerUtmostDuration = 0
+      state.IsTimerRunning = false
+    }
+
+    this.Channel.postMessage(state)
+  }
+
+  setWindowFocused(focused) {
+    document.body.classList.toggle('is-focused', focused)
+  }
+
+  onNavigationComplete() {
+    this.debouncedBroadcastWindowState()
+  }
+
+  onStateChange(event) {
+    if (
+      this.#isApplyingBroadcast ||
+      (event.target !== this.Curtain && event.target !== this.MainTimer)
+    ) {
+      return
+    }
+    this.broadcastWindowState()
+  }
+
+  onFocus() {
+    this.setWindowFocused(true)
+    this.debouncedBroadcastWindowState()
+  }
+
+  onBlur() {
+    this.setWindowFocused(false)
+    this.debouncedBroadcastWindowState()
+  }
+
+  onMessage(event) {
+    const broadcast = event.data
+    if (!broadcast || broadcast.DocumentID !== this.DocumentID) {
+      return
+    }
+    if (broadcast.IsReloading === true) {
+      window.location.reload()
+      return
+    }
+    if (broadcast.WindowID === this.WindowID) {
+      return
+    }
+    this.#isApplyingBroadcast = true
+    try {
+      this.setMainCurtainState(broadcast)
+      this.setMainTimerState(broadcast)
+    } finally {
+      this.#isApplyingBroadcast = false
+    }
+    this.setWindowFocused(false)
+
+    if (broadcast.SlideIndex !== currentSlide) {
+      navigate(broadcast.SlideIndex)
+    }
+    const concealedListItems = getCurrentConcealedListItems()
+    let revealCount = concealedListItems.length - broadcast.ConcealedListItemCount
+    for (const element of concealedListItems) {
+      if (revealCount === 0) {
+        return
+      }
+      element.classList.add("is-revealed")
+      revealCount--
+    }
+  }
+}
+
+const synchronizer = new Synchronizer()
 </script>
 
 <style role="complementary">

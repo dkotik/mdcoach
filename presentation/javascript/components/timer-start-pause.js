@@ -164,12 +164,7 @@ class TimerStartPause extends HTMLElement {
 
       this.timerStateObserver.disconnect()
       try {
-        timer.pause()
-        timer.UtmostDuration = duration
-        timer.ElapsedDuration = duration - remainingDuration
-        timer.setExpired(expired)
-        timer.updateProgress(timer.ElapsedDuration)
-        timer.updateState()
+        timer.setDuration(duration - remainingDuration, duration)
         if (running) {
           timer.start()
         }

@@ -108,7 +108,7 @@ class PresentationCurtain extends HTMLElement {
       return
     }
     this.setAttribute('open', '')
-    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }))
+    this.dispatchOnChange(true)
   }
 
   Up() {
@@ -116,11 +116,19 @@ class PresentationCurtain extends HTMLElement {
       return
     }
     this.removeAttribute('open')
-    this.dispatchEvent(new Event('change', { bubbles: true, composed: true }))
+    this.dispatchOnChange(false)
   }
 
   IsDown() {
     return this.hasAttribute('open')
+  }
+
+  dispatchOnChange(isDown) {
+    this.dispatchEvent(new CustomEvent('change', {
+      bubbles: true,
+      composed: true,
+      detail: { isDown },
+    }))
   }
 
   onKeyUp(event) {

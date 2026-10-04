@@ -161,6 +161,20 @@ class PresentationTimer extends HTMLElement {
     this.toggleAttribute('expired', isExpired)
   }
 
+  setDuration(elapsed, utmost) {
+    this.pause()
+    this.ElapsedDuration = elapsed
+    this.UtmostDuration = utmost
+    this.setExpired(elapsed >= utmost)
+    this.updateProgress(this.ElapsedDuration)
+    this.updateState()
+    this.dispatchEvent(new CustomEvent('change', {
+      bubbles: true,
+      composed: true,
+      detail: this,
+    }))
+  }
+
   getDuration() {
     const seconds = Number(this.getAttribute('duration'))
     return Number.isFinite(seconds) && seconds > 0 ? seconds * 1000 : 60_000

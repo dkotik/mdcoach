@@ -18,6 +18,7 @@ class Synchronizer {
   Curtain
   MainTimer
   Channel
+  #isApplyingBroadcast = false
 
   constructor() {
     this.DocumentID = document.querySelector("html").dataset.id ||
@@ -27,16 +28,17 @@ class Synchronizer {
     this.MainTimer = document.querySelector('presentation-timer#mainTimer')
     this.Channel = new BroadcastChannel(this.DocumentID)
 
-    this.broadcastWindowState = debounce(this.broadcastWindowState.bind(this), 120)
+    this.debouncedBroadcastWindowState = debounce(this.broadcastWindowState.bind(this), 120)
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
-    this.onCurtainChange = this.onCurtainChange.bind(this)
+    this.onStateChange = this.onStateChange.bind(this)
     this.onFocus = this.onFocus.bind(this)
     this.onBlur = this.onBlur.bind(this)
     this.onMessage = this.onMessage.bind(this)
 
     this.setWindowFocused(document.hasFocus())
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
-    window.addEventListener('change', this.onCurtainChange)
+    this.Curtain?.addEventListener('change', this.onStateChange)
+    this.MainTimer?.addEventListener('change', this.onStateChange)
     window.addEventListener('focus', this.onFocus)
     window.addEventListener('blur', this.onBlur)
     this.Channel.addEventListener('message', this.onMessage)
@@ -59,12 +61,7 @@ class Synchronizer {
 
     const expired = elapsed >= duration
     const running = state.IsTimerRunning && !expired && state.IsCurtainDown !== true
-    timer.pause()
-    timer.UtmostDuration = duration
-    timer.ElapsedDuration = elapsed
-    timer.setExpired(expired)
-    timer.updateProgress(timer.ElapsedDuration)
-    timer.updateState()
+    timer.setDuration(elapsed, duration)
     if (running) {
       timer.start()
     }
@@ -116,11 +113,14 @@ class Synchronizer {
   }
 
   onNavigationComplete() {
-    this.broadcastWindowState()
+    this.debouncedBroadcastWindowState()
   }
 
-  onCurtainChange(event) {
-    if (event.target !== this.Curtain) {
+  onStateChange(event) {
+    if (
+      this.#isApplyingBroadcast ||
+      (event.target !== this.Curtain && event.target !== this.MainTimer)
+    ) {
       return
     }
     this.broadcastWindowState()
@@ -128,12 +128,12 @@ class Synchronizer {
 
   onFocus() {
     this.setWindowFocused(true)
-    this.broadcastWindowState()
+    this.debouncedBroadcastWindowState()
   }
 
   onBlur() {
     this.setWindowFocused(false)
-    this.broadcastWindowState()
+    this.debouncedBroadcastWindowState()
   }
 
   onMessage(event) {
@@ -148,8 +148,13 @@ class Synchronizer {
     if (broadcast.WindowID === this.WindowID) {
       return
     }
-    this.setMainCurtainState(broadcast)
-    this.setMainTimerState(broadcast)
+    this.#isApplyingBroadcast = true
+    try {
+      this.setMainCurtainState(broadcast)
+      this.setMainTimerState(broadcast)
+    } finally {
+      this.#isApplyingBroadcast = false
+    }
     this.setWindowFocused(false)
 
     if (broadcast.SlideIndex !== currentSlide) {

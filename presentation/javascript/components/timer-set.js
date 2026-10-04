@@ -174,11 +174,7 @@ class TimerSet extends HTMLElement {
     }
 
     this.duration = duration
-    if (this.timerElement) {
-      this.timerElement.pause()
-      this.timerElement.ElapsedDuration = 0
-    }
-    this.updateTimerDuration()
+    this.updateTimerDuration(0)
   }
 
   onInputBlur() {
@@ -251,10 +247,16 @@ class TimerSet extends HTMLElement {
     this.renderDuration()
   }
 
-  updateTimerDuration() {
+  updateTimerDuration(elapsed) {
     if (this.timerElement) {
-      this.timerElement.UtmostDuration = this.duration * 1000
-      this.timerElement.start()
+      this.timerElement.pause()
+      this.timerElement.setDuration(
+        elapsed ?? this.timerElement.ElapsedDuration,
+        this.duration * 1000,
+      )
+      if (!this.timerElement.hasAttribute('expired')) {
+        this.timerElement.start()
+      }
     }
   }
 

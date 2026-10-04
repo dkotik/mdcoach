@@ -73,7 +73,7 @@ document.addEventListener(
         target.matches('input, textarea, select') || target.isContentEditable
       )
     )
-    if (isEditing || document.querySelector('presentation-curtain[open]')) {
+    if (isEditing || document.querySelector('presentation-curtain')?.IsDown()) {
       return
     }
 
@@ -99,7 +99,7 @@ document.addEventListener(
         window.open(window.location.href, '_blank')
         return
       case 'KeyR':
-        broadcastWindowState(true)
+        synchronizer.broadcastWindowState(true)
         window.location.reload()
         return
     }
@@ -358,122 +358,178 @@ const scaleThenCenter = async () => {
 
 */
 // ============== synchronize.js =====================
-const documentID = document.querySelector("html").dataset.id ||
-  "random"+Math.random().toString(36) + Date.now().toString(36)
-const channel = new BroadcastChannel(documentID)
-const windowID = documentID + '|' + Math.random().toString(36) + '|' + Date.now()
 
-let navigationState = {
-  slideIndex: currentSlide,
-  concealedListItemCount: getCurrentConcealedListItems().length,
-}
-let isWindowFocused = document.hasFocus()
-const bodyElement = document.body
-bodyElement.classList.toggle('is-focused', isWindowFocused)
-
-const mainTimerSelector = 'presentation-timer#mainTimer'
-const getMainTimerState = () => {
-  const timer = document.querySelector(mainTimerSelector)
-  if (!timer) {
-    return null
-  }
-
-  const now = performance.now()
-  const duration = Number(timer.duration)
-  const elapsed = Number(timer.elapsed) + (
-    timer.running
-      ? now - Number(timer.startedAt)
-      : 0
-  )
-  const expired = timer.hasAttribute('expired') || elapsed >= duration
-
-  return {
-    timerID: timer.id,
-    duration,
-    remainingDuration: expired ? 0 : Math.max(0, duration - elapsed),
-    running: timer.running && !expired,
-    expired,
-  }
-}
-const setMainTimerState = (state) => {
-  const timer = document.querySelector(mainTimerSelector)
-  const duration = Number(state?.duration)
-  const remainingDuration = Number(state?.remainingDuration)
-  if (
-    !timer || state?.timerID !== timer.id ||
-    !Number.isFinite(duration) || duration <= 0 ||
-    !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
-    remainingDuration > duration || typeof state.running !== 'boolean' ||
-    typeof state.expired !== 'boolean'
-  ) {
-    return
-  }
-
-  const expired = state.expired || remainingDuration === 0
-  const boundedRemainingDuration = expired ? 0 : remainingDuration
-  const running = state.running && boundedRemainingDuration > 0 && !expired
-  timer.pause()
-  timer.duration = duration
-  timer.elapsed = duration - boundedRemainingDuration
-  timer.setExpired(expired)
-  timer.updateProgress(timer.elapsed)
-  timer.updateState()
-  if (running) {
-    timer.start()
-  }
-}
-const broadcastWindowState = debounce((reload = false) => channel.postMessage({
-  slideIndex: navigationState.slideIndex,
-  concealedListItemCount: navigationState.concealedListItemCount,
-  timerState: getMainTimerState(),
-  reload: reload === true,
-  window: windowID,
-}), 120)
-const setWindowFocused = (focused) => {
-  isWindowFocused = focused
-  bodyElement.classList.toggle('is-focused', focused)
+class WindowState {
+  DocumentID
+  WindowID
+  SlideIndex
+  ConcealedListItemCount
+  TimerElapsedDuration
+  TimerUtmostDuration
+  IsTimerRunning
+  IsCurtainDown
+  IsReloading
 }
 
-window.addEventListener(navigationCompleteEventType, (event) => {
-  navigationState = event.detail
-  broadcastWindowState()
-})
-window.addEventListener('focus', () => {
-  setWindowFocused(true)
-  broadcastWindowState()
-})
-window.addEventListener('blur', () => {
-  setWindowFocused(false)
-  broadcastWindowState()
-})
+class Synchronizer {
+  DocumentID
+  WindowID
+  Curtain
+  MainTimer
+  Channel
+  #isApplyingBroadcast = false
 
-channel.addEventListener('message', (event) => {
-  const broadcast = event.data
-  if (broadcast.reload === true) {
-    window.location.reload()
-    return
-  }
-  if (broadcast.window === windowID) {
-    setWindowFocused(broadcast.focused === true)
-    return
-  }
-  setWindowFocused(false)
+  constructor() {
+    this.DocumentID = document.querySelector("html").dataset.id ||
+      "random"+Math.random().toString(36) + Date.now().toString(36)
+    this.WindowID = Math.random().toString(36) + '|' + Date.now()
+    this.Curtain = document.querySelector('presentation-curtain')
+    this.MainTimer = document.querySelector('presentation-timer#mainTimer')
+    this.Channel = new BroadcastChannel(this.DocumentID)
 
-  setMainTimerState(broadcast.timerState)
+    this.debouncedBroadcastWindowState = debounce(this.broadcastWindowState.bind(this), 120)
+    this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    this.onStateChange = this.onStateChange.bind(this)
+    this.onFocus = this.onFocus.bind(this)
+    this.onBlur = this.onBlur.bind(this)
+    this.onMessage = this.onMessage.bind(this)
 
-  if (broadcast.slideIndex !== currentSlide) {
-    navigate(broadcast.slideIndex)
+    this.setWindowFocused(document.hasFocus())
+    window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
+    this.Curtain?.addEventListener('change', this.onStateChange)
+    this.MainTimer?.addEventListener('change', this.onStateChange)
+    window.addEventListener('focus', this.onFocus)
+    window.addEventListener('blur', this.onBlur)
+    this.Channel.addEventListener('message', this.onMessage)
+    this.broadcastWindowState()
   }
-  const concealedListItems = getCurrentConcealedListItems()
-  let revealCount = concealedListItems.length - broadcast.concealedListItemCount
-  for (const element of concealedListItems) {
-    if (revealCount === 0) {
+
+
+  setMainTimerState(state) {
+    const timer = this.MainTimer
+    const duration = Number(state?.TimerUtmostDuration)
+    const elapsed = Number(state?.TimerElapsedDuration)
+    if (
+      !timer || state?.DocumentID !== this.DocumentID ||
+      !Number.isFinite(duration) || duration <= 0 ||
+      !Number.isFinite(elapsed) || elapsed < 0 || elapsed > duration ||
+      typeof state.IsTimerRunning !== 'boolean'
+    ) {
       return
     }
-    element.classList.add("is-revealed")
-    revealCount--
-  }
-});
 
-broadcastWindowState()
+    const expired = elapsed >= duration
+    const running = state.IsTimerRunning && !expired && state.IsCurtainDown !== true
+    timer.setDuration(elapsed, duration)
+    if (running) {
+      timer.start()
+    }
+  }
+
+  setMainCurtainState(state) {
+    if (
+      this.Curtain && typeof state?.IsCurtainDown === 'boolean' &&
+      this.Curtain.IsDown() !== state.IsCurtainDown
+    ) {
+      if (state.IsCurtainDown) {
+        this.Curtain.Down()
+      } else {
+        this.Curtain.Up()
+      }
+    }
+  }
+
+  broadcastWindowState(reloading = false) {
+    const state = new WindowState()
+    state.DocumentID = this.DocumentID
+    state.WindowID = this.WindowID
+    state.SlideIndex = currentSlide
+    state.ConcealedListItemCount = getCurrentConcealedListItems().length
+    state.IsCurtainDown = Boolean(this.Curtain?.IsDown())
+    state.IsReloading = reloading === true
+
+    const timer = this.MainTimer
+    const duration = Number(timer?.UtmostDuration)
+    const elapsed = Number(timer?.ElapsedDuration)
+    if (timer && Number.isFinite(duration) && duration > 0 && Number.isFinite(elapsed)) {
+      const expired = timer.hasAttribute('expired') || elapsed >= duration
+      state.TimerElapsedDuration = expired
+        ? duration
+        : Math.max(0, Math.min(duration, elapsed))
+      state.TimerUtmostDuration = duration
+      state.IsTimerRunning = timer.TimerRunning && !expired
+    } else {
+      state.TimerElapsedDuration = 0
+      state.TimerUtmostDuration = 0
+      state.IsTimerRunning = false
+    }
+
+    this.Channel.postMessage(state)
+  }
+
+  setWindowFocused(focused) {
+    document.body.classList.toggle('is-focused', focused)
+  }
+
+  onNavigationComplete() {
+    this.debouncedBroadcastWindowState()
+  }
+
+  onStateChange(event) {
+    if (
+      this.#isApplyingBroadcast ||
+      (event.target !== this.Curtain && event.target !== this.MainTimer)
+    ) {
+      return
+    }
+    this.broadcastWindowState()
+  }
+
+  onFocus() {
+    this.setWindowFocused(true)
+    this.debouncedBroadcastWindowState()
+  }
+
+  onBlur() {
+    this.setWindowFocused(false)
+    this.debouncedBroadcastWindowState()
+  }
+
+  onMessage(event) {
+    const broadcast = event.data
+    if (!broadcast || broadcast.DocumentID !== this.DocumentID) {
+      return
+    }
+    if (broadcast.IsReloading === true) {
+      window.location.reload()
+      return
+    }
+    if (broadcast.WindowID === this.WindowID) {
+      return
+    }
+    this.#isApplyingBroadcast = true
+    try {
+      this.setMainCurtainState(broadcast)
+      this.setMainTimerState(broadcast)
+    } finally {
+      this.#isApplyingBroadcast = false
+    }
+    this.setWindowFocused(false)
+
+    if (broadcast.SlideIndex !== currentSlide) {
+      navigate(broadcast.SlideIndex)
+    }
+    const concealedListItems = getCurrentConcealedListItems()
+    let revealCount = concealedListItems.length - broadcast.ConcealedListItemCount
+    for (const element of concealedListItems) {
+      if (revealCount === 0) {
+        return
+      }
+      element.classList.add("is-revealed")
+      revealCount--
+    }
+  }
+}
+
+const synchronizer = new Synchronizer()
 </script>
