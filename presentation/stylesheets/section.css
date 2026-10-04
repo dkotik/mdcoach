@@ -194,7 +194,7 @@ body.slides > main > section[data-layout="splash"] > .grid > .content {
 }
 
 body.slides > main > section[data-layout="left-aside"] > .grid > .content {
-  padding-left: 40vw;
+  padding-left: calc(40vw + var(--notes-panel-width));
 
   figure {
     position: fixed;
@@ -240,7 +240,7 @@ body.slides > main > section[data-layout="left-aside"] > .grid > .content {
 }
 
 body.slides > main > section[data-layout="right-aside"] > .grid > .content {
-  padding-right: 40vw;
+  padding-right: calc(40vw + var(--notes-panel-width));
 
   figure {
     position: fixed;

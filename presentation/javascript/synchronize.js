@@ -63,13 +63,13 @@ const setMainTimerState = (state) => {
     timer.start()
   }
 }
-const broadcastWindowState = (reload = false) => channel.postMessage({
+const broadcastWindowState = debounce((reload = false) => channel.postMessage({
   slideIndex: navigationState.slideIndex,
   concealedListItemCount: navigationState.concealedListItemCount,
   timerState: getMainTimerState(),
   reload: reload === true,
   window: windowID,
-})
+}), 120)
 const setWindowFocused = (focused) => {
   isWindowFocused = focused
   bodyElement.classList.toggle('is-focused', focused)

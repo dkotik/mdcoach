@@ -1688,6 +1688,7 @@ class TimerStartPause extends HTMLElement {
     this.pendingTimerState = null
     this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
+    this.onDOMReady = this.onDOMReady.bind(this)
     this.onCurtainToggle = this.onCurtainToggle.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
@@ -1698,6 +1699,7 @@ class TimerStartPause extends HTMLElement {
   }
 
   disconnectedCallback() {
+    document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
     window.removeEventListener(curtainToggleEventType, this.onCurtainToggle)
     this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
@@ -1733,13 +1735,29 @@ class TimerStartPause extends HTMLElement {
     const storedState = this.readStoredTimerState(currentState.timerID)
     const initialState = {
       ...currentState,
-      ...(storedState && !currentState.expired ? storedState : {}),
+      ...(storedState && !currentState.expired ? storedState : {
+        // default values
+        running: false,
+      }),
     }
     const curtain = document.querySelector('presentation-curtain')
     if (curtain && !initialState.expired) {
       initialState.running = !curtain.hasAttribute('open')
     }
     this.setTimerState(initialState)
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
+    } else {
+      this.onDOMReady()
+    }
+  }
+
+  onDOMReady() {
+    if (typeof currentSlide !== 'number') {
+      return
+    }
+    this.onNavigationComplete({ detail: { slideIndex: currentSlide } })
   }
 
   onNavigationComplete(event) {
