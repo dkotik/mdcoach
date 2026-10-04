@@ -18,7 +18,7 @@ class Synchronizer {
   Curtain
   MainTimer
   Channel
-  #isApplyingBroadcast = false
+  IsWindowFocused
 
   constructor() {
     this.DocumentID = document.querySelector("html").dataset.id ||
@@ -59,11 +59,12 @@ class Synchronizer {
       return
     }
 
-    const expired = elapsed >= duration
-    const running = state.IsTimerRunning && !expired && state.IsCurtainDown !== true
     timer.setDuration(elapsed, duration)
+    const running = state.IsTimerRunning
     if (running) {
       timer.start()
+    } else {
+      timer.pause()
     }
   }
 
@@ -81,6 +82,10 @@ class Synchronizer {
   }
 
   broadcastWindowState(reloading = false) {
+    if (this.IsWindowFocused !== true) {
+      return
+    }
+
     const state = new WindowState()
     state.DocumentID = this.DocumentID
     state.WindowID = this.WindowID
@@ -90,25 +95,16 @@ class Synchronizer {
     state.IsReloading = reloading === true
 
     const timer = this.MainTimer
-    const duration = Number(timer?.UtmostDuration)
     const elapsed = Number(timer?.ElapsedDuration)
-    if (timer && Number.isFinite(duration) && duration > 0 && Number.isFinite(elapsed)) {
-      const expired = timer.hasAttribute('expired') || elapsed >= duration
-      state.TimerElapsedDuration = expired
-        ? duration
-        : Math.max(0, Math.min(duration, elapsed))
-      state.TimerUtmostDuration = duration
-      state.IsTimerRunning = timer.TimerRunning && !expired
-    } else {
-      state.TimerElapsedDuration = 0
-      state.TimerUtmostDuration = 0
-      state.IsTimerRunning = false
-    }
-
+    const duration = Number(timer?.UtmostDuration)
+    state.TimerElapsedDuration = elapsed
+    state.TimerUtmostDuration = duration
+    state.IsTimerRunning = timer.TimerRunning
     this.Channel.postMessage(state)
   }
 
   setWindowFocused(focused) {
+    this.IsWindowFocused = focused
     document.body.classList.toggle('is-focused', focused)
   }
 
@@ -117,10 +113,7 @@ class Synchronizer {
   }
 
   onStateChange(event) {
-    if (
-      this.#isApplyingBroadcast ||
-      (event.target !== this.Curtain && event.target !== this.MainTimer)
-    ) {
+    if (event.target !== this.Curtain && event.target !== this.MainTimer) {
       return
     }
     this.broadcastWindowState()
@@ -128,16 +121,22 @@ class Synchronizer {
 
   onFocus() {
     this.setWindowFocused(true)
-    this.debouncedBroadcastWindowState()
+    // this.debouncedBroadcastWindowState()
   }
 
   onBlur() {
     this.setWindowFocused(false)
-    this.debouncedBroadcastWindowState()
+    // this.debouncedBroadcastWindowState()
   }
 
   onMessage(event) {
     const broadcast = event.data
+    // if (broadcast.WindowID === this.WindowID) {
+    //   return
+    // }
+    this.setWindowFocused(false)
+    this.setMainCurtainState(broadcast)
+    this.setMainTimerState(broadcast)
     if (!broadcast || broadcast.DocumentID !== this.DocumentID) {
       return
     }
@@ -145,17 +144,7 @@ class Synchronizer {
       window.location.reload()
       return
     }
-    if (broadcast.WindowID === this.WindowID) {
-      return
-    }
-    this.#isApplyingBroadcast = true
-    try {
-      this.setMainCurtainState(broadcast)
-      this.setMainTimerState(broadcast)
-    } finally {
-      this.#isApplyingBroadcast = false
-    }
-    this.setWindowFocused(false)
+
 
     if (broadcast.SlideIndex !== currentSlide) {
       navigate(broadcast.SlideIndex)

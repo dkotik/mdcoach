@@ -188,6 +188,11 @@ class PresentationTimer extends HTMLElement {
     } else {
       this.start()
     }
+    this.dispatchEvent(new CustomEvent('change', {
+      bubbles: true,
+      composed: true,
+      detail: this,
+    }))
   }
 
   onKeyDown(event) {

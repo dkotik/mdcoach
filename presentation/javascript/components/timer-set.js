@@ -199,6 +199,14 @@ class TimerSet extends HTMLElement {
       return
     }
 
+    this.updateDurationFromTimer(timer)
+  }
+
+  updateDurationFromTimer(timer) {
+    if (timer !== this.timerElement) {
+      return
+    }
+
     const remainingDuration = Number(timer.UtmostDuration - timer.ElapsedDuration)
     if (!Number.isFinite(remainingDuration) || remainingDuration < 0) {
       return

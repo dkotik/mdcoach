@@ -15,6 +15,7 @@ class TimerStartPause extends HTMLElement {
     this.onDOMReady = this.onDOMReady.bind(this)
     this.onCurtainChange = this.onCurtainChange.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
+    this.onTimerChange = this.onTimerChange.bind(this)
     this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
 
@@ -26,6 +27,7 @@ class TimerStartPause extends HTMLElement {
     document.removeEventListener('DOMContentLoaded', this.onDOMReady)
     window.removeEventListener(navigationCompleteEventType, this.onNavigationComplete)
     window.removeEventListener('change', this.onCurtainChange)
+    this.#timer?.removeEventListener('change', this.onTimerChange)
     this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.removeEventListener('click', this.onTimerStateChange)
     this.timerStateObserver.disconnect()
@@ -52,6 +54,7 @@ class TimerStartPause extends HTMLElement {
       subtree: true,
       attributeFilter: ['paused', 'expired'],
     })
+    this.#timer.addEventListener('change', this.onTimerChange)
     this.addEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.addEventListener('click', this.onTimerStateChange)
     window.addEventListener(navigationCompleteEventType, this.onNavigationComplete)
@@ -110,6 +113,15 @@ class TimerStartPause extends HTMLElement {
 
   onTimerStateChange() {
     this.setTimerState()
+  }
+
+  onTimerChange(event) {
+    if (event.target !== this.#timer) {
+      return
+    }
+
+    this.querySelector('timer-set')?.updateDurationFromTimer?.(this.#timer)
+    this.onTimerStateChange()
   }
 
   setTimerState(state) {
