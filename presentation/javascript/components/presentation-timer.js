@@ -147,7 +147,6 @@ class PresentationTimer extends HTMLElement {
     this.setAttribute('aria-label', `${this.UtmostDuration / 1000} second timer`)
     this.addEventListener('click', this.onClick)
     this.addEventListener('keydown', this.onKeyDown)
-    this.restoreExpirationState()
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
   }
@@ -158,45 +157,8 @@ class PresentationTimer extends HTMLElement {
     this.removeEventListener('keydown', this.onKeyDown)
   }
 
-  getExpirationStorageKey() {
-    const presentationID = document.documentElement?.dataset.id
-    if (!presentationID) {
-      return null
-    }
-
-    return `${presentationID}:timer:${this.id || 'default'}:expired`
-  }
-
-  restoreExpirationState() {
-    const key = this.getExpirationStorageKey()
-    if (!key) {
-      return
-    }
-
-    try {
-      this.toggleAttribute('expired', window.localStorage.getItem(key) === 'true')
-    } catch {
-      // Local storage may be unavailable in restricted browsing contexts.
-    }
-  }
-
   setExpired(isExpired) {
     this.toggleAttribute('expired', isExpired)
-
-    const key = this.getExpirationStorageKey()
-    if (!key) {
-      return
-    }
-
-    try {
-      if (isExpired) {
-        window.localStorage.setItem(key, 'true')
-      } else {
-        window.localStorage.removeItem(key)
-      }
-    } catch {
-      // Local storage may be unavailable in restricted browsing contexts.
-    }
   }
 
   getDuration() {
@@ -293,10 +255,7 @@ class PresentationTimer extends HTMLElement {
     this.dispatchEvent(new CustomEvent(presentationTimerTickEventType, {
       bubbles: true,
       composed: true,
-      detail: {
-        totalDuration: this.UtmostDuration,
-        remainingDuration: Math.max(0, this.UtmostDuration - this.ElapsedDuration),
-      },
+      detail: this,
     }))
 
     if (this.ElapsedDuration < this.UtmostDuration) {

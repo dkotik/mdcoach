@@ -198,11 +198,12 @@ class TimerSet extends HTMLElement {
   }
 
   onTimerTick(event) {
-    if (event.currentTarget !== this.timerElement) {
+    const timer = event.detail
+    if (event.currentTarget !== this.timerElement || timer !== this.timerElement) {
       return
     }
 
-    const remainingDuration = Number(event.detail?.remainingDuration)
+    const remainingDuration = Number(timer.UtmostDuration - timer.ElapsedDuration)
     if (!Number.isFinite(remainingDuration) || remainingDuration < 0) {
       return
     }
