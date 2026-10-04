@@ -224,7 +224,14 @@ class TimerSet extends HTMLElement {
     }
 
     this.duration = Math.ceil(remainingDuration / 1000)
-    this.renderDuration()
+    if (!this.input) {
+      return
+    }
+
+    const minutes = Math.floor(this.duration / 60)
+    const seconds = this.duration % 60
+    this.input.value = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    this.input.setAttribute('aria-valuetext', `${minutes} minutes ${seconds} seconds`)
   }
 
   getDurationAttribute() {
@@ -267,6 +274,7 @@ class TimerSet extends HTMLElement {
       elapsed ?? this.#timer.ElapsedDuration,
       this.duration * 1000,
     )
+    this.#timer.dispatchChange()
   }
 
   renderDuration() {

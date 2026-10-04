@@ -21,7 +21,6 @@ class TimerStartPause extends HTMLElement {
     this.onDOMReady = this.onDOMReady.bind(this)
     this.onCurtainChange = this.onCurtainChange.bind(this)
     this.onTimerStateChange = this.onTimerStateChange.bind(this)
-    this.timerStateObserver = new MutationObserver(this.onTimerStateChange)
   }
 
   connectedCallback() {
@@ -35,7 +34,6 @@ class TimerStartPause extends HTMLElement {
     this.#timer?.removeEventListener('change', this.onTimerStateChange)
     this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.removeEventListener('click', this.onTimerStateChange)
-    this.timerStateObserver.disconnect()
     this.isInitialized = false
   }
 
@@ -51,11 +49,6 @@ class TimerStartPause extends HTMLElement {
 
     this.#curtain = document.querySelector('presentation-curtain')
     this.isInitialized = true
-    this.timerStateObserver.observe(this, {
-      attributes: true,
-      subtree: true,
-      attributeFilter: ['paused'],
-    })
     this.#timer.addEventListener('change', this.onTimerStateChange)
     this.addEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.addEventListener('click', this.onTimerStateChange)
@@ -93,6 +86,7 @@ class TimerStartPause extends HTMLElement {
     if (initialState.IsRunning) {
       this.#timer.start()
     }
+    this.onTimerStateChange()
 
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', this.onDOMReady, { once: true })
@@ -112,22 +106,24 @@ class TimerStartPause extends HTMLElement {
   onNavigationComplete(event) {
     const slideIndex = event.detail?.slideIndex
     if (slideIndex === 0) {
-      if (this.#timer.IsRunning) {
-        this.#timer.pause()
-      }
-      return
-    }
-    if (!this.#timer.IsRunning && !this.#curtain.IsDown()) {
+      this.#timer.pause()
+    } else if (!this.#timer.IsRunning && !this.#curtain?.IsDown()) {
       this.#timer.start()
     }
+    this.onTimerStateChange()
   }
 
   onCurtainChange(event) {
-    if (event.detail) {
+    if (event.target !== this.#curtain) {
+      return
+    }
+
+    if (this.#curtain.IsDown()) {
       this.#timer.pause()
     } else {
       this.#timer.start()
     }
+    this.onTimerStateChange()
   }
 
   onTimerStateChange() {
@@ -135,6 +131,8 @@ class TimerStartPause extends HTMLElement {
     state.ElapsedDuration = Number(this.#timer.ElapsedDuration)
     state.UtmostDuration = Number(this.#timer.UtmostDuration)
     state.IsRunning = this.#timer.IsRunning
+
+    // console.log("timerState:", state)
 
     try {
       window.localStorage.setItem(mainTimerLocalStorageKey, JSON.stringify(state))

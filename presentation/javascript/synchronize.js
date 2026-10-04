@@ -47,17 +47,9 @@ class Synchronizer {
 
 
   setMainTimerState(state) {
-    const timer = this.MainTimer
     const duration = Number(state?.TimerUtmostDuration)
     const elapsed = Number(state?.TimerElapsedDuration)
-    if (
-      !timer || state?.DocumentID !== this.DocumentID ||
-      !Number.isFinite(duration) || duration <= 0 ||
-      !Number.isFinite(elapsed) || elapsed < 0 || elapsed > duration ||
-      typeof state.IsTimerRunning !== 'boolean'
-    ) {
-      return
-    }
+    const timer = this.MainTimer
 
     timer.setDuration(elapsed, duration)
     const running = state.IsTimerRunning
@@ -101,7 +93,7 @@ class Synchronizer {
     state.TimerUtmostDuration = duration
     state.IsTimerRunning = timer.IsRunning
     this.Channel.postMessage(state)
-    console.debug("broadcast", state)
+    // console.debug("bout", state.IsTimerRunning)
   }
 
   setWindowFocused(focused) {
@@ -129,13 +121,11 @@ class Synchronizer {
 
   onMessage(event) {
     const broadcast = event.data
-    // if (broadcast.WindowID === this.WindowID) {
-    //   return
-    // }
+    // console.debug("bin", broadcast.IsTimerRunning)
     this.setWindowFocused(false)
     this.setMainCurtainState(broadcast)
     this.setMainTimerState(broadcast)
-    if (!broadcast || broadcast.DocumentID !== this.DocumentID) {
+    if (broadcast.DocumentID !== this.DocumentID) {
       return
     }
     if (broadcast.IsReloading === true) {

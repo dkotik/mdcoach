@@ -170,11 +170,6 @@ class PresentationTimer extends HTMLElement {
     this.UtmostDuration = utmost
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
-    this.dispatchEvent(new CustomEvent('change', {
-      bubbles: true,
-      composed: true,
-      detail: this,
-    }))
   }
 
   getDuration() {
@@ -188,11 +183,6 @@ class PresentationTimer extends HTMLElement {
     } else {
       this.start()
     }
-    this.dispatchEvent(new CustomEvent('change', {
-      bubbles: true,
-      composed: true,
-      detail: this,
-    }))
   }
 
   onKeyDown(event) {
@@ -202,6 +192,14 @@ class PresentationTimer extends HTMLElement {
 
     event.preventDefault()
     this.onClick()
+  }
+
+  dispatchChange() {
+    this.dispatchEvent(new CustomEvent('change', {
+      bubbles: true,
+      composed: true,
+      detail: this,
+    }))
   }
 
   start() {
@@ -225,15 +223,16 @@ class PresentationTimer extends HTMLElement {
       this.tick,
       Math.min(1000, this.UtmostDuration - this.ElapsedDuration),
     )
+    this.dispatchChange()
   }
 
   pause() {
-    window.clearTimeout(this.#tickTimeoutID)
-    this.#tickTimeoutID = undefined
     if (!this.IsRunning) {
       return
     }
 
+    window.clearTimeout(this.#tickTimeoutID)
+    this.#tickTimeoutID = undefined
     this.ElapsedDuration = Math.min(
       this.UtmostDuration,
       this.ElapsedDuration + Math.max(0, performance.now() - this.#lastTickTimestamp),
@@ -245,6 +244,7 @@ class PresentationTimer extends HTMLElement {
     }
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
+    this.dispatchChange()
   }
 
   tick() {
