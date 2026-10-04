@@ -1,5 +1,13 @@
 // use as <timer-start-pause><presentation-timer></presentation-timer></timer-start-pause>
 
+const mainTimerLocalStorageKey = "mainTimerLocalStorageKey"
+
+class TimerState {
+  ElapsedDuration
+  UtmostDuration
+  IsRunning
+}
+
 class TimerStartPause extends HTMLElement {
   #timer
   #curtain
@@ -52,7 +60,7 @@ class TimerStartPause extends HTMLElement {
     this.timerStateObserver.observe(this, {
       attributes: true,
       subtree: true,
-      attributeFilter: ['paused', 'expired'],
+      attributeFilter: ['paused'],
     })
     this.#timer.addEventListener('change', this.onTimerChange)
     this.addEventListener('presentation-timer-tick', this.onTimerStateChange)
@@ -61,16 +69,13 @@ class TimerStartPause extends HTMLElement {
     window.addEventListener('change', this.onCurtainChange)
 
     const currentState = this.getTimerState()
-    const storedState = this.readStoredTimerState(currentState.timerID)
-    const initialState = {
-      ...currentState,
-      ...(storedState && !currentState.expired ? storedState : {
-        // default values
-        running: false,
-      }),
+    const storedState = this.readStoredTimerState()
+    const initialState = storedState ?? currentState
+    if (!storedState) {
+      initialState.IsRunning = false
     }
-    if (this.#curtain && !initialState.expired) {
-      initialState.running = !this.#curtain.IsDown()
+    if (this.#curtain) {
+      initialState.IsRunning = !this.#curtain.IsDown()
     }
     this.setTimerState(initialState)
 
@@ -92,7 +97,7 @@ class TimerStartPause extends HTMLElement {
   onNavigationComplete(event) {
     const slideIndex = event.detail?.slideIndex
     this.setTimerState({
-      running: slideIndex !== 0 && !this.isCurtainDown(),
+      IsRunning: slideIndex !== 0 && !this.isCurtainDown(),
     })
   }
 
@@ -104,7 +109,7 @@ class TimerStartPause extends HTMLElement {
       }
     }
 
-    this.setTimerState({ running: !this.#curtain.IsDown() })
+    this.setTimerState({ IsRunning: !this.#curtain.IsDown() })
   }
 
   isCurtainDown() {
@@ -116,27 +121,14 @@ class TimerStartPause extends HTMLElement {
   }
 
   onTimerChange(event) {
-    if (event.target !== this.#timer) {
-      return
-    }
-
-    this.querySelector('timer-set')?.updateDurationFromTimer?.(this.#timer)
     this.onTimerStateChange()
   }
 
   setTimerState(state) {
     if (state) {
-      const nextState = { ...state }
-      if (
-        Number.isFinite(nextState.remainingDuration) &&
-        !Number.isFinite(nextState.capturedAt)
-      ) {
-        nextState.capturedAt = performance.now()
-        nextState.counting = nextState.running === true
-      }
       this.pendingTimerState = {
         ...this.pendingTimerState,
-        ...nextState,
+        ...state,
       }
     }
 
@@ -147,37 +139,30 @@ class TimerStartPause extends HTMLElement {
       this.pendingTimerState = null
 
       if (!requestedState) {
-        const currentState = this.getTimerState()
-        this.storeTimerState(currentState)
+        this.storeTimerState(this.getTimerState())
         return
       }
 
-      const currentState = this.getTimerState()
-      const targetState = { ...currentState, ...requestedState }
-      const duration = Number(targetState.duration)
-      let remainingDuration = Number(targetState.remainingDuration)
-      if (targetState.counting === true && Number.isFinite(targetState.capturedAt)) {
-        remainingDuration -= performance.now() - targetState.capturedAt
-      }
+      const targetState = Object.assign(
+        new TimerState(),
+        this.getTimerState(),
+        requestedState,
+      )
+      const elapsed = Number(targetState.ElapsedDuration)
+      const utmost = Number(targetState.UtmostDuration)
       if (
-        !Number.isFinite(duration) || duration <= 0 ||
-        !Number.isFinite(remainingDuration)
+        !Number.isFinite(elapsed) || elapsed < 0 ||
+        !Number.isFinite(utmost) || utmost <= 0 ||
+        typeof targetState.IsRunning !== 'boolean'
       ) {
         return
       }
 
-      if (targetState.expired === true) {
-        remainingDuration = 0
-      }
-      remainingDuration = Math.min(duration, Math.max(0, remainingDuration))
-      const expired = targetState.expired === true || remainingDuration === 0
-      const running = targetState.running === true && remainingDuration > 0 && !expired
       const timer = this.#timer
-
       this.timerStateObserver.disconnect()
       try {
-        timer.setDuration(duration - remainingDuration, duration)
-        if (running) {
+        timer.setDuration(elapsed, utmost)
+        if (targetState.IsRunning) {
           timer.start()
         }
       } finally {
@@ -185,52 +170,27 @@ class TimerStartPause extends HTMLElement {
           this.timerStateObserver.observe(this, {
             attributes: true,
             subtree: true,
-            attributeFilter: ['paused', 'expired'],
+            attributeFilter: ['paused'],
           })
         }
       }
 
-      const updatedState = this.getTimerState()
-      this.storeTimerState(updatedState)
+      this.storeTimerState(this.getTimerState())
     }, 600)
   }
 
   getTimerState() {
-    const timer = this.#timer
-    const now = performance.now()
-    const duration = Number(timer.UtmostDuration)
-    const elapsed = Number(timer.ElapsedDuration)
-    const expired = timer.hasAttribute('expired') || elapsed >= duration
-
-    return {
-      timerID: timer.id || 'default',
-      duration,
-      remainingDuration: expired ? 0 : Math.max(0, duration - elapsed),
-      running: timer.TimerRunning && !expired,
-      expired,
-      capturedAt: now,
-      counting: timer.TimerRunning && !expired,
-    }
+    const state = new TimerState()
+    state.ElapsedDuration = Number(this.#timer.ElapsedDuration)
+    state.UtmostDuration = Number(this.#timer.UtmostDuration)
+    state.IsRunning = this.#timer.TimerRunning
+    return state
   }
 
-  getStorageKey(timerID) {
-    const presentationID = document.querySelector('html')?.dataset.id
-    if (!presentationID || !timerID) {
-      return null
-    }
-
-    return `${presentationID}:timer:${timerID}`
-  }
-
-  readStoredTimerState(timerID) {
-    const key = this.getStorageKey(timerID)
-    if (!key) {
-      return null
-    }
-
+  readStoredTimerState() {
     let state
     try {
-      const storedState = window.localStorage.getItem(key)
+      const storedState = window.localStorage.getItem(mainTimerLocalStorageKey)
       if (!storedState) {
         return null
       }
@@ -239,38 +199,28 @@ class TimerStartPause extends HTMLElement {
       return null
     }
 
-    const duration = Number(state?.duration)
-    const remainingDuration = Number(state?.remainingDuration)
+    const elapsed = Number(state?.ElapsedDuration)
+    const utmost = Number(state?.UtmostDuration)
     if (
-      !Number.isFinite(duration) || duration <= 0 ||
-      !Number.isFinite(remainingDuration) || remainingDuration < 0 ||
-      remainingDuration > duration || typeof state.running !== 'boolean' ||
-      (state.expired !== undefined && typeof state.expired !== 'boolean')
+      !Number.isFinite(elapsed) || elapsed < 0 ||
+      !Number.isFinite(utmost) || utmost <= 0 ||
+      typeof state?.IsRunning !== 'boolean'
     ) {
       return null
     }
 
-    return {
-      duration,
-      remainingDuration,
-      running: state.running,
-      expired: state.expired === true,
-    }
+    const timerState = new TimerState()
+    timerState.ElapsedDuration = elapsed
+    timerState.UtmostDuration = utmost
+    timerState.IsRunning = state.IsRunning
+    return timerState
   }
 
   storeTimerState(state) {
-    const key = this.getStorageKey(state.timerID)
-    if (!key) {
-      return
-    }
-
     try {
-      window.localStorage.setItem(key, JSON.stringify({
-        duration: state.duration,
-        remainingDuration: state.remainingDuration,
-        running: state.running,
-        expired: state.expired,
-      }))
+      window.localStorage.setItem(mainTimerLocalStorageKey, JSON.stringify(
+        Object.assign(new TimerState(), state),
+      ))
     } catch {
       // Local storage may be unavailable in restricted browsing contexts.
     }

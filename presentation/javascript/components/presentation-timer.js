@@ -5,7 +5,7 @@ const presentationTimerTickEventType = 'presentation-timer-tick'
 class PresentationTimer extends HTMLElement {
   ElapsedDuration
   UtmostDuration
-  TimerRunning
+  IsRunning
   #tickTimeoutID
   #lastTickTimestamp
 
@@ -14,7 +14,7 @@ class PresentationTimer extends HTMLElement {
     this.attachShadow({ mode: 'open' })
     this.ElapsedDuration = 0
     this.UtmostDuration = 0
-    this.TimerRunning = false
+    this.IsRunning = false
     this.onClick = this.onClick.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.tick = this.tick.bind(this)
@@ -181,7 +181,7 @@ class PresentationTimer extends HTMLElement {
   }
 
   onClick() {
-    if (this.TimerRunning) {
+    if (this.IsRunning) {
       this.pause()
     } else if (this.hasAttribute('expired')) {
       this.setExpired(false)
@@ -206,7 +206,7 @@ class PresentationTimer extends HTMLElement {
 
   start() {
     const now = performance.now()
-    if (this.TimerRunning) {
+    if (this.IsRunning) {
       this.ElapsedDuration = Math.min(
         this.UtmostDuration,
         this.ElapsedDuration + Math.max(0, now - this.#lastTickTimestamp),
@@ -221,7 +221,7 @@ class PresentationTimer extends HTMLElement {
     this.setExpired(false)
 
     this.#lastTickTimestamp = now
-    this.TimerRunning = true
+    this.IsRunning = true
     this.updateProgress(this.ElapsedDuration)
     this.updateState()
     this.#tickTimeoutID = window.setTimeout(
@@ -233,7 +233,7 @@ class PresentationTimer extends HTMLElement {
   pause() {
     window.clearTimeout(this.#tickTimeoutID)
     this.#tickTimeoutID = undefined
-    if (!this.TimerRunning) {
+    if (!this.IsRunning) {
       return
     }
 
@@ -241,7 +241,7 @@ class PresentationTimer extends HTMLElement {
       this.UtmostDuration,
       this.ElapsedDuration + Math.max(0, performance.now() - this.#lastTickTimestamp),
     )
-    this.TimerRunning = false
+    this.IsRunning = false
     this.#lastTickTimestamp = undefined
     if (this.ElapsedDuration >= this.UtmostDuration) {
       this.setExpired(true)
@@ -252,7 +252,7 @@ class PresentationTimer extends HTMLElement {
 
   tick() {
     this.#tickTimeoutID = undefined
-    if (!this.TimerRunning) {
+    if (!this.IsRunning) {
       return
     }
 
@@ -265,7 +265,7 @@ class PresentationTimer extends HTMLElement {
     const expired = this.ElapsedDuration >= this.UtmostDuration
     if (expired) {
       this.ElapsedDuration = this.UtmostDuration
-      this.TimerRunning = false
+      this.IsRunning = false
       this.#lastTickTimestamp = undefined
       this.setExpired(true)
     }
@@ -294,11 +294,11 @@ class PresentationTimer extends HTMLElement {
   }
 
   updateState() {
-    this.toggleAttribute('paused', !this.TimerRunning)
-    this.setAttribute('aria-pressed', String(this.TimerRunning))
+    this.toggleAttribute('paused', !this.IsRunning)
+    this.setAttribute('aria-pressed', String(this.IsRunning))
     this.setAttribute(
       'aria-label',
-      `${this.TimerRunning ? 'Pause' : 'Start'} ${this.UtmostDuration / 1000} second timer`,
+      `${this.IsRunning ? 'Pause' : 'Start'} ${this.UtmostDuration / 1000} second timer`,
     )
   }
 }

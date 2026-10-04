@@ -113,9 +113,6 @@ class Synchronizer {
   }
 
   onStateChange(event) {
-    if (event.target !== this.Curtain && event.target !== this.MainTimer) {
-      return
-    }
     this.broadcastWindowState()
   }
 
@@ -126,7 +123,7 @@ class Synchronizer {
 
   onBlur() {
     this.setWindowFocused(false)
-    // this.debouncedBroadcastWindowState()
+    this.debouncedBroadcastWindowState()
   }
 
   onMessage(event) {
