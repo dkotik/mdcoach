@@ -3,14 +3,18 @@
 const presentationTimerTickEventType = 'presentation-timer-tick'
 
 class PresentationTimer extends HTMLElement {
+  ElapsedDuration
+  UtmostDuration
+  TimerRunning
+
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.elapsed = 0
-    this.running = false
+    this.ElapsedDuration = 0
+    this.UtmostDuration = 0
+    this.TimerRunning = false
     this.frame = undefined
-    this.startedAt = 0
-    this.lastDispatchedSecond = 0
+    this.lastFrameTimestamp = undefined
     this.onClick = this.onClick.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
     this.tick = this.tick.bind(this)
@@ -93,7 +97,7 @@ class PresentationTimer extends HTMLElement {
       }
     `
 
-    this.duration = this.getDuration()
+    this.UtmostDuration = this.getDuration()
     this.circumference = 2 * Math.PI * 42
     this.svg = element('svg', { viewBox: '0 0 100 100', 'aria-hidden': 'true' })
     this.trackCircle = element('circle', {
@@ -140,11 +144,11 @@ class PresentationTimer extends HTMLElement {
       this.setAttribute('tabindex', '0')
     }
 
-    this.setAttribute('aria-label', `${this.duration / 1000} second timer`)
+    this.setAttribute('aria-label', `${this.UtmostDuration / 1000} second timer`)
     this.addEventListener('click', this.onClick)
     this.addEventListener('keydown', this.onKeyDown)
     this.restoreExpirationState()
-    this.updateProgress(this.elapsed)
+    this.updateProgress(this.ElapsedDuration)
     this.updateState()
   }
 
@@ -201,14 +205,13 @@ class PresentationTimer extends HTMLElement {
   }
 
   onClick() {
-    if (this.running) {
+    if (this.TimerRunning) {
       this.pause()
     } else if (this.hasAttribute('expired')) {
       this.setExpired(false)
     } else {
       this.start()
     }
-    this.dispatchElapsedSeconds(this.elapsed)
   }
 
   onKeyDown(event) {
@@ -221,64 +224,71 @@ class PresentationTimer extends HTMLElement {
   }
 
   start() {
-    if (this.elapsed >= this.duration) {
-      this.elapsed = 0
+    if (this.ElapsedDuration >= this.UtmostDuration) {
+      this.ElapsedDuration = 0
     }
     this.setExpired(false)
 
-    this.startedAt = performance.now()
-    this.lastDispatchedSecond = Math.floor(this.elapsed / 1000)
-    this.running = true
-    this.updateProgress(this.elapsed)
+    this.lastFrameTimestamp = performance.now()
+    this.TimerRunning = true
+    this.updateProgress(this.ElapsedDuration)
     this.updateState()
     this.frame = window.requestAnimationFrame(this.tick)
   }
 
   pause() {
-    if (!this.running) {
+    if (!this.TimerRunning) {
       return
     }
 
-    this.elapsed = Math.min(
-      this.duration,
-      this.elapsed + performance.now() - this.startedAt,
+    const previousElapsed = this.ElapsedDuration
+    this.ElapsedDuration = Math.min(
+      this.UtmostDuration,
+      this.ElapsedDuration + Math.max(0, performance.now() - this.lastFrameTimestamp),
     )
-    this.running = false
+    this.dispatchElapsedSeconds(previousElapsed, this.ElapsedDuration)
+    this.TimerRunning = false
     window.cancelAnimationFrame(this.frame)
     this.frame = undefined
-    this.updateProgress(this.elapsed)
+    this.lastFrameTimestamp = undefined
+    this.updateProgress(this.ElapsedDuration)
     this.updateState()
   }
 
   tick(timestamp) {
-    if (!this.running) {
+    if (!this.TimerRunning) {
       return
     }
 
-    const elapsed = this.elapsed + timestamp - this.startedAt
-    this.dispatchElapsedSeconds(elapsed)
-    if (elapsed >= this.duration) {
-      this.elapsed = this.duration
-      if (this.duration % 1000 !== 0) {
-        this.dispatchTimerTick(this.duration)
+    const previousElapsed = this.ElapsedDuration
+    this.ElapsedDuration = Math.min(
+      this.UtmostDuration,
+      this.ElapsedDuration + Math.max(0, timestamp - this.lastFrameTimestamp),
+    )
+    this.lastFrameTimestamp = timestamp
+    this.dispatchElapsedSeconds(previousElapsed, this.ElapsedDuration)
+    if (this.ElapsedDuration >= this.UtmostDuration) {
+      if (this.UtmostDuration % 1000 !== 0) {
+        this.dispatchTimerTick(this.UtmostDuration)
       }
-      this.running = false
+      this.TimerRunning = false
       this.frame = undefined
+      this.lastFrameTimestamp = undefined
       this.setExpired(true)
-      this.updateProgress(this.elapsed)
+      this.updateProgress(this.ElapsedDuration)
       this.updateState()
       return
     }
 
-    this.updateProgress(elapsed)
+    this.updateProgress(this.ElapsedDuration)
     this.frame = window.requestAnimationFrame(this.tick)
   }
 
-  dispatchElapsedSeconds(elapsed) {
-    const elapsedSeconds = Math.floor(elapsed / 1000)
-    while (this.lastDispatchedSecond < elapsedSeconds) {
-      this.lastDispatchedSecond++
-      this.dispatchTimerTick(Math.min(this.lastDispatchedSecond * 1000, this.duration))
+  dispatchElapsedSeconds(previousElapsed, elapsed) {
+    const previousSecond = Math.floor(previousElapsed / 1000)
+    const elapsedSecond = Math.floor(elapsed / 1000)
+    for (let second = previousSecond + 1; second <= elapsedSecond; second++) {
+      this.dispatchTimerTick(Math.min(second * 1000, this.UtmostDuration))
     }
   }
 
@@ -287,14 +297,14 @@ class PresentationTimer extends HTMLElement {
       bubbles: true,
       composed: true,
       detail: {
-        totalDuration: this.duration,
-        remainingDuration: Math.max(0, this.duration - elapsed),
+        totalDuration: this.UtmostDuration,
+        remainingDuration: Math.max(0, this.UtmostDuration - elapsed),
       },
     }))
   }
 
   updateProgress(elapsed) {
-    const progress = Math.min(elapsed / this.duration, 1)
+    const progress = Math.min(elapsed / this.UtmostDuration, 1)
     this.progressCircle.setAttribute(
       'stroke-dashoffset',
       String(this.circumference * (1 - progress)),
@@ -302,11 +312,11 @@ class PresentationTimer extends HTMLElement {
   }
 
   updateState() {
-    this.toggleAttribute('paused', !this.running)
-    this.setAttribute('aria-pressed', String(this.running))
+    this.toggleAttribute('paused', !this.TimerRunning)
+    this.setAttribute('aria-pressed', String(this.TimerRunning))
     this.setAttribute(
       'aria-label',
-      `${this.running ? 'Pause' : 'Start'} ${this.duration / 1000} second timer`,
+      `${this.TimerRunning ? 'Pause' : 'Start'} ${this.UtmostDuration / 1000} second timer`,
     )
   }
 }

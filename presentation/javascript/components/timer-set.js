@@ -175,7 +175,7 @@ class TimerSet extends HTMLElement {
 
     this.duration = duration
     if (this.timerElement) {
-      this.timerElement.elapsed = 0
+      this.timerElement.ElapsedDuration = 0
     }
     this.updateTimerDuration()
   }
@@ -212,7 +212,7 @@ class TimerSet extends HTMLElement {
 
   getDurationAttribute() {
     if (this.timerElement) {
-      const timerDuration = Number(this.timerElement.duration)
+      const timerDuration = Number(this.timerElement.UtmostDuration)
       if (Number.isFinite(timerDuration) && timerDuration >= 0) {
         return Math.floor(timerDuration / 1000)
       }
@@ -251,7 +251,7 @@ class TimerSet extends HTMLElement {
 
   updateTimerDuration() {
     if (this.timerElement) {
-      this.timerElement.duration = this.duration * 1000
+      this.timerElement.UtmostDuration = this.duration * 1000
       this.timerElement.start()
     }
   }

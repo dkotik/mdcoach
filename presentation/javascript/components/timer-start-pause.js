@@ -158,10 +158,10 @@ class TimerStartPause extends HTMLElement {
       this.timerStateObserver.disconnect()
       try {
         timer.pause()
-        timer.duration = duration
-        timer.elapsed = duration - remainingDuration
+        timer.UtmostDuration = duration
+        timer.ElapsedDuration = duration - remainingDuration
         timer.setExpired(expired)
-        timer.updateProgress(timer.elapsed)
+        timer.updateProgress(timer.ElapsedDuration)
         timer.updateState()
         if (running) {
           timer.start()
@@ -184,22 +184,18 @@ class TimerStartPause extends HTMLElement {
   getTimerState() {
     const timer = this.timerElement
     const now = performance.now()
-    const duration = Number(timer.duration)
-    const elapsed = Number(timer.elapsed) + (
-      timer.running
-        ? now - Number(timer.startedAt)
-        : 0
-    )
+    const duration = Number(timer.UtmostDuration)
+    const elapsed = Number(timer.ElapsedDuration)
     const expired = timer.hasAttribute('expired') || elapsed >= duration
 
     return {
       timerID: timer.id || 'default',
       duration,
       remainingDuration: expired ? 0 : Math.max(0, duration - elapsed),
-      running: timer.running && !expired,
+      running: timer.TimerRunning && !expired,
       expired,
       capturedAt: now,
-      counting: timer.running && !expired,
+      counting: timer.TimerRunning && !expired,
     }
   }
 

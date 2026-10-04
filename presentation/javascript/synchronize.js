@@ -60,10 +60,10 @@ class Synchronizer {
     const expired = elapsed >= duration
     const running = state.IsTimerRunning && !expired && state.IsCurtainDown !== true
     timer.pause()
-    timer.duration = duration
-    timer.elapsed = elapsed
+    timer.UtmostDuration = duration
+    timer.ElapsedDuration = elapsed
     timer.setExpired(expired)
-    timer.updateProgress(timer.elapsed)
+    timer.updateProgress(timer.ElapsedDuration)
     timer.updateState()
     if (running) {
       timer.start()
@@ -86,19 +86,15 @@ class Synchronizer {
     state.IsReloading = reloading === true
 
     const timer = this.MainTimer
-    const duration = Number(timer?.duration)
-    const elapsed = Number(timer?.elapsed) + (
-      timer?.running
-        ? performance.now() - Number(timer.startedAt)
-        : 0
-    )
+    const duration = Number(timer?.UtmostDuration)
+    const elapsed = Number(timer?.ElapsedDuration)
     if (timer && Number.isFinite(duration) && duration > 0 && Number.isFinite(elapsed)) {
       const expired = timer.hasAttribute('expired') || elapsed >= duration
       state.TimerElapsedDuration = expired
         ? duration
         : Math.max(0, Math.min(duration, elapsed))
       state.TimerUtmostDuration = duration
-      state.IsTimerRunning = timer.running && !expired
+      state.IsTimerRunning = timer.TimerRunning && !expired
     } else {
       state.TimerElapsedDuration = 0
       state.TimerUtmostDuration = 0
