@@ -1481,6 +1481,8 @@ if (!customElements.get('presentation-timer')) {
 // emits 'presentation-timer-change' with the selected duration in seconds
 
 class TimerSet extends HTMLElement {
+  #timer
+
   static get observedAttributes() {
     return ['data-timer-id']
   }
@@ -1488,14 +1490,14 @@ class TimerSet extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.onClick = this.onClick.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
     this.onInputKeyDown = this.onInputKeyDown.bind(this)
     this.onInputBlur = this.onInputBlur.bind(this)
     this.onTimerTick = this.onTimerTick.bind(this)
+    this.onTimerChange = this.onTimerChange.bind(this)
     this.defaultDuration = 60
     this.duration = this.defaultDuration
-    this.timerElement = null
+    this.#timer = null
   }
 
   connectedCallback() {
@@ -1593,19 +1595,17 @@ class TimerSet extends HTMLElement {
     const controls = document.createElement('div')
     controls.className = 'controls'
     controls.append(
-      this.createButton('Reset timer', '↻', 'reset'),
-      this.createButton('Subtract one minute', '−1', -61),
-      this.createButton('Add 1 minute', '+1', 59),
-      this.createButton('Add 5 minutes', '+5', 299),
+      this.createButton('Reset timer', '↻', () => this.ResetTimer()),
+      this.createButton('Subtract one minute', '−1', () => this.AdjustTimer(-61)),
+      this.createButton('Add 1 minute', '+1', () => this.AdjustTimer(59)),
+      this.createButton('Add 5 minutes', '+5', () => this.AdjustTimer(299)),
       this.input,
     )
     this.shadowRoot.replaceChildren(style, controls)
-    this.shadowRoot.addEventListener('click', this.onClick)
     this.renderDuration()
   }
 
   disconnectedCallback() {
-    this.shadowRoot.removeEventListener('click', this.onClick)
     this.input?.removeEventListener('change', this.onInputChange)
     this.input?.removeEventListener('keydown', this.onInputKeyDown)
     this.input?.removeEventListener('blur', this.onInputBlur)
@@ -1626,13 +1626,15 @@ class TimerSet extends HTMLElement {
       return
     }
 
-    this.timerElement = document.getElementById(timerId)
-    this.timerElement?.addEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.#timer = document.getElementById(timerId)
+    this.#timer?.addEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.#timer?.addEventListener('change', this.onTimerChange)
   }
 
   removeTimerTickSubscription() {
-    this.timerElement?.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
-    this.timerElement = null
+    this.#timer?.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.#timer?.removeEventListener('change', this.onTimerChange)
+    this.#timer = null
   }
 
   onInputKeyDown(event) {
@@ -1674,7 +1676,16 @@ class TimerSet extends HTMLElement {
 
   onTimerTick(event) {
     const timer = event.detail
-    if (event.currentTarget !== this.timerElement || timer !== this.timerElement) {
+    if (event.currentTarget !== this.#timer || timer !== this.#timer) {
+      return
+    }
+
+    this.updateDurationFromTimer(timer)
+  }
+
+  onTimerChange(event) {
+    const timer = event.detail
+    if (event.currentTarget !== this.#timer || timer !== this.#timer) {
       return
     }
 
@@ -1682,7 +1693,7 @@ class TimerSet extends HTMLElement {
   }
 
   updateDurationFromTimer(timer) {
-    if (timer !== this.timerElement) {
+    if (timer !== this.#timer) {
       return
     }
 
@@ -1696,8 +1707,8 @@ class TimerSet extends HTMLElement {
   }
 
   getDurationAttribute() {
-    if (this.timerElement) {
-      const timerDuration = Number(this.timerElement.UtmostDuration)
+    if (this.#timer) {
+      const timerDuration = Number(this.#timer.UtmostDuration)
       if (Number.isFinite(timerDuration) && timerDuration >= 0) {
         return Math.floor(timerDuration / 1000)
       }
@@ -1707,44 +1718,34 @@ class TimerSet extends HTMLElement {
     return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 60
   }
 
-  createButton(label, text, adjustment) {
+  createButton(label, text, onClick) {
     const button = document.createElement('button')
     button.type = 'button'
     button.textContent = text
     button.setAttribute('aria-label', label)
-    button.dataset.adjustment = String(adjustment)
+    button.addEventListener('click', onClick)
     return button
   }
 
-  onClick(event) {
-    const button = event.target.closest('button[data-adjustment]')
-    if (!button) {
-      return
-    }
+  ResetTimer() {
+    this.duration = this.defaultDuration
+    this.updateTimerDuration()
+    this.renderDuration()
+  }
 
-    const adjustment = button.dataset.adjustment
-    if (adjustment === 'reset') {
-      this.duration = this.defaultDuration
-    } else {
-      this.duration = Math.max(0, this.duration + Number(adjustment))
-      // round up to the nearest minute
-      // this.duration = Math.ceil(this.duration / 60) * 60
-    }
+  AdjustTimer(adjustment) {
+    this.duration = Math.max(0, this.duration + adjustment)
+    // round up to the nearest minute
+    // this.duration = Math.ceil(this.duration / 60) * 60
     this.updateTimerDuration()
     this.renderDuration()
   }
 
   updateTimerDuration(elapsed) {
-    if (this.timerElement) {
-      this.timerElement.pause()
-      this.timerElement.setDuration(
-        elapsed ?? this.timerElement.ElapsedDuration,
-        this.duration * 1000,
-      )
-      if (!this.timerElement.hasAttribute('expired')) {
-        this.timerElement.start()
-      }
-    }
+    this.#timer.setDuration(
+      elapsed ?? this.#timer.ElapsedDuration,
+      this.duration * 1000,
+    )
   }
 
   renderDuration() {
@@ -1780,8 +1781,6 @@ class TimerStartPause extends HTMLElement {
     super()
     this.#timer = this.querySelector('presentation-timer')
     this.#curtain = document.querySelector('presentation-curtain')
-    this.timerStateTimeout = null
-    this.pendingTimerState = null
     this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onDOMReady = this.onDOMReady.bind(this)
@@ -1803,9 +1802,6 @@ class TimerStartPause extends HTMLElement {
     this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.removeEventListener('click', this.onTimerStateChange)
     this.timerStateObserver.disconnect()
-    window.clearTimeout(this.timerStateTimeout)
-    this.timerStateTimeout = null
-    this.pendingTimerState = null
     this.isInitialized = false
   }
 
@@ -1860,20 +1856,23 @@ class TimerStartPause extends HTMLElement {
 
   onNavigationComplete(event) {
     const slideIndex = event.detail?.slideIndex
-    this.setTimerState({
-      IsRunning: slideIndex !== 0 && !this.isCurtainDown(),
-    })
+    if (slideIndex === 0) {
+      if (this.#timer.IsRunning) {
+        this.#timer.pause()
+      }
+      return
+    }
+    if (!this.#timer.IsRunning && !this.#curtain.IsDown()) {
+      this.#timer.start()
+    }
   }
 
   onCurtainChange(event) {
-    if (event.target !== this.#curtain) {
-      this.#curtain = document.querySelector('presentation-curtain')
-      if (event.target !== this.#curtain) {
-        return
-      }
+    if (event.detail) {
+      this.#timer.stop()
+    } else {
+      this.#timer.start()
     }
-
-    this.setTimerState({ IsRunning: !this.#curtain.IsDown() })
   }
 
   isCurtainDown() {
@@ -1889,65 +1888,38 @@ class TimerStartPause extends HTMLElement {
   }
 
   setTimerState(state) {
-    if (state) {
-      this.pendingTimerState = {
-        ...this.pendingTimerState,
-        ...state,
-      }
+    if (!state) {
+      this.storeTimerState(this.getTimerState())
+      return
     }
 
-    window.clearTimeout(this.timerStateTimeout)
-    this.timerStateTimeout = window.setTimeout(() => {
-      this.timerStateTimeout = null
-      const requestedState = this.pendingTimerState
-      this.pendingTimerState = null
+    const targetState = Object.assign(
+      new TimerState(),
+      this.getTimerState(),
+      state,
+    )
+    const elapsed = Number(targetState.ElapsedDuration)
+    const utmost = Number(targetState.UtmostDuration)
+    if (
+      !Number.isFinite(elapsed) || elapsed < 0 ||
+      !Number.isFinite(utmost) || utmost <= 0 ||
+      typeof targetState.IsRunning !== 'boolean'
+    ) {
+      return
+    }
 
-      if (!requestedState) {
-        this.storeTimerState(this.getTimerState())
-        return
-      }
-
-      const targetState = Object.assign(
-        new TimerState(),
-        this.getTimerState(),
-        requestedState,
-      )
-      const elapsed = Number(targetState.ElapsedDuration)
-      const utmost = Number(targetState.UtmostDuration)
-      if (
-        !Number.isFinite(elapsed) || elapsed < 0 ||
-        !Number.isFinite(utmost) || utmost <= 0 ||
-        typeof targetState.IsRunning !== 'boolean'
-      ) {
-        return
-      }
-
-      const timer = this.#timer
-      this.timerStateObserver.disconnect()
-      try {
-        timer.setDuration(elapsed, utmost)
-        if (targetState.IsRunning) {
-          timer.start()
-        }
-      } finally {
-        if (this.isConnected) {
-          this.timerStateObserver.observe(this, {
-            attributes: true,
-            subtree: true,
-            attributeFilter: ['paused'],
-          })
-        }
-      }
-
-      this.storeTimerState(this.getTimerState())
-    }, 600)
+    this.#timer.setDuration(elapsed, utmost)
+    if (targetState.IsRunning) {
+      this.#timer.start()
+    }
+    this.storeTimerState(this.getTimerState())
   }
 
   getTimerState() {
     const state = new TimerState()
     state.ElapsedDuration = Number(this.#timer.ElapsedDuration)
     state.UtmostDuration = Number(this.#timer.UtmostDuration)
-    state.IsRunning = this.#timer.TimerRunning
+    state.IsRunning = this.#timer.IsRunning
     return state
   }
 
@@ -3627,8 +3599,9 @@ class Synchronizer {
     const duration = Number(timer?.UtmostDuration)
     state.TimerElapsedDuration = elapsed
     state.TimerUtmostDuration = duration
-    state.IsTimerRunning = timer.TimerRunning
+    state.IsTimerRunning = timer.IsRunning
     this.Channel.postMessage(state)
+    console.debug("broadcast", state)
   }
 
   setWindowFocused(focused) {

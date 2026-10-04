@@ -458,8 +458,9 @@ class Synchronizer {
     const duration = Number(timer?.UtmostDuration)
     state.TimerElapsedDuration = elapsed
     state.TimerUtmostDuration = duration
-    state.IsTimerRunning = timer.TimerRunning
+    state.IsTimerRunning = timer.IsRunning
     this.Channel.postMessage(state)
+    console.debug("broadcast", state)
   }
 
   setWindowFocused(focused) {

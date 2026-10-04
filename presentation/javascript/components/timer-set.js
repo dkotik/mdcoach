@@ -2,6 +2,8 @@
 // emits 'presentation-timer-change' with the selected duration in seconds
 
 class TimerSet extends HTMLElement {
+  #timer
+
   static get observedAttributes() {
     return ['data-timer-id']
   }
@@ -9,14 +11,14 @@ class TimerSet extends HTMLElement {
   constructor() {
     super()
     this.attachShadow({ mode: 'open' })
-    this.onClick = this.onClick.bind(this)
     this.onInputChange = this.onInputChange.bind(this)
     this.onInputKeyDown = this.onInputKeyDown.bind(this)
     this.onInputBlur = this.onInputBlur.bind(this)
     this.onTimerTick = this.onTimerTick.bind(this)
+    this.onTimerChange = this.onTimerChange.bind(this)
     this.defaultDuration = 60
     this.duration = this.defaultDuration
-    this.timerElement = null
+    this.#timer = null
   }
 
   connectedCallback() {
@@ -114,19 +116,17 @@ class TimerSet extends HTMLElement {
     const controls = document.createElement('div')
     controls.className = 'controls'
     controls.append(
-      this.createButton('Reset timer', '↻', 'reset'),
-      this.createButton('Subtract one minute', '−1', -61),
-      this.createButton('Add 1 minute', '+1', 59),
-      this.createButton('Add 5 minutes', '+5', 299),
+      this.createButton('Reset timer', '↻', () => this.ResetTimer()),
+      this.createButton('Subtract one minute', '−1', () => this.AdjustTimer(-61)),
+      this.createButton('Add 1 minute', '+1', () => this.AdjustTimer(59)),
+      this.createButton('Add 5 minutes', '+5', () => this.AdjustTimer(299)),
       this.input,
     )
     this.shadowRoot.replaceChildren(style, controls)
-    this.shadowRoot.addEventListener('click', this.onClick)
     this.renderDuration()
   }
 
   disconnectedCallback() {
-    this.shadowRoot.removeEventListener('click', this.onClick)
     this.input?.removeEventListener('change', this.onInputChange)
     this.input?.removeEventListener('keydown', this.onInputKeyDown)
     this.input?.removeEventListener('blur', this.onInputBlur)
@@ -147,13 +147,15 @@ class TimerSet extends HTMLElement {
       return
     }
 
-    this.timerElement = document.getElementById(timerId)
-    this.timerElement?.addEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.#timer = document.getElementById(timerId)
+    this.#timer?.addEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.#timer?.addEventListener('change', this.onTimerChange)
   }
 
   removeTimerTickSubscription() {
-    this.timerElement?.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
-    this.timerElement = null
+    this.#timer?.removeEventListener(presentationTimerTickEventType, this.onTimerTick)
+    this.#timer?.removeEventListener('change', this.onTimerChange)
+    this.#timer = null
   }
 
   onInputKeyDown(event) {
@@ -195,7 +197,16 @@ class TimerSet extends HTMLElement {
 
   onTimerTick(event) {
     const timer = event.detail
-    if (event.currentTarget !== this.timerElement || timer !== this.timerElement) {
+    if (event.currentTarget !== this.#timer || timer !== this.#timer) {
+      return
+    }
+
+    this.updateDurationFromTimer(timer)
+  }
+
+  onTimerChange(event) {
+    const timer = event.detail
+    if (event.currentTarget !== this.#timer || timer !== this.#timer) {
       return
     }
 
@@ -203,7 +214,7 @@ class TimerSet extends HTMLElement {
   }
 
   updateDurationFromTimer(timer) {
-    if (timer !== this.timerElement) {
+    if (timer !== this.#timer) {
       return
     }
 
@@ -217,8 +228,8 @@ class TimerSet extends HTMLElement {
   }
 
   getDurationAttribute() {
-    if (this.timerElement) {
-      const timerDuration = Number(this.timerElement.UtmostDuration)
+    if (this.#timer) {
+      const timerDuration = Number(this.#timer.UtmostDuration)
       if (Number.isFinite(timerDuration) && timerDuration >= 0) {
         return Math.floor(timerDuration / 1000)
       }
@@ -228,44 +239,34 @@ class TimerSet extends HTMLElement {
     return Number.isFinite(value) && value >= 0 ? Math.floor(value) : 60
   }
 
-  createButton(label, text, adjustment) {
+  createButton(label, text, onClick) {
     const button = document.createElement('button')
     button.type = 'button'
     button.textContent = text
     button.setAttribute('aria-label', label)
-    button.dataset.adjustment = String(adjustment)
+    button.addEventListener('click', onClick)
     return button
   }
 
-  onClick(event) {
-    const button = event.target.closest('button[data-adjustment]')
-    if (!button) {
-      return
-    }
+  ResetTimer() {
+    this.duration = this.defaultDuration
+    this.updateTimerDuration()
+    this.renderDuration()
+  }
 
-    const adjustment = button.dataset.adjustment
-    if (adjustment === 'reset') {
-      this.duration = this.defaultDuration
-    } else {
-      this.duration = Math.max(0, this.duration + Number(adjustment))
-      // round up to the nearest minute
-      // this.duration = Math.ceil(this.duration / 60) * 60
-    }
+  AdjustTimer(adjustment) {
+    this.duration = Math.max(0, this.duration + adjustment)
+    // round up to the nearest minute
+    // this.duration = Math.ceil(this.duration / 60) * 60
     this.updateTimerDuration()
     this.renderDuration()
   }
 
   updateTimerDuration(elapsed) {
-    if (this.timerElement) {
-      this.timerElement.pause()
-      this.timerElement.setDuration(
-        elapsed ?? this.timerElement.ElapsedDuration,
-        this.duration * 1000,
-      )
-      if (!this.timerElement.hasAttribute('expired')) {
-        this.timerElement.start()
-      }
-    }
+    this.#timer.setDuration(
+      elapsed ?? this.#timer.ElapsedDuration,
+      this.duration * 1000,
+    )
   }
 
   renderDuration() {

@@ -16,8 +16,6 @@ class TimerStartPause extends HTMLElement {
     super()
     this.#timer = this.querySelector('presentation-timer')
     this.#curtain = document.querySelector('presentation-curtain')
-    this.timerStateTimeout = null
-    this.pendingTimerState = null
     this.isInitialized = false
     this.onNavigationComplete = this.onNavigationComplete.bind(this)
     this.onDOMReady = this.onDOMReady.bind(this)
@@ -39,9 +37,6 @@ class TimerStartPause extends HTMLElement {
     this.removeEventListener('presentation-timer-tick', this.onTimerStateChange)
     this.removeEventListener('click', this.onTimerStateChange)
     this.timerStateObserver.disconnect()
-    window.clearTimeout(this.timerStateTimeout)
-    this.timerStateTimeout = null
-    this.pendingTimerState = null
     this.isInitialized = false
   }
 
@@ -96,20 +91,23 @@ class TimerStartPause extends HTMLElement {
 
   onNavigationComplete(event) {
     const slideIndex = event.detail?.slideIndex
-    this.setTimerState({
-      IsRunning: slideIndex !== 0 && !this.isCurtainDown(),
-    })
+    if (slideIndex === 0) {
+      if (this.#timer.IsRunning) {
+        this.#timer.pause()
+      }
+      return
+    }
+    if (!this.#timer.IsRunning && !this.#curtain.IsDown()) {
+      this.#timer.start()
+    }
   }
 
   onCurtainChange(event) {
-    if (event.target !== this.#curtain) {
-      this.#curtain = document.querySelector('presentation-curtain')
-      if (event.target !== this.#curtain) {
-        return
-      }
+    if (event.detail) {
+      this.#timer.stop()
+    } else {
+      this.#timer.start()
     }
-
-    this.setTimerState({ IsRunning: !this.#curtain.IsDown() })
   }
 
   isCurtainDown() {
@@ -125,65 +123,38 @@ class TimerStartPause extends HTMLElement {
   }
 
   setTimerState(state) {
-    if (state) {
-      this.pendingTimerState = {
-        ...this.pendingTimerState,
-        ...state,
-      }
+    if (!state) {
+      this.storeTimerState(this.getTimerState())
+      return
     }
 
-    window.clearTimeout(this.timerStateTimeout)
-    this.timerStateTimeout = window.setTimeout(() => {
-      this.timerStateTimeout = null
-      const requestedState = this.pendingTimerState
-      this.pendingTimerState = null
+    const targetState = Object.assign(
+      new TimerState(),
+      this.getTimerState(),
+      state,
+    )
+    const elapsed = Number(targetState.ElapsedDuration)
+    const utmost = Number(targetState.UtmostDuration)
+    if (
+      !Number.isFinite(elapsed) || elapsed < 0 ||
+      !Number.isFinite(utmost) || utmost <= 0 ||
+      typeof targetState.IsRunning !== 'boolean'
+    ) {
+      return
+    }
 
-      if (!requestedState) {
-        this.storeTimerState(this.getTimerState())
-        return
-      }
-
-      const targetState = Object.assign(
-        new TimerState(),
-        this.getTimerState(),
-        requestedState,
-      )
-      const elapsed = Number(targetState.ElapsedDuration)
-      const utmost = Number(targetState.UtmostDuration)
-      if (
-        !Number.isFinite(elapsed) || elapsed < 0 ||
-        !Number.isFinite(utmost) || utmost <= 0 ||
-        typeof targetState.IsRunning !== 'boolean'
-      ) {
-        return
-      }
-
-      const timer = this.#timer
-      this.timerStateObserver.disconnect()
-      try {
-        timer.setDuration(elapsed, utmost)
-        if (targetState.IsRunning) {
-          timer.start()
-        }
-      } finally {
-        if (this.isConnected) {
-          this.timerStateObserver.observe(this, {
-            attributes: true,
-            subtree: true,
-            attributeFilter: ['paused'],
-          })
-        }
-      }
-
-      this.storeTimerState(this.getTimerState())
-    }, 600)
+    this.#timer.setDuration(elapsed, utmost)
+    if (targetState.IsRunning) {
+      this.#timer.start()
+    }
+    this.storeTimerState(this.getTimerState())
   }
 
   getTimerState() {
     const state = new TimerState()
     state.ElapsedDuration = Number(this.#timer.ElapsedDuration)
     state.UtmostDuration = Number(this.#timer.UtmostDuration)
-    state.IsRunning = this.#timer.TimerRunning
+    state.IsRunning = this.#timer.IsRunning
     return state
   }
 
