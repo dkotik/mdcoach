@@ -73,7 +73,11 @@ func main() {
 			}
 			args = args[1:] // the first one is the command name
 
-			if directory := c.String("directory"); directory != "" {
+			directory, err := expandUserPath(c.String("directory"))
+			if err != nil {
+				return fmt.Errorf("expand working directory path: %w", err)
+			}
+			if directory != "" {
 				if err := os.Chdir(directory); err != nil {
 					return fmt.Errorf("failed to change working directory to %q: %w", directory, err)
 				}
@@ -83,7 +87,16 @@ func main() {
 			if err != nil {
 				return fmt.Errorf("failed to locate working directory: %w", err)
 			}
-			output := c.String("output")
+			output, err := expandUserPath(c.String("output"))
+			if err != nil {
+				return fmt.Errorf("expand output path: %w", err)
+			}
+			for i, p := range args {
+				args[i], err = expandUserPath(p)
+				if err != nil {
+					return fmt.Errorf("expand input path %q: %w", p, err)
+				}
+			}
 
 			isDir, err := isDirectory(output)
 			if err != nil {

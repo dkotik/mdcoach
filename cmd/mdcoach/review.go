@@ -52,12 +52,19 @@ func reviewCmd() *cli.Command {
 				return errors.New("review command requires a file path to a Markdown file")
 			}
 			for i, filePath := range args {
-				if filepath.IsLocal(filePath) {
-					args[i] = filepath.Join(cwd, filePath)
+				args[i], err = expandUserPath(filePath)
+				if err != nil {
+					return fmt.Errorf("expand input path %q: %w", filePath, err)
+				}
+				if filepath.IsLocal(args[i]) {
+					args[i] = filepath.Join(cwd, args[i])
 				}
 			}
 
-			output := c.String("output")
+			output, err := expandUserPath(c.String("output"))
+			if err != nil {
+				return fmt.Errorf("expand output path: %w", err)
+			}
 			if filepath.IsLocal(output) {
 				output = filepath.Join(cwd, output)
 			}

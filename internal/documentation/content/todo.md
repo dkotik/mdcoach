@@ -4,6 +4,7 @@ weight: 60
 ---
 
 - [ ] Add presentation icon to --index
+- [ ] replace "vh" and "vw" units in CSS with "vb"
 - [ ] There is root image loader and another one in the epub package. Those two should be refactored to one and placed into internal package.
 - [ ] Add SVG support to the image loader.
 - [ ] Fix goreleaser Homebrew issue:

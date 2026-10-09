@@ -1844,7 +1844,7 @@ class TimerStartPause extends HTMLElement {
     state.UtmostDuration = Number(this.#timer.UtmostDuration)
     state.IsRunning = this.#timer.IsRunning
 
-    console.log("timerState:", state)
+    // console.log("timerState:", state)
 
     try {
       window.localStorage.setItem(mainTimerLocalStorageKey, JSON.stringify(state))

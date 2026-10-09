@@ -2,13 +2,15 @@
 
 figure {
   width: 40rem;
+  max-width: 90vw;
 }
 
 .mdcoachImage {
 	min-height: 1.5rem;
 	min-width: 1.5rem;
 	max-height: 90vh;
-	max-width: 60rem;
+	width: 40rem;
+	max-width: 90vw;
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: contain;
